@@ -20,6 +20,8 @@ public interface Transactions {
 	/**
 	 * Returns all transactions as a List type object.
 	 * 
+	 * This should not return income transactions.
+	 * 
 	 * @return List of Transaction objects
 	 */
 	public abstract List<Transaction> getTransactions();
@@ -30,6 +32,8 @@ public interface Transactions {
 	 * to get a transaction at an index (value should not ever return null
 	 * unless list is empty). Should return an empty list if no transactions
 	 * recorded.
+	 * 
+	 * This should not return income transactions.
 	 * 
 	 * @param index of the Transactions List
 	 * @return Transaction at the provided index
@@ -49,12 +53,16 @@ public interface Transactions {
 	 * 
 	 * Should return an empty list if no transactions recorded.
 	 * 
+	 * This should not return income transactions.
+	 * 
 	 * @return last transaction of list
 	 */
 	public abstract Transaction getLastTransaction();
 	
 	/**
 	 * Get all the transactions at a certain date.
+	 * 
+	 * This should not return income transactions.
 	 * 
 	 * @param date - date of Transactions
 	 * @return list of transactions on given date
@@ -64,6 +72,8 @@ public interface Transactions {
 	/**
 	 * Get all the transactions between two specified dates. Should return an
 	 * empty list if none present.
+	 * 
+	 * This should not return income transactions.
 	 * 
 	 * @param start - start date of the transactions list
 	 * @param end - end date of the transactions list
@@ -76,6 +86,8 @@ public interface Transactions {
 	 * Get all transactions for a given category. Should return an empty list
 	 * if none present.
 	 * 
+	 * This should not return income transactions.
+	 * 
 	 * @param category - category of transactions to return
 	 * @return list of transactions of a given category
 	 */
@@ -85,6 +97,8 @@ public interface Transactions {
 	 * Get all transactions for a given category on a specified date. Should
 	 * return an empty list if none present.
 	 * 
+	 * This should not return income transactions.
+	 * 
 	 * @param cat - category of transactions
 	 * @param date - date of transactions
 	 * @return list of transactions of a category and date
@@ -93,6 +107,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all transactions for a given category in a specified time interval.
+	 * Should return an empty list if none found.
+	 * 
+	 * This should not return income transactions.
 	 * 
 	 * @param cat - category of transactions
 	 * @param start - start date of the transactions list
@@ -101,4 +118,44 @@ public interface Transactions {
 	 * @throws ArrayIndexOutOfBoundsException if end < start
 	 */
 	public abstract List<Transaction> getTransactionsByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	
+	/**
+	 * Get all of the income transactions.
+	 * Should return an empty list if none found.
+	 * 
+	 * @return a list of transactions that are income
+	 */
+	public abstract List<Transaction> getIncomeTransactions();
+	
+	/**
+	 * Get all income transactions on a given date.
+	 * Should return an empty list if none found.
+	 * 
+	 * @param date - the date of all income transactions
+	 * @return a list of transactions that are income on a particular date
+	 */
+	public abstract List<Transaction> getIncomeByDate(Date date);
+	
+	/**
+	 * Get all income transactions between given dates.
+	 * Should return an empty list if none found.
+	 * 
+	 * @param start - start date of the income transactions list
+	 * @param end - end date of the income transactions list
+	 * @return list of income transactions between given dates.
+	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 */
+	public abstract List<Transaction> getIncomeBetweenDates(Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	
+	/**
+	 * Add a transaction to the transactions list.
+	 */
+	public abstract void addTransaction(Transaction tran);
+	
+	/**
+	 * Remove a transaction from the transactions list.
+	 * 
+	 * @param tran - the transaction to remove
+	 */
+	public abstract void removeTransaction(Transaction tran);
 }
