@@ -1,14 +1,23 @@
 package derigible.transactions;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+import static org.mockito.Mockito.*;
+import derigible.transactions.TList;
+import derigible.transactions.TransactionArray;
 
-public class TransactionTest {
+public class TransactionTest { 	
+	
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		TList test = mock(TList.class);
+		test.getLastTransaction();
+		test.getLastTransaction();
+		
+		verify(test, times(2)).getLastTransaction();
+		
+		when(test.getLastTransaction()).thenReturn(new TransactionArray());
+		
 	}
 
 }
