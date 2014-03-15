@@ -50,4 +50,9 @@ public class TransactionTest {
 				tal.getTransactions().getClass(), tll.getTransactions().getClass());
 	}
 	
+	@Test
+	public void testCategoryInsertion(){
+		
+	}
+	
 }

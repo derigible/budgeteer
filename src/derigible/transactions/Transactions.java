@@ -153,6 +153,12 @@ public interface Transactions {
 	public abstract void addTransaction(Transaction tran);
 	
 	/**
+	 * Remove 
+	 * @param tran
+	 */
+	public abstract void addTransactions(Transaction[] tran);
+	
+	/**
 	 * Remove a transaction from the transactions list.
 	 * 
 	 * @param tran - the transaction to remove

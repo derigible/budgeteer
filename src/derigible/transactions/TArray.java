@@ -209,4 +209,10 @@ public class TArray implements Transactions, Transaction {
 		return false;
 	}
 
+	@Override
+	public void addTransactions(Transaction[] tran) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
