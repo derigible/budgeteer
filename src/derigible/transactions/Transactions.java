@@ -94,6 +94,17 @@ public interface Transactions {
 	public abstract List<Transaction> getTransactionsByCategory(String category);
 	
 	/**
+	 * Get all transactions for the given categories. Should return an empty list if
+	 * none present.
+	 * 
+	 * This should not return income transactions.
+	 * 
+	 * @param categories - categories of transactions to return
+	 * @return list of transactions of a given category
+	 */
+	public abstract List<Transaction> getTransactionsByCategories(String[] categories);
+	
+	/**
 	 * Get all transactions for a given category on a specified date. Should
 	 * return an empty list if none present.
 	 * 
@@ -118,6 +129,20 @@ public interface Transactions {
 	 * @throws ArrayIndexOutOfBoundsException if end < start
 	 */
 	public abstract List<Transaction> getTransactionsByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	
+	/**
+	 * Get all transactions for the given categories in a specified time interval.
+	 * Should return an empty list if none found.
+	 * 
+	 * This should not return income transactions.
+	 * 
+	 * @param cats - the categories to return
+	 * @param start - start date of the transactions list
+	 * @param end - end date of the transactions list
+	 * @return list of transactions of categories and dates
+	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 */
+	public abstract List<Transaction> getTransactionsByCategoriesAndDates(String[] cats, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
 	 * Get all of the income transactions.
@@ -164,5 +189,7 @@ public interface Transactions {
 	 * @param tran - the transaction to remove
 	 */
 	public abstract void removeTransaction(Transaction tran);
+	
+	public abstract String[] getCategories();
 	
 }

@@ -215,4 +215,23 @@ public class TArray implements Transactions, Transaction {
 		
 	}
 
+	@Override
+	public String[] getCategories() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Transaction> getTransactionsByCategoriesAndDates(String[] cats,
+			Date start, Date end) throws ArrayIndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Transaction> getTransactionsByCategories(String[] categories) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
