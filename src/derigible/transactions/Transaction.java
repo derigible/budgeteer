@@ -3,7 +3,7 @@
  */
 package derigible.transactions;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * @author marphill
@@ -15,7 +15,7 @@ import java.util.Date;
  *	Some Transactions classes can use this to call themselves to get data.
  */
 public interface Transaction {
-	public abstract Date getDate();
+	public abstract GregorianCalendar getDate();
 	public abstract String getDescription();
 	public abstract double getAmount();
 	public abstract String getCategory();

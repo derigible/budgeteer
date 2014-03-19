@@ -60,6 +60,50 @@ public interface Transactions {
 	public abstract Transaction getLastTransaction();
 	
 	/**
+	 * Gets all the years in which a Transaction is recorded. Returned as an
+	 * int array since representing year as an int plays well with the
+	 * Calendar API, and just about any other date API you will find in Java
+	 * (or most any other language for that matter).
+	 * 
+	 * @return the int array of years with a Transaction recorded
+	 */
+	public abstract int[] getYearsWithTransactions();
+	
+	/**
+	 * Gets all the months in the given year that have a Transaction recorded.
+	 * In theory this should never be called without first querying the 
+	 * getYearsWithTransactions method and then taking a value from that.
+	 * However, in the even that a year is passed in that has no Transactions
+	 * recorded, an empty int[] should  be returned. Same reasoning for
+	 * using ints as getYearsWithTransactions.
+	 * 
+	 * @param year - the year of the months in question
+	 * @return the int array of months within the year with a Transaction recorded
+	 */
+	public abstract int[] getMonthsInYearWithTransactions(int year);
+	
+	/**
+	 * Gets all the days in the given month of the given year with a Transaction
+	 * recorded. Works in much the same way as getYearsWithTransactions and
+	 * getMonthsInYearWithTransactions does. Returns an empty int[] id none found.
+	 * 
+	 * @param year - the year of the days in question
+	 * @param month - the month of the days in question
+	 * @return the int array of days within the month within the year with a Transaction recorded
+	 */
+	public abstract int[] getDaysInMonthInYearWithTransactions(int year, int month);
+	
+	/**
+	 * Get all the days in the year with Transactions. Works just like the 
+	 * getDayInMonthInYearWithTransactions method, except it doesn't take into
+	 * account any month. Returns empty if none are found.
+	 * 
+	 * @param year - the year of the days in question
+	 * @return the int array of days within the specified year with a Transaction Recorded
+	 */
+	public abstract int[] getAllDaysInYearWithTransactions(int year);
+	
+	/**
 	 * Get all the transactions at a certain date.
 	 * 
 	 * This should not return income transactions.
@@ -71,7 +115,7 @@ public interface Transactions {
 	
 	/**
 	 * Get all the transactions between two specified dates. Should return an
-	 * empty list if none present.
+	 * empty list if none present. Dates provided ARE inclusive.
 	 * 
 	 * This should not return income transactions.
 	 * 

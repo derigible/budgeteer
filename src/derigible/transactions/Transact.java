@@ -3,7 +3,7 @@
  */
 package derigible.transactions;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * @author marphill
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class Transact implements Transaction {
 
-		private Date date;
+		private GregorianCalendar date;
 		private String description;
 		private double Amount;
 		private String Category;
@@ -37,7 +37,7 @@ public class Transact implements Transaction {
 		 * @param account - Account
 		 * @param doc - Debit or Credit
 		 */
-		public Transact(Date d, String desc, double amount,
+		public Transact(GregorianCalendar d, String desc, double amount,
 				String cat, String account, boolean doc){
 			date = d;
 			description = desc;
@@ -64,13 +64,13 @@ public class Transact implements Transaction {
 		 * @return the date
 		 */
 		@Override
-		public Date getDate() {
+		public GregorianCalendar getDate() {
 			return date;
 		}
 		/**
 		 * @param date the date to set
 		 */
-		public void setDate(Date date) {
+		public void setDate(GregorianCalendar date) {
 			this.date = date;
 		}
 		/**

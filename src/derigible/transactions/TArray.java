@@ -4,6 +4,7 @@
 package derigible.transactions;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -174,7 +175,7 @@ public class TArray implements Transactions, Transaction {
 	}
 
 	@Override
-	public Date getDate() {
+	public GregorianCalendar getDate() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -230,6 +231,30 @@ public class TArray implements Transactions, Transaction {
 
 	@Override
 	public List<Transaction> getTransactionsByCategories(String[] categories) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[] getYearsWithTransactions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[] getMonthsInYearWithTransactions(int year) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[] getDaysInMonthInYearWithTransactions(int year, int month) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[] getAllDaysInYearWithTransactions(int year) {
 		// TODO Auto-generated method stub
 		return null;
 	}
