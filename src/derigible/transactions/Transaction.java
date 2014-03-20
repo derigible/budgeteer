@@ -15,10 +15,45 @@ import java.util.GregorianCalendar;
  *	Some Transactions classes can use this to call themselves to get data.
  */
 public interface Transaction {
+	/**
+	 * The date of the transaction, represented as a Gregorian Calendar object.
+	 * 
+	 * @return the date as a GregorianCalendar
+	 */
 	public abstract GregorianCalendar getDate();
+	
+	/**
+	 * The description of the transaction.
+	 * 
+	 * @return the description of the transaction.
+	 */
 	public abstract String getDescription();
+	
+	/**
+	 * The amount of the transaction.
+	 * 
+	 * @return the amount of the transaction
+	 */
 	public abstract double getAmount();
+	
+	/**
+	 * The category that the transaction falls under.
+	 * 
+	 * @return the category of the transaction
+	 */
 	public abstract String getCategory();
+	
+	/**
+	 * The account from which the money was debited/credited.
+	 * 
+	 * @return the account name
+	 */
 	public abstract String getAccount();
+	
+	/**
+	 * Whether or not it was money coming into our accounts or out. Debit for out, credit for in.
+	 * 
+	 * @return false for Debit, true for Credit (or reverse if primarily used in a sales env)
+	 */
 	public abstract boolean isDebitOrCredit();
 }

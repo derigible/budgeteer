@@ -41,7 +41,7 @@ public class TransactionTest {
 			talist.add(t);
 			tllist.add(t);
 		}
-		trans2 = new Transaction[5];
+		trans2 = new Transaction[6];
 		trans2[0] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,13), "Ice Cream",
 				4.50, "Dessert", "Mastercard", false);
 		trans2[1] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,14), "Home Improvement",
@@ -52,11 +52,14 @@ public class TransactionTest {
 				24.50, "Groceries", "Mastercard", false);
 		trans2[4] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,15), "Ice Cream",
 				4.50, "Dessert", "Mastercard", false);
+		trans2[5] = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
 	}
 	
 	@AfterClass
 	public static void teardownData(){
 		trans = null;
+		trans2 = null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -354,4 +357,56 @@ public class TransactionTest {
 				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
 						start.getTime(), end.getTime()).size());
 	}
+	
+	@Test
+	public void testIncomeFiltering(){
+		TList t = new TList(trans2);
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		
+		assertEquals("Wrong number of Income Transactions returned", 1, t.getIncomeTransactions().size());
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Transactions returned", 5, t.getTransactions().size());
+		assertEquals("Wrong number of Income Transactions returned after add.", 2, 
+				t.getIncomeTransactions().size());
+	}
+	
+	@Test
+	public void testGetIncomeByDate(){
+		TList t = new TList(trans2);
+		Transact transact2 = new Transact(new GregorianCalendar(2014,Calendar.OCTOBER,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		GregorianCalendar first = new GregorianCalendar(2014,Calendar.OCTOBER,15);
+		GregorianCalendar second = new GregorianCalendar(2015,Calendar.JANUARY,15);
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Income Transactions returned", 1, 
+				t.getIncomeByDate(first.getTime()).size());
+		
+		
+		assertEquals("Wrong number of Income Transactions returned after add of second date.", 1, 
+				t.getIncomeByDate(second.getTime()).size());
+	}
+	
+	@Test
+	public void testGetIncomeBetweenDates(){
+		TList t = new TList(trans2);
+		Transact transact2 = new Transact(new GregorianCalendar(2014,Calendar.OCTOBER,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
+		GregorianCalendar start2 = new GregorianCalendar(2014,Calendar.OCTOBER,15);
+		GregorianCalendar end = new GregorianCalendar(2015,Calendar.JANUARY,15);
+		
+		assertEquals("Wrong number of Income Transactions returned", 1, t.getIncomeTransactions().size());
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Transactions returned", 5, t.getTransactions().size());
+		assertEquals("Wrong number of Income Transactions returned after add.", 2, 
+				t.getIncomeTransactions().size());
+	}
+	
 }

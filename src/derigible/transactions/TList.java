@@ -19,7 +19,14 @@ import derigible.utils.StringHelper;
  */
 public class TList implements Transactions{
 	
+	/**
+	 * The transactions list. This list should only hold Debits, no Credits.
+	 */
 	private ArrayList<Transaction> tlist = new ArrayList<Transaction>();
+	/**
+	 * The income transactions list. Should only hold Credits, not Debits.
+	 */
+	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();
 	private HashMap<String, int[]> categories = new HashMap<String, int[]>();
 	private HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>> years = 
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
@@ -32,11 +39,7 @@ public class TList implements Transactions{
 	 * @param trans
 	 */
 	public TList(Transaction[] trans){
-		for(int i = 0; i < trans.length; i++){
-			tlist.add(trans[i]);
-		}
-		indexCategories(trans);
-		indexDates(trans);
+		init(trans);
 	}
 	
 	/**
@@ -44,18 +47,24 @@ public class TList implements Transactions{
 	 * @param trans
 	 */
 	public TList(List<Transaction> trans){
-		if(trans.getClass() == ArrayList.class){
-			this.tlist = (ArrayList<Transaction>) trans;
-			indexCategories(trans.toArray(new Transaction[0]));
-			indexDates(trans.toArray(new Transaction[0]));
-		} else{
-			Transaction[] t = trans.toArray(new Transaction[0]);
-			indexCategories(t);
-			indexDates(t);
-			for(int i = 0; i < t.length; i++){
-				tlist.add(t[i]);
+		init(trans.toArray(new Transaction[0]));
+	}
+	
+	/**
+	 * Internal constructor to allow for two different types of input but needing only one set of code.
+	 * @param trans
+	 */
+	private void init(Transaction[] trans){
+		for(int i = 0; i < trans.length; i++){
+			if(!trans[i].isDebitOrCredit()){
+				tlist.add(trans[i]);
+			} else {
+				tilist.add(trans[i]);
 			}
 		}
+		Transaction[] newt = tlist.toArray(new Transaction[0]);
+		indexCategories(newt);
+		indexDates(newt);
 	}
 	
 	/**
@@ -489,28 +498,43 @@ public class TList implements Transactions{
 
 	@Override
 	public List<Transaction> getIncomeTransactions() {
-		// TODO Auto-generated method stub
-		return null;
+		return tilist;
 	}
 
 	@Override
 	public List<Transaction> getIncomeByDate(Date date) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Transaction> trans = new ArrayList<Transaction>();
+		for(Transaction inc : tilist){
+			if(!inc.getDate().getTime().equals(date)){
+				trans.add(inc);
+			}
+		}
+		return trans;
 	}
 
 	@Override
 	public List<Transaction> getIncomeBetweenDates(Date start, Date end)
 			throws ArrayIndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Transaction> trans = new ArrayList<Transaction>();
+		for(Transaction inc : tilist){
+			if((inc.getDate().after(start) && inc.getDate().before(end)) || 
+					(inc.getDate().getTime().equals(start) || inc.getDate().getTime().equals(end))){
+				trans.add(inc);
+			}
+		}
+		
+		return trans;
 	}
 
 	@Override
 	public void addTransaction(Transaction tran) {
-		tlist.add(tran);
-		indexCategories(new Transaction[] {tran});
-		indexDates(new Transaction[] {tran});
+		if(!tran.isDebitOrCredit()){
+			tlist.add(tran);
+			indexCategories(new Transaction[] {tran});
+			indexDates(new Transaction[] {tran});
+		} else {
+			tilist.add(tran);
+		}
 	}
 
 	@Override
