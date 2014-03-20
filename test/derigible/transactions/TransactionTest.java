@@ -43,20 +43,15 @@ public class TransactionTest {
 		}
 		trans2 = new Transaction[5];
 		trans2[0] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,13), "Ice Cream",
-				4.50, "Dessert",
-				"Mastercard", false);
+				4.50, "Dessert", "Mastercard", false);
 		trans2[1] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,14), "Home Improvement",
-				56.57, "Home Improvement",
-				"Mastercard", false);
+				56.57, "Home Improvement", "Mastercard", false);
 		trans2[2] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,15), "New Hammer",
-				14.50, "hOme Improvement",
-				"Mastercard", false);
+				14.50, "hOme Improvement", "Mastercard", false);
 		trans2[3] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,16), "Macey's Grocery Store",
-				24.50, "Groceries",
-				"Mastercard", false);
+				24.50, "Groceries", "Mastercard", false);
 		trans2[4] = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,15), "Ice Cream",
-				4.50, "Dessert",
-				"Mastercard", false);
+				4.50, "Dessert", "Mastercard", false);
 	}
 	
 	@AfterClass
@@ -78,7 +73,6 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testCategoryIndexing(){
 		TList t = new TList(trans);
 		
@@ -87,7 +81,6 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testAccurateIndexingForGetTransactionsByCategory(){
 		TList t = new TList(trans);
 		TList t2 = new TList(trans2);
@@ -100,7 +93,6 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testAccurateDateIndexingForGetTransactionsByDate(){
 		TList t = new TList(trans2);
 		
@@ -123,16 +115,13 @@ public class TransactionTest {
 		TList t = new TList(trans2);
 		
 		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,23), "Ice Cream",
-				4.50, "SomethingNew",
-				"Mastercard", false);
+				4.50, "SomethingNew", "Mastercard", false);
 		int before = t.getTransactions().size();
 		
 		t.addTransaction(transact);
 		
 		int after = t.getTransactions().size();
 		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,23);
-		
-		System.out.println("Result: " +t.getTransactionsByCategory("SomethingNew").get(0).getCategory());
 		
 		assertFalse("Transaction not added to list.", before == after);
 		assertEquals("Transaction list not changed by correct amount.", 6, after);
@@ -143,7 +132,6 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testTransactionsBetweenDates_SameDateCase(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
@@ -154,8 +142,7 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
-	public void testTransactionsBetweenDates_DifferentDatesSameMonth(){
+	public void testTransactionsBetweenDates_DifferentDaysSameMonth(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
@@ -165,35 +152,36 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
-	public void testTransactionsBetweenDates_DifferentDatesSameYearAndDifferentMonths(){
+	public void testTransactionsBetweenDates_SameYearAndDifferentMonths(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.DECEMBER,14);
+		
+		Transact transact = new Transact(new GregorianCalendar(2016,Calendar.NOVEMBER,15), "Ice Cream",
+				4.50, "Dessert", "Mastercard", false);
+		
+		t.addTransaction(transact);
 
 		assertEquals("Wrong number of transactions fetched.", 5,
 				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test
-	@Ignore
-	public void testTransactionsBetweenDates_DifferentDatesDifferentYears(){
+	public void testTransactionsBetweenDates_DifferentYears(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2013,Calendar.NOVEMBER,13);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
 		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,15), "Ice Cream",
-				4.50, "Dessert",
-				"Mastercard", false);
+				4.50, "Dessert","Mastercard", false);
 		
-//		t.addTransaction(transact);
+		t.addTransaction(transact);
 		
 		assertEquals("Wrong number of transactions fetched.", 2,
 				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test(expected = ArrayIndexOutOfBoundsException.class)
-	@Ignore
 	public void testTransactionsBetweenDates_DifferentDatesUnAcceptableCase(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
@@ -202,7 +190,6 @@ public class TransactionTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testTransactionsBetweenDates_DifferentDatesAcceptableCaseReturnsNone(){
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,20);
@@ -210,5 +197,161 @@ public class TransactionTest {
 		
 		assertEquals("Wrong number of transactions fetched.", 0,
 				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
+	}
+	
+	@Test
+	public void testGetYearsWithTransactions(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of years passed back.", 1, t.getYearsWithTransactions().length);
+		assertTrue("Wrong year passed back.", 2014 == t.getYearsWithTransactions()[0]);
+		
+		Transact transact = new Transact(new GregorianCalendar(2013,Calendar.NOVEMBER,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact);
+		
+		assertEquals("Wrong number of years pass back after adding transaction.", 2, 
+				t.getYearsWithTransactions().length);
+		
+	}
+	
+	@Test
+	public void testGetMonthsInYearWithTransactions(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of months passed back.", 1, 
+				t.getMonthsInYearWithTransactions(2014).length);
+		assertTrue("Wrong month passed back.", 10 == t.getMonthsInYearWithTransactions(2014)[0]);
+		
+		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact);
+		
+		assertEquals("Wrong number of months passed back for 2014.", 2, 
+				t.getMonthsInYearWithTransactions(2014).length);
+		assertEquals("Wrong number of months passed back for 2015.", 0, 
+				t.getMonthsInYearWithTransactions(2015).length);
+	}
+	
+	@Test
+	public void testGetDaysInMonthInYearWithTransactions(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of days passed back.", 4, 
+				t.getDaysInMonthInYearWithTransactions(2014, 10).length);
+		
+		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact);
+		
+		assertEquals("Wrong day passed back.", 15 ,
+				t.getDaysInMonthInYearWithTransactions(2014, 0)[0]);
+	}
+	
+	@Test
+	public void testGetAllDaysInYearWithTransactions(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of days passed back.", 4, 
+				t.getAllDaysInYearWithTransactions(2014).length);
+		
+		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact);
+		
+		assertEquals("Wrong number of days passed back after add.", 5, 
+				t.getAllDaysInYearWithTransactions(2014).length);
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of days passed back after second add for 2014.", 5, 
+				t.getAllDaysInYearWithTransactions(2014).length);
+		assertEquals("Wrong number of days passed back after add for 2015.", 1, 
+				t.getAllDaysInYearWithTransactions(2015).length);
+		assertEquals("Wrong day passed back.", 15, 
+				t.getAllDaysInYearWithTransactions(2015)[0]);
+	}
+	
+	@Test
+	public void testGetTransactionsByCategories(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of Transactions returned", 4,
+				t.getTransactionsByCategories(new String[] {"Dessert", "Home Improvement"}).size());
+		
+		assertEquals("Wrong number of Transactions returned", 0,
+				t.getTransactionsByCategories(new String[] {"Ice Cream", "Grocery"}).size());
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Transactions returned after adding Transaction.", 5,
+				t.getTransactionsByCategories(new String[] {"Dessert", "Home Improvement"}).size());
+		assertEquals("Wrong number of Transactions returned after adding Transaction.", 6,
+				t.getTransactionsByCategories(
+						new String[] {"Dessert", "Home Improvement", "Groceries"}).size());
+	}
+	
+	@Test
+	public void testGetTransactionsByCategoryAndDates(){
+		TList t = new TList(trans2);
+		
+		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
+		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
+		
+		assertEquals("Wrong number of Transactions returned", 1,
+				t.getTransactionsByCategoryAndDates("Dessert", 
+						start.getTime(), end.getTime()).size());
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Transactions returned after Transaction added.", 1,
+				t.getTransactionsByCategoryAndDates("Dessert", 
+						start.getTime(), end.getTime()).size());
+		
+		end = new GregorianCalendar(2015,Calendar.NOVEMBER,16);
+		
+		assertEquals("Wrong number of Transactions returned after Transaction added and date changed.", 3,
+				t.getTransactionsByCategoryAndDates("Dessert", 
+						start.getTime(), end.getTime()).size());
+	}
+	
+	@Test
+	public void testGetTransactionsByCategoriesAndDates(){
+		TList t = new TList(trans2);
+		
+		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
+		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
+		
+		assertEquals("Wrong number of Transactions returned", 2,
+				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+						start.getTime(), end.getTime()).size());
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", false);
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Transactions returned after Transaction added.", 2,
+				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+						start.getTime(), end.getTime()).size());
+		
+		end = new GregorianCalendar(2015,Calendar.NOVEMBER,16);
+		
+		assertEquals("Wrong number of Transactions returned after Transaction added and date changed.", 3,
+				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+						start.getTime(), end.getTime()).size());
 	}
 }

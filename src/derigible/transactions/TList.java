@@ -10,9 +10,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import derigible.utils.StringHelper;
-import java.util.Collections;
+
 
 /**
  * @author marphill
@@ -24,7 +23,7 @@ public class TList implements Transactions{
 	private HashMap<String, int[]> categories = new HashMap<String, int[]>();
 	private HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>> years = 
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
-	private boolean indexed = false;
+	private boolean cindexed = false;
 	private boolean dindexed = false;
 	
 	/**
@@ -61,58 +60,48 @@ public class TList implements Transactions{
 	
 	/**
 	 * Hashmap keeps track of category by key (case is ignored). Since it is not likely
-	 * the arrays will change much after being indexed, all arrays will be of a fixed length.
+	 * the arrays will change much after being cindexed, all arrays will be of a fixed length.
 	 * It is better to take more time upfront and place the keys in a fixed length array
 	 * then worry about null values later. Keys stored in lower case to avoid duplicates.
 	 * 
-	 * @param trans - the transactions to be indexed
+	 * @param trans - the transactions to be cindexed
 	 */
 	private void indexCategories(Transaction[] trans){
+		int arrayend = 0;
+		if(cindexed){
+			arrayend = tlist.size() - 1;
+		}
 		for(int i = 0; i < trans.length; i++){
-			if(!indexed){
-				if(categories.containsKey(lower(trans[i].getCategory()))){
-					int[] tempids = categories.get(lower(trans[i].getCategory()));
-					int[] newarray = new int[tempids.length +1];
-					for(int j = 0; j < tempids.length; j++){
-						newarray[j] = tempids[j];
-					}
-					newarray[newarray.length - 1] = i;
-					categories.put(lower(trans[i].getCategory()), newarray);
-				} else{
-					int[] tempids = new int[1];
-					tempids[0] = i;
-					categories.put(lower(trans[i].getCategory()), tempids);
+			if(categories.containsKey(lower(trans[i].getCategory()))){
+				int[] tempids = categories.get(lower(trans[i].getCategory()));
+				int[] newarray = new int[tempids.length +1];
+				for(int j = 0; j < tempids.length; j++){
+					newarray[j] = tempids[j];
 				}
-				
+				newarray[newarray.length - 1] = i + arrayend;
+				categories.put(lower(trans[i].getCategory()), newarray);
 			} else{
-				if(categories.containsKey(lower(trans[i].getCategory()))){
-					int[] tempids = categories.get(lower(trans[i].getCategory()));
-					int[] newarray = new int[tempids.length +1];
-					for(int j = 0; j < tempids.length; j++){
-						newarray[j] = tempids[j];
-					}
-					newarray[newarray.length - 1] = tlist.size() + i -1;
-					categories.put(lower(trans[i].getCategory()), newarray);
-				} else{
-					int[] tempids = new int[1];
-					tempids[0] = tlist.size() + i - 1;
-					categories.put(lower(trans[i].getCategory()), tempids);
-				}
+				int[] tempids = new int[1];
+				tempids[0] = i + arrayend;
+				categories.put(lower(trans[i].getCategory()), tempids);
 			}
 		}
-		indexed = true;
-		
+		cindexed = true;
 	}
 	
 	/**
 	 * Same basic idea as index by categories, except for years.
 	 * 
-	 * @param trans - the transactions to be indexed
+	 * @param trans - the transactions to be cindexed
 	 */
 	private void indexDates(Transaction[] trans){
 		int year = 0;
 		int month = 0;
 		int day = 0;
+		int arrayend = 0;
+		if(dindexed){
+			arrayend = tlist.size() - 1;
+		}
 		for(int i=0; i < trans.length; i++){
 			GregorianCalendar gc = trans[i].getDate();
 			year = gc.get(Calendar.YEAR);
@@ -128,34 +117,21 @@ public class TList implements Transactions{
 						for(int j = 0; j < transacts0.length; j++){
 							transacts1[j] = transacts0[j];
 						}
-						if(!dindexed){
-							transacts1[transacts1.length - 1] = i;
-						} else{
-							transacts1[transacts1.length - 1] = i + tlist.size() -1;
-						}
+						transacts1[transacts1.length - 1] = i + arrayend;
 						days.put(day, transacts1);
 					} else {
-						if(!dindexed){
-							days.put(day, new int[] {i});
-						} else{
-							days.put(day, new int[] {i + tlist.size() -1});
-						}
+						days.put(day, new int[] {i + arrayend});
 					}
 				} else {
 					HashMap<Integer, int[]> days = new HashMap<Integer, int[]>();
-					days.put(day, new int[] {i});
+					days.put(day, new int[] {i + arrayend});
 					months.put(month, days);
 				}
 			} else {
 				HashMap<Integer, int[]> days = new HashMap<Integer, int[]>();
 				HashMap<Integer, HashMap<Integer, int[]>> months = 
 						new HashMap<Integer, HashMap<Integer, int[]>>();
-				if(!dindexed){
-					days.put(day, new int[] {i});
-				}
-				else{
-					days.put(day, new int[] {i + tlist.size() -1});
-				}
+				days.put(day, new int[] {i + arrayend});
 				months.put(month, days);
 				years.put(year, months);
 			}
@@ -187,26 +163,64 @@ public class TList implements Transactions{
 	
 	@Override
 	public int[] getYearsWithTransactions() {
-		// TODO Auto-generated method stub
-		return null;
+		int[] years0 = new int[years.keySet().size()];
+		Integer[] years1 = years.keySet().toArray(new Integer[years.keySet().size()]);
+		for(int i = 0; i < years1.length; i++){
+			years0[i] = years1[i];
+		}
+		return years0;
 	}
 
 	@Override
 	public int[] getMonthsInYearWithTransactions(int year) {
-		// TODO Auto-generated method stub
-		return null;
+		int[] months;
+		if(years.containsKey(year)){
+			Integer[] months0 = years.get(year).keySet()
+					.toArray(new Integer[years.get(year).keySet().size()]);
+			
+			months = new int[months0.length];
+			for(int i = 0; i < years.keySet().size(); i++){
+				months[i] = months0[i];
+			} 
+		} else{
+			months = new int[0];
+		}
+		return months;
 	}
 
 	@Override
 	public int[] getDaysInMonthInYearWithTransactions(int year, int month) {
-		// TODO Auto-generated method stub
-		return null;
+		int[] days;
+		if(years.containsKey(year)){
+			if(years.get(year).containsKey(month)){
+				HashMap<Integer, int[]> month0 = years.get(year).get(month);
+				Integer[] days0 = month0.keySet().toArray(new Integer[month0.keySet().size()]);
+				days = new int[days0.length];
+				for(int i = 0 ; i < days0.length; i++){
+					days[i] = days0[i];
+				}
+			} else {
+				days = new int[0];
+			}
+		} else {
+			days = new int[0];
+		}
+		return days;
 	}
 
 	@Override
 	public int[] getAllDaysInYearWithTransactions(int year) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Integer> days = new ArrayList<Integer>();
+		for(HashMap<Integer, int[]> month : years.get(year).values()){
+			for(Integer i : month.keySet().toArray(new Integer[month.keySet().size()])){
+				days.add(i);
+			}
+		}
+		int[] daysreturn = new int[days.size()];
+		for(int k = 0; k < days.size(); k++){
+			daysreturn[k] = days.get(k);
+		}
+		return daysreturn;
 	}
 
 	@Override
@@ -230,10 +244,12 @@ public class TList implements Transactions{
 		}
 		return new ArrayList<Transaction>();
 	}
-
-	@Override
-	public List<Transaction> getTransactionsBetweenDates(Date start, Date end)
-			throws ArrayIndexOutOfBoundsException {
+	
+	/**
+	 * Private method to get transactions between dates to be used to help filter situations
+	 * where a category and dates are requested. Makes this algorithm more useful.
+	 */
+	private List<Transaction> getTransactionsBetweenDates(Date start, Date end, List<Transaction> l){
 		if(end.before(start)) {
 			String msg = "Start date after end date."; 
 			throw new ArrayIndexOutOfBoundsException(msg);
@@ -257,8 +273,16 @@ public class TList implements Transactions{
 		if(yearstart == yearend	&& monthstart == monthend){
 			for(Map.Entry<Integer, int[]> day : years.get(yearstart).get(monthstart).entrySet()){
 				if(day.getKey() >= daystart && day.getKey() <= dayend){
-					for(int j : day.getValue()){		
-						trans.add(tlist.get(j));
+					if(l.equals(tlist)){
+						for(int j : day.getValue()){		
+							trans.add(l.get(j));
+						}
+					} else { // Do filtering case of a list not tlist
+						for(int j : day.getValue()){
+							if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+								trans.add(tlist.get(j));
+							}
+						}
 					}
 				}
 			}
@@ -266,12 +290,52 @@ public class TList implements Transactions{
 		//Do case where dates are within same year but not the same month
 		else if(yearstart == yearend && monthstart != monthend){
 			for(Integer month : years.get(yearstart).keySet()){
-				if(month >= monthstart && month <= monthend){
+				if(month > monthstart && month < monthend){//Worry only about non edge months
 					for(Map.Entry<Integer, int[]> day : 
 						years.get(yearstart).get(month).entrySet()){
-						if(day.getKey() >= daystart && day.getKey() <= dayend){
+						if(l.equals(tlist)){
 							for(int j : day.getValue()){
-								trans.add(tlist.get(j));
+								trans.add(l.get(j));
+							}
+						} else { // Do filtering case of a list not tlist
+							for(int j : day.getValue()){
+								if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+									trans.add(tlist.get(j));
+								}
+							}
+						}
+					}
+				} else if(month == monthstart){ //Do Start edge case
+					for(Map.Entry<Integer, int[]> day : 
+						years.get(yearstart).get(month).entrySet()){
+						if(day.getKey() >= daystart){
+							if(l.equals(tlist)){
+								for(int j : day.getValue()){
+									trans.add(l.get(j));
+								}
+							} else { // Do filtering case of a list not tlist
+								for(int j : day.getValue()){
+									if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+										trans.add(tlist.get(j));
+									}
+								}
+							}
+						}
+					}
+				} else if(month == monthend){ //Do End edge case
+					for(Map.Entry<Integer, int[]> day : 
+						years.get(yearstart).get(month).entrySet()){
+						if(day.getKey() <= dayend){
+							if(l.equals(tlist)){
+								for(int j : day.getValue()){
+									trans.add(l.get(j));
+								}
+							} else { // Do filtering case of a list not tlist
+								for(int j : day.getValue()){
+									if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+										trans.add(tlist.get(j));
+									}
+								}
 							}
 						}
 					}
@@ -284,8 +348,16 @@ public class TList implements Transactions{
 				if(year > yearstart && year < yearend){
 					for(HashMap<Integer, int[]> month : years.get(year).values()){
 						for(int[] day : month.values()){
-							for(int j : day){
-								trans.add(tlist.get(j));
+							if(l.equals(tlist)){
+								for(int j : day){
+									trans.add(l.get(j));
+								}
+							} else { // Do filtering case of a list not tlist
+								for(int j : day){
+									if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+										trans.add(tlist.get(j));
+									}
+								}
 							}
 						}
 					}
@@ -295,8 +367,16 @@ public class TList implements Transactions{
 						if(month.getKey() >= monthstart){
 							for(Map.Entry<Integer, int[]> day : month.getValue().entrySet()){
 								if(day.getKey() >= daystart){
-									for(int j : day.getValue()){
-										trans.add(tlist.get(j));
+									if(l.equals(tlist)){
+										for(int j : day.getValue()){
+											trans.add(l.get(j));
+										}
+									} else { // Do filtering case of a list not tlist
+										for(int j : day.getValue()){
+											if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+												trans.add(tlist.get(j));
+											}
+										}
 									}
 								}
 							}
@@ -308,8 +388,16 @@ public class TList implements Transactions{
 						if(month.getKey() <= monthend){
 							for(Map.Entry<Integer, int[]> day : month.getValue().entrySet()){
 								if(day.getKey() <= dayend){
-									for(int j : day.getValue()){
-										trans.add(tlist.get(j));
+									if(l.equals(tlist)){
+										for(int j : day.getValue()){
+											trans.add(l.get(j));
+										}
+									} else { // Do filtering case of a list not tlist
+										for(int j : day.getValue()){
+											if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+												trans.add(tlist.get(j));
+											}
+										}
 									}
 								}
 							}
@@ -319,6 +407,12 @@ public class TList implements Transactions{
 			}
 		}
 		return trans;
+	}
+
+	@Override
+	public List<Transaction> getTransactionsBetweenDates(Date start, Date end)
+			throws ArrayIndexOutOfBoundsException {
+		return this.getTransactionsBetweenDates(start, end, tlist);
 	}
 
 	@Override
@@ -334,10 +428,36 @@ public class TList implements Transactions{
 		return new ArrayList<Transaction>();
 	}
 	
+	/**
+	 * Private method to make getTransactionsByCategories more useful within the class, such as
+	 * to allow filtering of one Transaction list by category.
+	 */
+	private List<Transaction> getTransactionsByCategories(String[] categories, List<Transaction> l) {
+		ArrayList<Transaction> t = new ArrayList<Transaction>();
+		for(String category : categories){
+			if(this.categories.containsKey(lower(category))){
+				int [] t0 = this.categories.get(lower(category));
+				if(l.equals(tlist)){
+					for(int i = 0; i < t0.length; i++){
+						t.add(l.get(t0[i]));
+					}
+				} else {
+					for(int i = 0; i < t0.length; i++){
+						if(l.contains(tlist.get(i)) && !t.contains(tlist.get(i))){
+							t.add(tlist.get(i));
+						}
+					}
+				}
+			} else {
+				continue;
+			}
+		}
+		return t;
+	}
+	
 	@Override
 	public List<Transaction> getTransactionsByCategories(String[] categories) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getTransactionsByCategories(categories, tlist);
 	}
 
 	@Override
@@ -356,15 +476,15 @@ public class TList implements Transactions{
 	@Override
 	public List<Transaction> getTransactionsByCategoryAndDates(String cat,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Transaction> l = this.getTransactionsByCategory(cat);
+		return this.getTransactionsBetweenDates(start, end, l);
 	}
 	
 	@Override
 	public List<Transaction> getTransactionsByCategoriesAndDates(String[] cats,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Transaction> l = this.getTransactionsBetweenDates(start, end, tlist);
+		return this.getTransactionsByCategories(cats, l);
 	}
 
 	@Override
