@@ -515,6 +515,13 @@ public class TList implements Transactions{
 	@Override
 	public List<Transaction> getIncomeBetweenDates(Date start, Date end)
 			throws ArrayIndexOutOfBoundsException {
+		if(end.before(start)) {
+			String msg = "Start date after end date."; 
+			throw new ArrayIndexOutOfBoundsException(msg);
+		} 
+		if(start.equals(end)){
+			return this.getIncomeByDate(start);
+		}
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		for(Transaction inc : tilist){
 			if((inc.getDate().after(start) && inc.getDate().before(end)) || 
@@ -522,7 +529,6 @@ public class TList implements Transactions{
 				trans.add(inc);
 			}
 		}
-		
 		return trans;
 	}
 
@@ -544,37 +550,132 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public void addTransactions(Transaction[] tran) {
-		// TODO Auto-generated method stub
-		
+	public void addTransactions(Transaction[] trans) {
+		for(Transaction tran : trans){
+			if(tran.isDebitOrCredit()){
+				tilist.add(tran);
+			} else {
+				addTransaction(tran);
+			}
+		}
 	}
 
 	@Override
 	public String[] getCategories() {
 		return categories.keySet().toArray(new String[categories.keySet().size()]);
 	}
-
-	 public static void main(String[] args) {
-		 Transaction[] trans2 = new Transaction[5];
-		 trans2 = new Transaction[5];
-			trans2[0] = new Transact(new GregorianCalendar(2014,12,13), "Ice Cream",
-					4.50, "Dessert",
+	
+	private List<Transaction> newGetTransByDate(Date date){
+		ArrayList<Transaction> trans = new ArrayList<Transaction>();
+		for(Transaction inc : tlist){
+			if(!inc.getDate().getTime().equals(date)){
+				trans.add(inc);
+			}
+		}
+		return trans;
+	}
+	
+	private List<Transaction> newGetTransBetweenDates(Date start, Date end){
+		if(end.before(start)) {
+			String msg = "Start date after end date."; 
+			throw new ArrayIndexOutOfBoundsException(msg);
+		} 
+		if(start.equals(end)){
+			return this.getIncomeByDate(start);
+		}
+		ArrayList<Transaction> trans = new ArrayList<Transaction>();
+		for(Transaction inc : tlist){
+			if((inc.getDate().after(start) && inc.getDate().before(end)) || 
+					(inc.getDate().getTime().equals(start) || inc.getDate().getTime().equals(end))){
+				trans.add(inc);
+			}
+		}
+		return trans;
+	}
+	
+	public static void main(String[] args) {
+		Transaction[] trans = new Transaction[1000000];
+		for(int i = 0; i < trans.length; i++){
+			int m =0;
+			if(i > 11){
+				m = i % 10;
+			} else{
+				m = i;
+			}
+			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
+					30.0 * i, "Category is 1"+ i + " women and children.",
 					"Mastercard", false);
-			trans2[1] = new Transact(new GregorianCalendar(2014,12,14), "Home Improvement",
-					56.57, "Home Improvement",
-					"Mastercard", false);
-			trans2[2] = new Transact(new GregorianCalendar(2014,12,15), "New Hammer",
-					14.50, "hOme Improvement",
-					"Mastercard", false);
-			trans2[3] = new Transact(new GregorianCalendar(2014,12,16), "Macey's Grocery Store",
-					24.50, "Groceries",
-					"Mastercard", false);
-			trans2[4] = new Transact(new GregorianCalendar(2014,12,15), "Ice Cream",
-					4.50, "Dessert",
-					"Mastercard", false);
+			trans[i] = t;
+		}
+		TList t = new TList(trans);
 		
-			TList t = new TList(trans2);
-	 }
-
-
+		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
+		GregorianCalendar g2 = new GregorianCalendar(2015,Calendar.NOVEMBER,13);
+		
+		double orig = 0;
+        double prop =0;
+        double orig2 = 0;
+        double prop2 = 0;
+        int runs = 5;
+        int iterations = 100000;
+		
+		System.out.println("Working on orig");
+        for(int i = 0; i < runs; i++){
+        	double results = 0;
+        	for(int j = 0; j < iterations; j++){
+        		long start = System.nanoTime();
+        		t.getTransactionsByDate(g.getTime());
+        		long end = System.nanoTime();
+        		results = (double)(end - start);///1000000000L;
+        	}
+        	orig += results/iterations;
+        }
+        orig = orig/runs;
+        
+//        System.out.println("Working on prop");
+//        for(int i = 0; i < runs; i++){
+//        	double results = 0;
+//        	for(int j = 0; j < iterations; j++){
+//        		long start = System.nanoTime();
+//        		t.newGetTransByDate(g.getTime());
+//        		long end = System.nanoTime();
+//        		results = (double)(end - start);///1000000000L;
+//        	}
+//        	prop += results/iterations;
+//        }
+        
+        prop = prop/runs;
+        
+        System.out.println("Working on orig2");
+        for(int i = 0; i < runs; i++){
+        	double results = 0;
+        	for(int j = 0; j < iterations; j++){
+        		long start = System.nanoTime();
+        		t.getTransactionsBetweenDates(g.getTime(), g2.getTime());
+        		long end = System.nanoTime();
+        		results = (double)(end - start);///1000000000L;
+        	}
+        	orig2 += results/iterations;
+        }
+        orig2 = orig2/runs;
+        
+//        System.out.println("Working on prop2");
+//        for(int i = 0; i < runs; i++){
+//        	double results = 0;
+//        	for(int j = 0; j < iterations; j++){
+//        		long start = System.nanoTime();
+//        		t.newGetTransBetweenDates(g.getTime(), g2.getTime());
+//        		long end = System.nanoTime();
+//        		results = (double)(end - start);///1000000000L;
+//        	}
+//        	prop2 += results/iterations;
+//        }
+//        
+        prop2 = prop2/runs;
+        
+        System.out.println("Original: " + orig);
+        System.out.println("Proposed: " + prop);
+        System.out.println("Original Between: " + orig2);
+        System.out.println("Proposed Between: " + prop2);
+	}
 }

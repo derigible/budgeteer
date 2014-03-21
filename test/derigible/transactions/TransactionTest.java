@@ -400,13 +400,78 @@ public class TransactionTest {
 		GregorianCalendar start2 = new GregorianCalendar(2014,Calendar.OCTOBER,15);
 		GregorianCalendar end = new GregorianCalendar(2015,Calendar.JANUARY,15);
 		
-		assertEquals("Wrong number of Income Transactions returned", 1, t.getIncomeTransactions().size());
+		assertEquals("Wrong number of Income Transactions returned.", 1, 
+				t.getIncomeBetweenDates(start.getTime(),end.getTime()).size());
 		
 		t.addTransaction(transact2);
 		
-		assertEquals("Wrong number of Transactions returned", 5, t.getTransactions().size());
 		assertEquals("Wrong number of Income Transactions returned after add.", 2, 
-				t.getIncomeTransactions().size());
+				t.getIncomeBetweenDates(start2.getTime(),end.getTime()).size());
 	}
 	
+	@Test
+	public void testGetIncomeBetweenDates_AcceptedNoReturn(){
+		TList t = new TList(trans2);
+		Transact transact2 = new Transact(new GregorianCalendar(2014,Calendar.OCTOBER,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		GregorianCalendar start = new GregorianCalendar(2015,Calendar.NOVEMBER,12);
+		GregorianCalendar start2 = new GregorianCalendar(2015,Calendar.OCTOBER,15);
+		GregorianCalendar end = new GregorianCalendar(2016,Calendar.JANUARY,15);
+		
+		assertEquals("Wrong number of Income Transactions returned.", 0, 
+				t.getIncomeBetweenDates(start.getTime(),end.getTime()).size());
+		
+		t.addTransaction(transact2);
+		
+		assertEquals("Wrong number of Income Transactions returned after add.", 0, 
+				t.getIncomeBetweenDates(start2.getTime(),end.getTime()).size());
+	}
+	
+	@Test(expected = ArrayIndexOutOfBoundsException.class)
+	public void testGetIncomeBetweenDates_ThrowsError(){
+		TList t = new TList(trans2);
+		GregorianCalendar start2 = new GregorianCalendar(2014,Calendar.OCTOBER,15);
+		GregorianCalendar end = new GregorianCalendar(2015,Calendar.JANUARY,15);
+		t.getIncomeBetweenDates(end.getTime(), start2.getTime());
+	}
+	
+	@Test
+	public void testAddTransactions(){
+		TList t = new TList(trans2);
+		
+		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,23), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", false);
+		Transact transact2 = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,24), "Ice Cream",
+				4.50, "SomethingNew2", "Mastercard", false);
+		int before = t.getTransactions().size();
+		
+		t.addTransactions(new Transaction[] {transact, transact2});
+		
+		int after = t.getTransactions().size();
+		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,23);
+		
+		assertFalse("Transaction not added to list.", before == after);
+		assertEquals("Transaction list not changed by correct amount.", 7, after);
+		assertSame("Category Indexing not working correctly with add event.", transact,
+				t.getTransactionsByCategory("SomethingNew").get(0));
+		assertSame("Date Indexing not working correctly with add event.", transact,
+				t.getTransactionsByDate(g.getTime()).get(0));
+	}
+	
+	@Test
+	public void testAddTransactionsInAttemptToBreakIndexing(){
+		TList t = new TList(trans2);
+		t.addTransactions(trans);
+		Transact transact = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,23), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", false);
+		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,23);
+		
+		t.addTransaction(transact);
+		
+		assertEquals("Category Indexing not working correctly with add event.", 1,
+				t.getTransactionsByCategory("SomethingNew").size());
+		assertSame("Date Indexing not working correctly with add event.", 1,
+				t.getTransactionsByDate(g.getTime()).size());
+		assertTrue("Transactions list too small", t.getTransactions().size() > 100);
+	}
 }

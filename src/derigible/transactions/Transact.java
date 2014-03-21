@@ -3,6 +3,7 @@
  */
 package derigible.transactions;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -125,8 +126,4 @@ public class Transact implements Transaction {
 		public void setDebitOrCredit(boolean debitOrCredit) {
 			DebitOrCredit = debitOrCredit;
 		}
-
-
-
-
 }
