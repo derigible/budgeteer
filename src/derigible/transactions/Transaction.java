@@ -56,4 +56,17 @@ public interface Transaction {
 	 * @return false for Debit, true for Credit (or reverse if primarily used in a sales env)
 	 */
 	public abstract boolean isDebitOrCredit();
+	
+	/**
+	 * Set whether or not the transaction has been excluded from use. Transaction objects should
+	 * be assumed included.
+	 * 
+	 * @return true if excluded, false otherwise
+	 */
+	public abstract boolean isExcluded();
+	
+	/**
+	 * All transactions need to be able to be excluded at any given time.
+	 */
+	public abstract void setExcluded(boolean exclude);
 }

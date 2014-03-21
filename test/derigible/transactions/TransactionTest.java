@@ -474,4 +474,151 @@ public class TransactionTest {
 				t.getTransactionsByDate(g.getTime()).size());
 		assertTrue("Transactions list too small", t.getTransactions().size() > 100);
 	}
+	
+	@Test
+	public void testRemoveTransactionForExclusionFromIndexReturns(){
+		TList t = new TList(trans2);
+		
+		Transact transact = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,23), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", false);
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,24), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", false);
+		
+		t.addTransaction(transact);
+		t.addTransaction(transact2);
+		
+		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
+		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
+		
+		Transaction before1 = t.getLastTransaction();
+//		int[] before2 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
+//		int[] before3 = t.getAllDaysInYearWithTransactions(g.get(Calendar.YEAR));
+//		int[] before4 = t.getDaysInMonthInYearWithTransactions(g.get(Calendar.YEAR), g.get(Calendar.MONTH));
+		Transaction before5 = t.getTransactionAt(5);
+		Transaction before5_1 = t.getTransactionAt(6); //Should stay the same
+//		int[] before6 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
+//		List<Transaction> before7 = t.getTransactions();
+		int[] before8 = t.getYearsWithTransactions();
+//		List<Transaction> before9 = t.getTransactionsByDate(g.getTime());
+//		List<Transaction> before10 = t.getTransactionsBetweenDates(g.getTime(), g2.getTime());
+//		List<Transaction> before11 = t.getTransactionsByCategory("SomethingNew");
+//		List<Transaction> before12 = t.getTransactionsByCategories(new String[] {"SomethingNew", "Groceries"});
+//		List<Transaction> before13 = t.getTransactionsByCategoryAndDate("SomethingNew", g.getTime());
+//		List<Transaction> before14 = t.getTransactionsByCategoryAndDates("SomethingNew", g.getTime(), g2.getTime());
+//		List<Transaction> before15 = t.getTransactionsByCategoriesAndDates(new String[] {"SomethingNew", "Groceries"}, g.getTime(), g2.getTime());
+		
+//		t.removeTransaction(transact);
+		
+		//Should be different transaction
+		Transaction after1 = t.getLastTransaction();
+		//Should return empty
+		int[] after2 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
+		//Should return 1
+		int[] after3 = t.getAllDaysInYearWithTransactions(g.get(Calendar.YEAR));
+		//Should return 1
+		int[] after4 = t.getDaysInMonthInYearWithTransactions(g.get(Calendar.YEAR), g.get(Calendar.MONTH));
+		//Should return same
+		Transaction after5 = t.getTransactionAt(5);
+		//Should stay the same
+		Transaction after5_1 = t.getTransactionAt(6); 
+		//Should return 1
+		int[] after6 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
+		//Should return 7
+		List<Transaction> after7 = t.getTransactions();
+		//Should return the same
+		int[] after8 = t.getYearsWithTransactions();
+		//Should return 0
+		List<Transaction> after9 = t.getTransactionsByDate(g.getTime());
+		//Should return 1
+		List<Transaction> after10 = t.getTransactionsBetweenDates(g.getTime(), g2.getTime());
+		//Should return 1
+		List<Transaction> after11 = t.getTransactionsByCategory("SomethingNew");
+		//Should return the 2
+		List<Transaction> after12 = t.getTransactionsByCategories(new String[] {"SomethingNew", "Groceries"});
+		//Should return 0
+		List<Transaction> after13 = t.getTransactionsByCategoryAndDate("SomethingNew", g.getTime());
+		//Should return 1
+		List<Transaction> after14 = t.getTransactionsByCategoryAndDates("SomethingNew", g.getTime(), g2.getTime());
+		//Should return 1
+		List<Transaction> after15 = t.getTransactionsByCategoriesAndDates(new String[] {"SomethingNew", "Groceries"}, g.getTime(), g2.getTime());
+		
+		t.removeTransaction(transact2);
+		
+		//Should return 0
+		int[] after16 = t.getYearsWithTransactions();
+		
+		assertNotSame("Same Transaction returned as before, shoudld be excluded for getLastTransaction",
+				before1, after1);
+		assertEquals("Wrong number of transactions returned for getMonthsInYearWithT.",
+				0, after2.length);
+		assertEquals("Wrong number of transactions returned for getAllDaysInYearWithT.",
+				1, after3.length);
+		assertEquals("Wrong number of transactions returned for getDaysInMonthsInYearWithT.",
+				1, after4.length);
+		assertNotSame("Same Transaction not returned as before, shoudld be included for getTransactionAt",
+				before5, after5);
+		assertNotSame("Same Transaction not returned as before, shoudld be included for getTransactionAt",
+				before5_1, after5_1);
+		assertEquals("Wrong number of transactions returned for getMonthsInYearWithT.", 
+				1, after6.length);
+		assertEquals("Wrong number of transactions returned for getTransactions.",
+				1, after7.size());
+		assertEquals("Wrong number of transactions returned for getYearsWithTransactions.",
+				before8.length, after8.length);
+		assertEquals("Wrong number of transactions returned for getTransactionsByDate.", 
+				0, after9.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsBetweenDates.",
+				1, after10.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsByCategory.",
+				1, after11.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsByCategories.",
+				2, after12.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsByCatsAndDate.",
+				0, after13.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsByCatsAndDates.",
+				1, after14.size());
+		assertEquals("Wrong number of transactions returned for getTransactionsByCategoriesAndDates.", 
+				1, after15.size());
+		assertEquals("Wrong number of transactions returned for getYearsWithTs after second delete.", 
+				0, after15.size());
+	}
+	
+	@Test
+	public void testRemoveTransactionForIncomeTransactoinsExclusion(){
+		TList t = new TList(trans2);
+		
+		Transact transact = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,23), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", true);
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,24), "Ice Cream",
+				4.50, "SomethingNew", "Mastercard", true);
+		
+		t.addTransaction(transact);
+		t.addTransaction(transact2);
+		
+		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
+		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
+		
+		t.removeTransaction(transact);
+		
+		//Should be 1
+		List<Transaction> before1 = t.getIncomeBetweenDates(g.getTime(), g2.getTime());
+		//Should be 0
+		List<Transaction> before2 = t.getIncomeByDate(g.getTime());
+		//Should be 1
+		List<Transaction> before3 = t.getIncomeTransactions();
+		t.removeTransaction(transact);
+		//Should be 0
+		List<Transaction> before4 = t.getIncomeTransactions();
+		
+		assertEquals("Wrong number of transactions returned for getIncomeBetweenDates.", 
+				1, before1.size());
+		assertEquals("Wrong number of transactions returned for getIncomeByDate.", 
+				0, before2.size());
+		assertEquals("Wrong number of transactions returned for getIncomeTransactions.", 
+				1, before3.size());
+		assertEquals("Wrong number of transactions returned for getIncomeTransaction after second removal.", 
+				0, before4.size());
+	}
 }

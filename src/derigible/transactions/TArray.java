@@ -259,4 +259,22 @@ public class TArray implements Transactions, Transaction {
 		return null;
 	}
 
+	@Override
+	public boolean isExcluded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<Transaction> getExcludedTransactions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setExcluded(boolean exclude) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

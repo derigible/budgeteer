@@ -3,7 +3,6 @@
  */
 package derigible.transactions;
 
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -20,6 +19,10 @@ public class Transact implements Transaction {
 		private String Category;
 		private String Account;
 		private boolean DebitOrCredit;
+		/**
+		 * All transactions assumed included.
+		 */
+		private boolean excluded = false;
 		
 		/**
 		 * Empty constructor. Add data in later.
@@ -125,5 +128,14 @@ public class Transact implements Transaction {
 		 */
 		public void setDebitOrCredit(boolean debitOrCredit) {
 			DebitOrCredit = debitOrCredit;
+		}
+
+		@Override
+		public boolean isExcluded() {
+			return excluded;
+		}
+		
+		public void setExcluded(boolean exclude){
+			excluded = exclude;
 		}
 }

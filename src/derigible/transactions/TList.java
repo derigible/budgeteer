@@ -32,6 +32,7 @@ public class TList implements Transactions{
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
 	private boolean cindexed = false;
 	private boolean dindexed = false;
+	private ArrayList<Transaction> excluded = new ArrayList<Transaction>();
 	
 	/**
 	 * Constructor using an array of transaction objects. 
@@ -188,7 +189,7 @@ public class TList implements Transactions{
 					.toArray(new Integer[years.get(year).keySet().size()]);
 			
 			months = new int[months0.length];
-			for(int i = 0; i < years.keySet().size(); i++){
+			for(int i = 0; i < years.get(year).keySet().size(); i++){
 				months[i] = months0[i];
 			} 
 		} else{
@@ -545,8 +546,8 @@ public class TList implements Transactions{
 
 	@Override
 	public void removeTransaction(Transaction tran) {
-		// TODO Auto-generated method stub
-		
+		tran.setExcluded(true);
+		excluded.add(tran);
 	}
 
 	@Override
@@ -564,6 +565,16 @@ public class TList implements Transactions{
 	public String[] getCategories() {
 		return categories.keySet().toArray(new String[categories.keySet().size()]);
 	}
+	
+	@Override
+	public List<Transaction> getExcludedTransactions() {
+		return excluded;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Testing methods to confirm indexing is efficient (as far as retrieval is concerned).
+	
+	//
 	
 	private List<Transaction> newGetTransByDate(Date date){
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
