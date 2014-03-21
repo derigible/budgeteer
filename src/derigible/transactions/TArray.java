@@ -277,4 +277,11 @@ public class TArray implements Transactions, Transaction {
 		
 	}
 
+	@Override
+	public List<Transaction> getTransactionByCategoriesAndDate(
+			String[] categories, Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

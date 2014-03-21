@@ -22,11 +22,11 @@ public class TList implements Transactions{
 	/**
 	 * The transactions list. This list should only hold Debits, no Credits.
 	 */
-	private ArrayList<Transaction> tlist = new ArrayList<Transaction>();
+	private ArrayList<Transaction> tlist;
 	/**
 	 * The income transactions list. Should only hold Credits, not Debits.
 	 */
-	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();
+	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();;
 	private HashMap<String, int[]> categories = new HashMap<String, int[]>();
 	private HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>> years = 
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
@@ -56,6 +56,7 @@ public class TList implements Transactions{
 	 * @param trans
 	 */
 	private void init(Transaction[] trans){
+		tlist = new ArrayList<Transaction>(trans.length);
 		for(int i = 0; i < trans.length; i++){
 			if(!trans[i].isDebitOrCredit()){
 				tlist.add(trans[i]);
@@ -149,6 +150,16 @@ public class TList implements Transactions{
 		dindexed = true;
 	}
 	
+	private List<Transaction> filterExcluded(List<Transaction> trans){
+		ArrayList<Transaction> trans0 = new ArrayList<Transaction>(trans.size());
+		for(Transaction tran : trans){
+			if(!tran.isExcluded()){
+				trans0.add(tran);
+			}
+		}
+		return trans0;
+	}
+	
 	/**
 	 * Simply a convenience method to make lowering much cleaner.
 	 */
@@ -158,17 +169,29 @@ public class TList implements Transactions{
 	
 	@Override
 	public List<Transaction> getTransactions() {
-			return tlist;
+			return filterExcluded(tlist);
 	}
 
 	@Override
 	public Transaction getTransactionAt(int index) {
 		return tlist.get(index);
 	}
+	
+	/**
+	 * Used as a means to recursively find the last included index.
+	 */
+	private Transaction getLastTransaction(List<Transaction> trans, int indexreduce){
+		System.out.println(trans.get(trans.size() - indexreduce).isExcluded());
+		if(trans.size() >= indexreduce && trans.get(trans.size() - indexreduce).isExcluded()){
+			return getLastTransaction(trans, ++indexreduce);
+		} else {
+			return trans.get(trans.size() - indexreduce);
+		}
+	}
 
 	@Override
 	public Transaction getLastTransaction() {
-		return tlist.get(tlist.size() - 1);
+		return getLastTransaction(tlist, 1);
 	}
 	
 	@Override
@@ -187,7 +210,6 @@ public class TList implements Transactions{
 		if(years.containsKey(year)){
 			Integer[] months0 = years.get(year).keySet()
 					.toArray(new Integer[years.get(year).keySet().size()]);
-			
 			months = new int[months0.length];
 			for(int i = 0; i < years.get(year).keySet().size(); i++){
 				months[i] = months0[i];
@@ -248,7 +270,7 @@ public class TList implements Transactions{
 					for(int i =0; i < dayarray.length; i++){
 						trans.add(tlist.get(dayarray[i]));
 					}
-					return trans;
+					return filterExcluded(trans);
 				}
 			}
 		}
@@ -265,7 +287,7 @@ public class TList implements Transactions{
 			throw new ArrayIndexOutOfBoundsException(msg);
 		}
 		if(end.compareTo(start) == 0){ //Same date
-			return getTransactionsByDate(start);
+			return filterExcluded(getTransactionsByDate(start));
 		}
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		Calendar start0 = Calendar.getInstance();
@@ -422,7 +444,7 @@ public class TList implements Transactions{
 	@Override
 	public List<Transaction> getTransactionsBetweenDates(Date start, Date end)
 			throws ArrayIndexOutOfBoundsException {
-		return this.getTransactionsBetweenDates(start, end, tlist);
+		return filterExcluded(this.getTransactionsBetweenDates(start, end, tlist));
 	}
 
 	@Override
@@ -433,7 +455,7 @@ public class TList implements Transactions{
 			for(int i = 0; i < t0.length; i++){
 				t.add(tlist.get(t0[i]));
 			}
-			return t;
+			return filterExcluded(t);
 		}
 		return new ArrayList<Transaction>();
 	}
@@ -444,7 +466,10 @@ public class TList implements Transactions{
 	 */
 	private List<Transaction> getTransactionsByCategories(String[] categories, List<Transaction> l) {
 		ArrayList<Transaction> t = new ArrayList<Transaction>();
+	System.out.println("tlist size: " + tlist.size());
+	System.out.println(l.size());
 		for(String category : categories){
+	System.out.println(category);
 			if(this.categories.containsKey(lower(category))){
 				int [] t0 = this.categories.get(lower(category));
 				if(l.equals(tlist)){
@@ -453,8 +478,12 @@ public class TList implements Transactions{
 					}
 				} else {
 					for(int i = 0; i < t0.length; i++){
-						if(l.contains(tlist.get(i)) && !t.contains(tlist.get(i))){
+	System.out.println("1: " + l.contains(tlist.get(t0[i])));
+	System.out.println("2 " + !t.contains(tlist.get(t0[i])));
+	System.out.println("3: " + t0[i]);
+						if(l.contains(tlist.get(t0[i])) && !t.contains(tlist.get(t0[i]))){
 							t.add(tlist.get(i));
+	System.out.println(tlist.get(i).isExcluded());
 						}
 					}
 				}
@@ -462,12 +491,13 @@ public class TList implements Transactions{
 				continue;
 			}
 		}
+	System.out.println("What it is: " +t.size());
 		return t;
 	}
 	
 	@Override
 	public List<Transaction> getTransactionsByCategories(String[] categories) {
-		return this.getTransactionsByCategories(categories, tlist);
+		return filterExcluded(this.getTransactionsByCategories(categories, tlist));
 	}
 
 	@Override
@@ -480,37 +510,44 @@ public class TList implements Transactions{
 			}
 		}
 		
-		return trans;
+		return filterExcluded(trans);
 	}
 
+	@Override
+	public List<Transaction> getTransactionByCategoriesAndDate(
+			String[] categories, Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public List<Transaction> getTransactionsByCategoryAndDates(String cat,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
 		List<Transaction> l = this.getTransactionsByCategory(cat);
-		return this.getTransactionsBetweenDates(start, end, l);
+		return filterExcluded(this.getTransactionsBetweenDates(start, end, l));
 	}
 	
 	@Override
 	public List<Transaction> getTransactionsByCategoriesAndDates(String[] cats,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
 		List<Transaction> l = this.getTransactionsBetweenDates(start, end, tlist);
-		return this.getTransactionsByCategories(cats, l);
+		return filterExcluded(this.getTransactionsByCategories(cats, l));
 	}
 
 	@Override
 	public List<Transaction> getIncomeTransactions() {
-		return tilist;
+		return filterExcluded(tilist);
 	}
 
 	@Override
 	public List<Transaction> getIncomeByDate(Date date) {
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		for(Transaction inc : tilist){
-			if(!inc.getDate().getTime().equals(date)){
+			if(inc.getDate().getTime().equals(date)){
 				trans.add(inc);
 			}
 		}
-		return trans;
+		return filterExcluded(trans);
 	}
 
 	@Override
@@ -521,16 +558,18 @@ public class TList implements Transactions{
 			throw new ArrayIndexOutOfBoundsException(msg);
 		} 
 		if(start.equals(end)){
-			return this.getIncomeByDate(start);
+			return filterExcluded(this.getIncomeByDate(start));
 		}
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		for(Transaction inc : tilist){
-			if((inc.getDate().after(start) && inc.getDate().before(end)) || 
+			if((inc.getDate().getTime().after(start) && inc.getDate().getTime().before(end)) || 
 					(inc.getDate().getTime().equals(start) || inc.getDate().getTime().equals(end))){
 				trans.add(inc);
 			}
 		}
-		return trans;
+		System.out.println(tilist.size());
+		System.out.println(trans.size());
+		return filterExcluded(trans);
 	}
 
 	@Override

@@ -71,7 +71,8 @@ public interface Transactions {
 	 * Calendar API, and just about any other date API you will find in Java
 	 * (or most any other language for that matter).
 	 * 
-	 * Excluded Transactions should not be returned.
+	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
+	 * it contains excluded transactions.
 	 * 
 	 * @return the int array of years with a Transaction recorded
 	 */
@@ -85,7 +86,8 @@ public interface Transactions {
 	 * recorded, an empty int[] should  be returned. Same reasoning for
 	 * using ints as getYearsWithTransactions.
 	 * 
-	 * Excluded Transactions should not be returned.
+	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
+	 * it contains excluded transactions.
 	 * 
 	 * @param year - the year of the months in question
 	 * @return the int array of months within the year with a Transaction recorded
@@ -97,7 +99,8 @@ public interface Transactions {
 	 * recorded. Works in much the same way as getYearsWithTransactions and
 	 * getMonthsInYearWithTransactions does. Returns an empty int[] id none found.
 	 * 
-	 * Excluded Transactions should not be returned.
+	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
+	 * it contains excluded transactions.
 	 * 
 	 * @param year - the year of the days in question
 	 * @param month - the month of the days in question
@@ -110,7 +113,8 @@ public interface Transactions {
 	 * getDayInMonthInYearWithTransactions method, except it doesn't take into
 	 * account any month. Returns empty if none are found.
 	 * 
-	 * Excluded Transactions should not be returned.
+	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
+	 * it contains excluded transactions.
 	 * 
 	 * @param year - the year of the days in question
 	 * @return the int array of days within the specified year with a Transaction Recorded
@@ -166,9 +170,23 @@ public interface Transactions {
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param categories - categories of transactions to return
-	 * @return list of transactions of a given category
+	 * @return list of transactions of given categories
 	 */
 	public abstract List<Transaction> getTransactionsByCategories(String[] categories);
+	
+	/**
+	 * Get all transactions for the given categories and date. Should return an empty list if
+	 * none present.
+	 * 
+	 * This should not return income transactions.
+	 * 
+	 * Excluded Transactions should not be returned.
+	 * 
+	 * @param categories - categories of transactions to return
+	 * @param date - date of the transactions to return
+	 * @return list of transactions of given categories and date
+	 */
+	public abstract List<Transaction> getTransactionByCategoriesAndDate(String[] categories, Date date);
 	
 	/**
 	 * Get all transactions for a given category on a specified date. Should
