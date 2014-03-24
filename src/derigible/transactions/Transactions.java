@@ -354,4 +354,88 @@ public interface Transactions {
 	 */
 	public abstract List<Transaction> getExcludedTransactions();
 	
+	//////////////////////////////////////////////////////////////
+	// Filter Methods
+	
+	/**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the account provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. Invocations will look something 
+	 * like the following:
+	 * 
+	 * 		tlist.filterByAccount("Account1", tlist.getTransactions()); // equivalent to getTransactionsByAccount
+	 * 	
+	 * Filter method should not exclude transactions.
+	 * 
+	 * @param account - the account to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByAccount(String account, List<Transaction> l);
+	
+	/**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the accounts provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * 
+	 * Filter method should not exclude transactions.
+	 * 
+	 * @param accounts - the accounts to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByAccounts(String[] accounts, List<Transaction> l);
+	
+	/**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the category provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * 
+	 * Filter method should not exclude transactions, except for income transactions.
+	 * 
+	 * @param category - the category to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByCategory(String category, List<Transaction> l);
+	
+	/**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the categories provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * 
+	 * Filter method should not exclude transactions, except for income transactions.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByCategories(String[] categories, List<Transaction> l);
+	
+	/**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the date provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * 
+	 * Filter method should not exclude transactions, except for income transactions.
+	 * 
+	 * @param date - the date to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByDate(Date date, List<Transaction> l);
+	
+	 /**
+	 * Takes in a list of transactions and filters them against the master Transactions list and
+	 * the dates provided. Transactions must be in the master Transactions list of the Transactions
+	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * 
+	 * Filter method should not exclude transactions, except for income transactions.
+	 * 
+	 * @param start - the start of the dates to filter by
+	 * @param end - the end of the dates to filter by
+	 * @param l - the list of transactions
+	 * @return the filtered list of transactions
+	 */
+	public abstract List<Transaction> filterByDates(Date start, Date end, List<Transaction> l);
 }
