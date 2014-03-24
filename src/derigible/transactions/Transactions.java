@@ -122,7 +122,9 @@ public interface Transactions {
 	public abstract int[] getAllDaysInYearWithTransactions(int year);
 	
 	/**
-	 * Get all the transactions at a certain date.
+	 * Get all the transactions at a certain date. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -135,7 +137,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all the transactions between two specified dates. Should return an
-	 * empty list if none present. Dates provided ARE inclusive.
+	 * empty list if none present. Dates provided ARE inclusive. This is a convenience method to call 
+	 * directly and get a filtered list. Use the corresponding filter for all other Transaction 
+	 * lists that you want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -150,7 +154,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all transactions for a given category. Should return an empty list
-	 * if none present.
+	 * if none present. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -163,7 +169,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all transactions for the given categories. Should return an empty list if
-	 * none present.
+	 * none present. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -176,7 +184,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all transactions for the given categories and date. Should return an empty list if
-	 * none present.
+	 * none present. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -186,11 +196,13 @@ public interface Transactions {
 	 * @param date - date of the transactions to return
 	 * @return list of transactions of given categories and date
 	 */
-	public abstract List<Transaction> getTransactionByCategoriesAndDate(String[] categories, Date date);
+	public abstract List<Transaction> getTransactionsByCategoriesAndDate(String[] categories, Date date);
 	
 	/**
 	 * Get all transactions for a given category on a specified date. Should
-	 * return an empty list if none present.
+	 * return an empty list if none present. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -204,7 +216,9 @@ public interface Transactions {
 	
 	/**
 	 * Get all transactions for a given category in a specified time interval.
-	 * Should return an empty list if none found.
+	 * Should return an empty list if none found. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -219,8 +233,23 @@ public interface Transactions {
 	public abstract List<Transaction> getTransactionsByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
+	 * Get all the transactions in the specified account. Should return an empty list if none found.
+	 * 
+	 * This SHOULD return income transactions.
+	 * 
+	 * Excluded Transactions should not be returned.
+	 * 
+	 * @param account - the account to check for
+	 * @return the list of transactions in account
+	 */
+	public abstract List<Transaction> getTransactionsByAccount(String account);
+	
+	/**
+	 * 
 	 * Get all transactions for the given categories in a specified time interval.
-	 * Should return an empty list if none found.
+	 * Should return an empty list if none found. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
 	 * 
 	 * This should not return income transactions.
 	 * 
@@ -235,7 +264,10 @@ public interface Transactions {
 	public abstract List<Transaction> getTransactionsByCategoriesAndDates(String[] cats, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
-	 * Get all of the income transactions.
+	 * Get all of the income transactions. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
+	 * 
 	 * Should return an empty list if none found.
 	 * 
 	 * Excluded Transactions should not be returned.
@@ -245,7 +277,10 @@ public interface Transactions {
 	public abstract List<Transaction> getIncomeTransactions();
 	
 	/**
-	 * Get all income transactions on a given date.
+	 * Get all income transactions on a given date. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
+	 * 
 	 * Should return an empty list if none found.
 	 * 
 	 * Excluded Transactions should not be returned.
@@ -256,7 +291,10 @@ public interface Transactions {
 	public abstract List<Transaction> getIncomeByDate(Date date);
 	
 	/**
-	 * Get all income transactions between given dates.
+	 * Get all income transactions between given dates. This is a convenience method to call directly and
+	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
+	 * want to filter by this method.
+	 * 
 	 * Should return an empty list if none found.
 	 * 
 	 * Excluded Transactions should not be returned.
@@ -298,6 +336,13 @@ public interface Transactions {
 	 * @return the stored transaction categories
 	 */
 	public abstract String[] getCategories();
+	
+	/**
+	 * Get the accounts in the transactions list.
+	 * 
+	 * @return the stored transaction accounts
+	 */
+	public abstract String[] getAccounts();
 	
 	/**
 	 * Get all of the transactions that have have excluded. This list will return both income and

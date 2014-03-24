@@ -26,12 +26,14 @@ public class TList implements Transactions{
 	/**
 	 * The income transactions list. Should only hold Credits, not Debits.
 	 */
-	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();;
+	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();
 	private HashMap<String, int[]> categories = new HashMap<String, int[]>();
 	private HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>> years = 
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
+	private HashMap<String, int[]> accounts = new HashMap<String, int[]>();
 	private boolean cindexed = false;
 	private boolean dindexed = false;
+	private boolean aindexed = false;
 	private ArrayList<Transaction> excluded = new ArrayList<Transaction>();
 	
 	/**
@@ -67,6 +69,7 @@ public class TList implements Transactions{
 		Transaction[] newt = tlist.toArray(new Transaction[0]);
 		indexCategories(newt);
 		indexDates(newt);
+		indexAccounts(newt);
 	}
 	
 	/**
@@ -150,6 +153,29 @@ public class TList implements Transactions{
 		dindexed = true;
 	}
 	
+	private void indexAccounts(Transaction[] trans){
+		int arrayend = 0;
+		if(aindexed){
+			arrayend = tlist.size() - 1;
+		}
+		for(int i = 0; i < trans.length; i++){
+			if(accounts.containsKey(lower(trans[i].getAccount()))){
+				int[] tempids = accounts.get(lower(trans[i].getAccount()));
+				int[] newarray = new int[tempids.length +1];
+				for(int j = 0; j < tempids.length; j++){
+					newarray[j] = tempids[j];
+				}
+				newarray[newarray.length - 1] = i + arrayend;
+				accounts.put(lower(trans[i].getAccount()), newarray);
+			} else{
+				int[] tempids = new int[1];
+				tempids[0] = i + arrayend;
+				accounts.put(lower(trans[i].getAccount()), tempids);
+			}
+		}
+		aindexed = true;
+	}
+	
 	private List<Transaction> filterExcluded(List<Transaction> trans){
 		ArrayList<Transaction> trans0 = new ArrayList<Transaction>(trans.size());
 		for(Transaction tran : trans){
@@ -181,7 +207,6 @@ public class TList implements Transactions{
 	 * Used as a means to recursively find the last included index.
 	 */
 	private Transaction getLastTransaction(List<Transaction> trans, int indexreduce){
-		System.out.println(trans.get(trans.size() - indexreduce).isExcluded());
 		if(trans.size() >= indexreduce && trans.get(trans.size() - indexreduce).isExcluded()){
 			return getLastTransaction(trans, ++indexreduce);
 		} else {
@@ -254,9 +279,8 @@ public class TList implements Transactions{
 		}
 		return daysreturn;
 	}
-
-	@Override
-	public List<Transaction> getTransactionsByDate(Date date) {
+	
+	private List<Transaction> getTransactionsByDate(Date date, List<Transaction> l){
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		if(years.containsKey(cal.get(Calendar.YEAR))){
@@ -268,13 +292,26 @@ public class TList implements Transactions{
 					int[] dayarray = days.get(cal.get(Calendar.DAY_OF_MONTH));
 					ArrayList<Transaction> trans = new ArrayList<Transaction>();
 					for(int i =0; i < dayarray.length; i++){
-						trans.add(tlist.get(dayarray[i]));
+						if(l.equals(tlist)){
+							trans.add(tlist.get(dayarray[i]));
+						} else { // Do filtering case of a list not tlist
+							for(int j : dayarray){
+								if(l.contains(tlist.get(j)) && !trans.contains(tlist.get(j))){
+									trans.add(tlist.get(j));
+								}
+							}
+						}
 					}
 					return filterExcluded(trans);
 				}
 			}
 		}
 		return new ArrayList<Transaction>();
+	}
+
+	@Override
+	public List<Transaction> getTransactionsByDate(Date date) {
+		return filterExcluded(this.getTransactionsByDate(date, tlist));
 	}
 	
 	/**
@@ -466,10 +503,7 @@ public class TList implements Transactions{
 	 */
 	private List<Transaction> getTransactionsByCategories(String[] categories, List<Transaction> l) {
 		ArrayList<Transaction> t = new ArrayList<Transaction>();
-	System.out.println("tlist size: " + tlist.size());
-	System.out.println(l.size());
 		for(String category : categories){
-	System.out.println(category);
 			if(this.categories.containsKey(lower(category))){
 				int [] t0 = this.categories.get(lower(category));
 				if(l.equals(tlist)){
@@ -478,12 +512,8 @@ public class TList implements Transactions{
 					}
 				} else {
 					for(int i = 0; i < t0.length; i++){
-	System.out.println("1: " + l.contains(tlist.get(t0[i])));
-	System.out.println("2 " + !t.contains(tlist.get(t0[i])));
-	System.out.println("3: " + t0[i]);
 						if(l.contains(tlist.get(t0[i])) && !t.contains(tlist.get(t0[i]))){
-							t.add(tlist.get(i));
-	System.out.println(tlist.get(i).isExcluded());
+							t.add(tlist.get(t0[i]));
 						}
 					}
 				}
@@ -491,7 +521,6 @@ public class TList implements Transactions{
 				continue;
 			}
 		}
-	System.out.println("What it is: " +t.size());
 		return t;
 	}
 	
@@ -514,10 +543,10 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public List<Transaction> getTransactionByCategoriesAndDate(
+	public List<Transaction> getTransactionsByCategoriesAndDate(
 			String[] categories, Date date) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Transaction> l = this.getTransactionsByCategories(categories, tlist);
+		return filterExcluded(this.getTransactionsByDate(date, l));
 	}
 	
 	@Override
@@ -532,6 +561,19 @@ public class TList implements Transactions{
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
 		List<Transaction> l = this.getTransactionsBetweenDates(start, end, tlist);
 		return filterExcluded(this.getTransactionsByCategories(cats, l));
+	}
+	
+	@Override
+	public List<Transaction> getTransactionsByAccount(String account) {
+		if(accounts.containsKey(lower(account))){
+			ArrayList<Transaction> t = new ArrayList<Transaction>();
+			int [] t0 = accounts.get(lower(account));
+			for(int i = 0; i < t0.length; i++){
+				t.add(tlist.get(t0[i]));
+			}
+			return t;
+		}
+		return new ArrayList<Transaction>();
 	}
 
 	@Override
@@ -567,8 +609,6 @@ public class TList implements Transactions{
 				trans.add(inc);
 			}
 		}
-		System.out.println(tilist.size());
-		System.out.println(trans.size());
 		return filterExcluded(trans);
 	}
 
@@ -578,6 +618,7 @@ public class TList implements Transactions{
 			tlist.add(tran);
 			indexCategories(new Transaction[] {tran});
 			indexDates(new Transaction[] {tran});
+			indexAccounts(new Transaction[] {tran});
 		} else {
 			tilist.add(tran);
 		}
@@ -602,7 +643,20 @@ public class TList implements Transactions{
 
 	@Override
 	public String[] getCategories() {
-		return categories.keySet().toArray(new String[categories.keySet().size()]);
+		String[] tempStrings = categories.keySet().toArray(new String[categories.keySet().size()]);
+		for(int i = 0; i < tempStrings.length; i++){
+			tempStrings[i] = StringHelper.formatString(tempStrings[i]);
+		}
+		return tempStrings;
+	}
+	
+	@Override
+	public String[] getAccounts() {
+		String[] tempStrings = accounts.keySet().toArray(new String[accounts.keySet().size()]);
+		for(int i = 0; i < tempStrings.length; i++){
+			tempStrings[i] = StringHelper.formatString(tempStrings[i]);
+		}
+		return tempStrings;
 	}
 	
 	@Override
@@ -611,121 +665,53 @@ public class TList implements Transactions{
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Testing methods to confirm indexing is efficient (as far as retrieval is concerned).
+	// Filter Methods - to use on lists of transactions.
 	
 	//
 	
-	private List<Transaction> newGetTransByDate(Date date){
-		ArrayList<Transaction> trans = new ArrayList<Transaction>();
-		for(Transaction inc : tlist){
-			if(!inc.getDate().getTime().equals(date)){
-				trans.add(inc);
-			}
-		}
-		return trans;
-	}
-	
-	private List<Transaction> newGetTransBetweenDates(Date start, Date end){
-		if(end.before(start)) {
-			String msg = "Start date after end date."; 
-			throw new ArrayIndexOutOfBoundsException(msg);
-		} 
-		if(start.equals(end)){
-			return this.getIncomeByDate(start);
-		}
-		ArrayList<Transaction> trans = new ArrayList<Transaction>();
-		for(Transaction inc : tlist){
-			if((inc.getDate().after(start) && inc.getDate().before(end)) || 
-					(inc.getDate().getTime().equals(start) || inc.getDate().getTime().equals(end))){
-				trans.add(inc);
-			}
-		}
-		return trans;
-	}
 	
 	public static void main(String[] args) {
-		Transaction[] trans = new Transaction[1000000];
-		for(int i = 0; i < trans.length; i++){
-			int m =0;
-			if(i > 11){
-				m = i % 10;
-			} else{
-				m = i;
-			}
-			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
-					30.0 * i, "Category is 1"+ i + " women and children.",
-					"Mastercard", false);
-			trans[i] = t;
-		}
-		TList t = new TList(trans);
-		
-		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
-		GregorianCalendar g2 = new GregorianCalendar(2015,Calendar.NOVEMBER,13);
-		
-		double orig = 0;
-        double prop =0;
-        double orig2 = 0;
-        double prop2 = 0;
-        int runs = 5;
-        int iterations = 100000;
-		
-		System.out.println("Working on orig");
-        for(int i = 0; i < runs; i++){
-        	double results = 0;
-        	for(int j = 0; j < iterations; j++){
-        		long start = System.nanoTime();
-        		t.getTransactionsByDate(g.getTime());
-        		long end = System.nanoTime();
-        		results = (double)(end - start);///1000000000L;
-        	}
-        	orig += results/iterations;
-        }
-        orig = orig/runs;
-        
-//        System.out.println("Working on prop");
+//		Transaction[] trans = new Transaction[1000000];
+//		for(int i = 0; i < trans.length; i++){
+//			int m =0;
+//			if(i > 11){
+//				m = i % 10;
+//			} else{
+//				m = i;
+//			}
+//			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
+//					30.0 * i, "Category is 1"+ i + " women and children.",
+//					"Mastercard", false);
+//			trans[i] = t;
+//		}
+//		TList t = new TList(trans);
+//		
+//		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
+//		GregorianCalendar g2 = new GregorianCalendar(2015,Calendar.NOVEMBER,13);
+//		
+//		double orig = 0;
+//        double prop =0;
+//        double orig2 = 0;
+//        double prop2 = 0;
+//        int runs = 5;
+//        int iterations = 100000;
+//		
+//		System.out.println("Working on orig");
 //        for(int i = 0; i < runs; i++){
 //        	double results = 0;
 //        	for(int j = 0; j < iterations; j++){
 //        		long start = System.nanoTime();
-//        		t.newGetTransByDate(g.getTime());
+//        		t.getTransactionsByDate(g.getTime());
 //        		long end = System.nanoTime();
 //        		results = (double)(end - start);///1000000000L;
 //        	}
-//        	prop += results/iterations;
+//        	orig += results/iterations;
 //        }
-        
-        prop = prop/runs;
-        
-        System.out.println("Working on orig2");
-        for(int i = 0; i < runs; i++){
-        	double results = 0;
-        	for(int j = 0; j < iterations; j++){
-        		long start = System.nanoTime();
-        		t.getTransactionsBetweenDates(g.getTime(), g2.getTime());
-        		long end = System.nanoTime();
-        		results = (double)(end - start);///1000000000L;
-        	}
-        	orig2 += results/iterations;
-        }
-        orig2 = orig2/runs;
-        
-//        System.out.println("Working on prop2");
-//        for(int i = 0; i < runs; i++){
-//        	double results = 0;
-//        	for(int j = 0; j < iterations; j++){
-//        		long start = System.nanoTime();
-//        		t.newGetTransBetweenDates(g.getTime(), g2.getTime());
-//        		long end = System.nanoTime();
-//        		results = (double)(end - start);///1000000000L;
-//        	}
-//        	prop2 += results/iterations;
-//        }
+//        orig = orig/runs;
 //        
-        prop2 = prop2/runs;
-        
-        System.out.println("Original: " + orig);
-        System.out.println("Proposed: " + prop);
-        System.out.println("Original Between: " + orig2);
-        System.out.println("Proposed Between: " + prop2);
+//        System.out.println("Original: " + orig);
+//        System.out.println("Proposed: " + prop);
+//        System.out.println("Original Between: " + orig2);
+//        System.out.println("Proposed Between: " + prop2);
 	}
 }
