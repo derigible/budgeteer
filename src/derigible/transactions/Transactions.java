@@ -133,7 +133,7 @@ public interface Transactions {
 	 * @param date - date of Transactions
 	 * @return list of transactions on given date
 	 */
-	public abstract List<Transaction> getTransactionsByDate(Date date);
+	public abstract List<Transaction> getByDate(Date date);
 	
 	/**
 	 * Get all the transactions between two specified dates. Should return an
@@ -150,7 +150,7 @@ public interface Transactions {
 	 * @return list of transactions between given dates.
 	 * @throws ArrayIndexOutOfBoundsException if end < start
 	 */
-	public abstract List<Transaction> getTransactionsBetweenDates(Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	public abstract List<Transaction> getBetweenDates(Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
 	 * Get all transactions for a given category. Should return an empty list
@@ -165,7 +165,7 @@ public interface Transactions {
 	 * @param category - category of transactions to return
 	 * @return list of transactions of a given category
 	 */
-	public abstract List<Transaction> getTransactionsByCategory(String category);
+	public abstract List<Transaction> getByCategory(String category);
 	
 	/**
 	 * Get all transactions for the given categories. Should return an empty list if
@@ -180,7 +180,7 @@ public interface Transactions {
 	 * @param categories - categories of transactions to return
 	 * @return list of transactions of given categories
 	 */
-	public abstract List<Transaction> getTransactionsByCategories(String[] categories);
+	public abstract List<Transaction> getByCategories(String[] categories);
 	
 	/**
 	 * Get all transactions for the given categories and date. Should return an empty list if
@@ -196,7 +196,7 @@ public interface Transactions {
 	 * @param date - date of the transactions to return
 	 * @return list of transactions of given categories and date
 	 */
-	public abstract List<Transaction> getTransactionsByCategoriesAndDate(String[] categories, Date date);
+	public abstract List<Transaction> getByCategoriesAndDate(String[] categories, Date date);
 	
 	/**
 	 * Get all transactions for a given category on a specified date. Should
@@ -212,7 +212,7 @@ public interface Transactions {
 	 * @param date - date of transactions
 	 * @return list of transactions of a category and date
 	 */
-	public abstract List<Transaction> getTransactionsByCategoryAndDate(String cat, Date date);
+	public abstract List<Transaction> getByCategoryAndDate(String cat, Date date);
 	
 	/**
 	 * Get all transactions for a given category in a specified time interval.
@@ -230,7 +230,7 @@ public interface Transactions {
 	 * @return list of transaction of category within dates
 	 * @throws ArrayIndexOutOfBoundsException if end < start
 	 */
-	public abstract List<Transaction> getTransactionsByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	public abstract List<Transaction> getByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
 	 * Get all the transactions in the specified account. Should return an empty list if none found.
@@ -242,7 +242,7 @@ public interface Transactions {
 	 * @param account - the account to check for
 	 * @return the list of transactions in account
 	 */
-	public abstract List<Transaction> getTransactionsByAccount(String account);
+	public abstract List<Transaction> getByAccount(String account);
 	
 	/**
 	 * 
@@ -261,7 +261,7 @@ public interface Transactions {
 	 * @return list of transactions of categories and dates
 	 * @throws ArrayIndexOutOfBoundsException if end < start
 	 */
-	public abstract List<Transaction> getTransactionsByCategoriesAndDates(String[] cats, Date start, Date end) throws ArrayIndexOutOfBoundsException;
+	public abstract List<Transaction> getByCategoriesAndDates(String[] cats, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
 	 * Get all of the income transactions. This is a convenience method to call directly and
@@ -343,6 +343,22 @@ public interface Transactions {
 	 * @return the stored transaction accounts
 	 */
 	public abstract String[] getAccounts();
+	
+	/**
+	 * Determines if the transactions list has the given category.
+	 * 
+	 * @param category - the category to search for
+	 * @return true if found, false otherwise
+	 */
+	public abstract boolean hasCategory(String category);
+	
+	/**
+	 * Determines if the transactions list has the given account.
+	 * 
+	 * @param account - the account to search for
+	 * @return true if found, false otherwise
+	 */
+	public abstract boolean hasAccount(String account);
 	
 	/**
 	 * Get all of the transactions that have have excluded. This list will return both income and

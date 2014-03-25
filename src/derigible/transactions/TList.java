@@ -271,31 +271,31 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public List<Transaction> getTransactionsByDate(Date date) {
+	public List<Transaction> getByDate(Date date) {
 		return filterExcluded(this.filterByDate(date, tlist));
 	}
 	
 
 	@Override
-	public List<Transaction> getTransactionsBetweenDates(Date start, Date end)
+	public List<Transaction> getBetweenDates(Date start, Date end)
 			throws ArrayIndexOutOfBoundsException {
 		return filterExcluded(this.filterByDates(start, end, tlist));
 	}
 
 	@Override
-	public List<Transaction> getTransactionsByCategory(String category) {
+	public List<Transaction> getByCategory(String category) {
 		return filterExcluded(this.filterByCategory(category, tlist));
 	}
 	
 	@Override
-	public List<Transaction> getTransactionsByCategories(String[] categories) {
+	public List<Transaction> getByCategories(String[] categories) {
 		return filterExcluded(this.filterByCategories(categories, tlist));
 	}
 
 	@Override
-	public List<Transaction> getTransactionsByCategoryAndDate(String cat,
+	public List<Transaction> getByCategoryAndDate(String cat,
 			Date date) {
-		ArrayList<Transaction> trans = (ArrayList<Transaction>) getTransactionsByCategory(cat);
+		ArrayList<Transaction> trans = (ArrayList<Transaction>) getByCategory(cat);
 		for(int i =0; i < trans.size(); i++){
 			if(!trans.get(i).getDate().equals(date)){
 				trans.remove(i);
@@ -306,28 +306,28 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public List<Transaction> getTransactionsByCategoriesAndDate(
+	public List<Transaction> getByCategoriesAndDate(
 			String[] categories, Date date) {
 		List<Transaction> l = this.filterByCategories(categories, tlist);
 		return filterExcluded(this.filterByDate(date, l));
 	}
 	
 	@Override
-	public List<Transaction> getTransactionsByCategoryAndDates(String cat,
+	public List<Transaction> getByCategoryAndDates(String cat,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
-		List<Transaction> l = this.getTransactionsByCategory(cat);
+		List<Transaction> l = this.getByCategory(cat);
 		return filterExcluded(this.filterByDates(start, end, l));
 	}
 	
 	@Override
-	public List<Transaction> getTransactionsByCategoriesAndDates(String[] cats,
+	public List<Transaction> getByCategoriesAndDates(String[] cats,
 			Date start, Date end) throws ArrayIndexOutOfBoundsException {
 		List<Transaction> l = this.filterByDates(start, end, tlist);
 		return filterExcluded(this.filterByCategories(cats, l));
 	}
 	
 	@Override
-	public List<Transaction> getTransactionsByAccount(String account) {
+	public List<Transaction> getByAccount(String account) {
 		return filterByAccount(account, tlist);
 	}
 
@@ -412,6 +412,16 @@ public class TList implements Transactions{
 			tempStrings[i] = StringHelper.formatString(tempStrings[i]);
 		}
 		return tempStrings;
+	}
+	
+	@Override
+	public boolean hasCategory(String category) {
+		return categories.containsKey(category);
+	}
+
+	@Override
+	public boolean hasAccount(String account) {
+		return accounts.containsKey(account);
 	}
 	
 	@Override
@@ -537,7 +547,7 @@ public class TList implements Transactions{
 			throw new ArrayIndexOutOfBoundsException(msg);
 		}
 		if(end.compareTo(start) == 0){ //Same date
-			return filterExcluded(getTransactionsByDate(start));
+			return filterExcluded(getByDate(start));
 		}
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		Calendar start0 = Calendar.getInstance();

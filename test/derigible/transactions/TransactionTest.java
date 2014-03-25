@@ -17,7 +17,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
-
+/**
+ * Note that filters are tested in the getBy* methods.
+ * @author marphill
+ *
+ */
 public class TransactionTest { 
 	static Transaction[] trans;
 	static Transaction[] trans2;
@@ -93,10 +97,10 @@ public class TransactionTest {
 		TList t2 = new TList(trans2);
 		
 		assertSame("Wrong category transaction fetched.", trans[0],
-				t.getTransactionsByCategory("Category is 10 women and children.").get(0));
+				t.getByCategory("Category is 10 women and children.").get(0));
 		
 		assertEquals("Too many/few categories returned.", 2,
-				t2.getTransactionsByCategory("Dessert").size());
+				t2.getByCategory("Dessert").size());
 	}
 	
 	@Test
@@ -104,7 +108,7 @@ public class TransactionTest {
 		TList t2 = new TList(trans2);
 		
 		assertEquals("Too many/few categories returned.", 3,
-				t2.getTransactionsByAccount("Mastercard").size());
+				t2.getByAccount("Mastercard").size());
 	}
 	
 	@Test
@@ -114,15 +118,15 @@ public class TransactionTest {
 		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		assertSame("Wrong date transaction fetched.", trans2[0],
-				t.getTransactionsByDate(g.getTime()).get(0));
+				t.getByDate(g.getTime()).get(0));
 		
 		g = new GregorianCalendar(2014,Calendar.NOVEMBER,15);
 		
 		assertNotSame("Retrieved date was the same transaction.",trans2[0],
-				t.getTransactionsByDate(g.getTime()).get(0));
+				t.getByDate(g.getTime()).get(0));
 		
 		assertEquals("Wrong number of transactions fetched.", 2,
-				t.getTransactionsByDate(g.getTime()).size());
+				t.getByDate(g.getTime()).size());
 	}
 	
 	@Test
@@ -141,9 +145,9 @@ public class TransactionTest {
 		assertFalse("Transaction not added to list.", before == after);
 		assertEquals("Transaction list not changed by correct amount.", 6, after);
 		assertSame("Category Indexing not working correctly with add event.", transact,
-				t.getTransactionsByCategory("SomethingNew").get(0));
+				t.getByCategory("SomethingNew").get(0));
 		assertSame("Date Indexing not working correctly with add event.", transact,
-				t.getTransactionsByDate(g.getTime()).get(0));
+				t.getByDate(g.getTime()).get(0));
 	}
 	
 	@Test
@@ -153,7 +157,7 @@ public class TransactionTest {
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		assertSame("Wrong date transaction fetched.", trans2[0],
-				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).get(0));
+				t.getBetweenDates(start.getTime(), end.getTime()).get(0));
 	}
 	
 	@Test
@@ -163,7 +167,7 @@ public class TransactionTest {
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
 		assertEquals("Wrong number of transactions fetched.", 2,
-				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
+				t.getBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test
@@ -178,7 +182,7 @@ public class TransactionTest {
 		t.addTransaction(transact);
 
 		assertEquals("Wrong number of transactions fetched.", 5,
-				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
+				t.getBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test
@@ -193,7 +197,7 @@ public class TransactionTest {
 		t.addTransaction(transact);
 		
 		assertEquals("Wrong number of transactions fetched.", 2,
-				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
+				t.getBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test(expected = ArrayIndexOutOfBoundsException.class)
@@ -201,7 +205,7 @@ public class TransactionTest {
 		TList t = new TList(trans2);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
-		t.getTransactionsBetweenDates(start.getTime(), end.getTime()); //Throws exception
+		t.getBetweenDates(start.getTime(), end.getTime()); //Throws exception
 	}
 	
 	@Test
@@ -211,7 +215,7 @@ public class TransactionTest {
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,22);
 		
 		assertEquals("Wrong number of transactions fetched.", 0,
-				t.getTransactionsBetweenDates(start.getTime(), end.getTime()).size());
+				t.getBetweenDates(start.getTime(), end.getTime()).size());
 	}
 	
 	@Test
@@ -299,10 +303,10 @@ public class TransactionTest {
 		TList t = new TList(trans2);
 		
 		assertEquals("Wrong number of Transactions returned", 4,
-				t.getTransactionsByCategories(new String[] {"Dessert", "Home Improvement"}).size());
+				t.getByCategories(new String[] {"Dessert", "Home Improvement"}).size());
 		
 		assertEquals("Wrong number of Transactions returned", 0,
-				t.getTransactionsByCategories(new String[] {"Ice Cream", "Grocery"}).size());
+				t.getByCategories(new String[] {"Ice Cream", "Grocery"}).size());
 		
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
 				4.50, "Dessert","Mastercard", false);
@@ -310,9 +314,9 @@ public class TransactionTest {
 		t.addTransaction(transact2);
 		
 		assertEquals("Wrong number of Transactions returned after adding Transaction.", 5,
-				t.getTransactionsByCategories(new String[] {"Dessert", "Home Improvement"}).size());
+				t.getByCategories(new String[] {"Dessert", "Home Improvement"}).size());
 		assertEquals("Wrong number of Transactions returned after adding Transaction.", 6,
-				t.getTransactionsByCategories(
+				t.getByCategories(
 						new String[] {"Dessert", "Home Improvement", "Groceries"}).size());
 	}
 	
@@ -324,7 +328,7 @@ public class TransactionTest {
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
 		assertEquals("Wrong number of Transactions returned", 1,
-				t.getTransactionsByCategoryAndDates("Dessert", 
+				t.getByCategoryAndDates("Dessert", 
 						start.getTime(), end.getTime()).size());
 		
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
@@ -333,13 +337,13 @@ public class TransactionTest {
 		t.addTransaction(transact2);
 		
 		assertEquals("Wrong number of Transactions returned after Transaction added.", 1,
-				t.getTransactionsByCategoryAndDates("Dessert", 
+				t.getByCategoryAndDates("Dessert", 
 						start.getTime(), end.getTime()).size());
 		
 		end = new GregorianCalendar(2015,Calendar.NOVEMBER,16);
 		
 		assertEquals("Wrong number of Transactions returned after Transaction added and date changed.", 3,
-				t.getTransactionsByCategoryAndDates("Dessert", 
+				t.getByCategoryAndDates("Dessert", 
 						start.getTime(), end.getTime()).size());
 	}
 	
@@ -351,7 +355,7 @@ public class TransactionTest {
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
 		assertEquals("Wrong number of Transactions returned", 2,
-				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+				t.getByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
 						start.getTime(), end.getTime()).size());
 		
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
@@ -360,13 +364,13 @@ public class TransactionTest {
 		t.addTransaction(transact2);
 		
 		assertEquals("Wrong number of Transactions returned after Transaction added.", 2,
-				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+				t.getByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
 						start.getTime(), end.getTime()).size());
 		
 		end = new GregorianCalendar(2015,Calendar.NOVEMBER,16);
 		
 		assertEquals("Wrong number of Transactions returned after Transaction added and date changed.", 5,
-				t.getTransactionsByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
+				t.getByCategoriesAndDates(new String[] {"Dessert", "Home Improvement"}, 
 						start.getTime(), end.getTime()).size());
 	}
 	
@@ -469,11 +473,11 @@ public class TransactionTest {
 		assertFalse("Transaction not added to list.", before == after);
 		assertEquals("Transaction list not changed by correct amount.", 7, after);
 		assertSame("Category Indexing not working correctly with add event.", transact,
-				t.getTransactionsByCategory("SomethingNew").get(0));
+				t.getByCategory("SomethingNew").get(0));
 		assertSame("Date Indexing not working correctly with add event.", transact,
-				t.getTransactionsByDate(g.getTime()).get(0));
+				t.getByDate(g.getTime()).get(0));
 		assertSame("Account Indexing not working correctly with add event.", transact,
-				t.getTransactionsByAccount("Mastercard2").get(0));
+				t.getByAccount("Mastercard2").get(0));
 	}
 	
 	@Test
@@ -487,11 +491,11 @@ public class TransactionTest {
 		t.addTransaction(transact);
 		
 		assertEquals("Category Indexing not working correctly with add event.", 1,
-				t.getTransactionsByCategory("SomethingNew").size());
+				t.getByCategory("SomethingNew").size());
 		assertEquals("Account Indexing not working correctly with add event.", 1,
-				t.getTransactionsByAccount("Mastercard2").size());
+				t.getByAccount("Mastercard2").size());
 		assertSame("Date Indexing not working correctly with add event.", 1,
-				t.getTransactionsByDate(g.getTime()).size());
+				t.getByDate(g.getTime()).size());
 		assertTrue("Transactions list too small", t.getTransactions().size() > 100);
 	}
 	
@@ -615,7 +619,7 @@ public class TransactionTest {
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
 		t.removeTransaction(trn);
 		//Should return 1
-		List<Transaction> after10 = t.getTransactionsBetweenDates(g.getTime(), g2.getTime());
+		List<Transaction> after10 = t.getBetweenDates(g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsBetweenDates.",
 				1, after10.size());
 		cleanupExclusionTest();
@@ -627,7 +631,7 @@ public class TransactionTest {
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		t.removeTransaction(trn);
 		//Should return 0
-		List<Transaction> after9 = t.getTransactionsByDate(g.getTime());
+		List<Transaction> after9 = t.getByDate(g.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByDate.", 
 				0, after9.size());
 		cleanupExclusionTest();
@@ -639,7 +643,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		
-		List<Transaction> before = t.getTransactionsByCategoriesAndDate(
+		List<Transaction> before = t.getByCategoriesAndDate(
 				new String[] {"SomethingNew", "Groceries"} , g.getTime());
 		
 		assertEquals("Wrong number of transactions returned for getTransactionsByCatAndDates.",
@@ -647,7 +651,7 @@ public class TransactionTest {
 		
 		t.removeTransaction(trn);
 		
-		List<Transaction> after14 = t.getTransactionsByCategoriesAndDate(
+		List<Transaction> after14 = t.getByCategoriesAndDate(
 				new String[] {"SomethingNew", "Groceries"} , g.getTime());
 		
 		assertEquals("Wrong number of transactions returned for getTransactionsByCatAndDates.",
@@ -663,7 +667,7 @@ public class TransactionTest {
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
 		t.removeTransaction(trn);
 		//Should return 1
-		List<Transaction> after14 = t.getTransactionsByCategoryAndDates("SomethingNew", g.getTime(), g2.getTime());
+		List<Transaction> after14 = t.getByCategoryAndDates("SomethingNew", g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByCatAndDates.",
 				1, after14.size());
 		cleanupExclusionTest();
@@ -676,7 +680,7 @@ public class TransactionTest {
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
 		t.removeTransaction(trn);
 		//Should return 1
-		List<Transaction> after15 = t.getTransactionsByCategoriesAndDates(new String[] {"SomethingNew", "Groceries"}, g.getTime(), g2.getTime());
+		List<Transaction> after15 = t.getByCategoriesAndDates(new String[] {"SomethingNew", "Groceries"}, g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByCategoriesAndDates.", 
 				1, after15.size());
 		cleanupExclusionTest();
@@ -687,7 +691,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		t.removeTransaction(trn);
 		//Should return 1
-		List<Transaction> after11 = t.getTransactionsByCategory("SomethingNew");
+		List<Transaction> after11 = t.getByCategory("SomethingNew");
 		assertEquals("Wrong number of transactions returned for getTransactionsByCategory.",
 				1, after11.size());
 		cleanupExclusionTest();
@@ -745,5 +749,13 @@ public class TransactionTest {
 		
 		assertEquals("Wrong number of accounts returned.", 
 				3, t.getAccounts().length);
+	}
+	
+	@Test
+	public void testGetTransactionsByAccount(){
+		TList t = new TList(trans2);
+		
+		assertEquals("Wrong number of transactions returned for account Mastercard.", 3,
+				t.getByAccount("Mastercard").size());
 	}
 }
