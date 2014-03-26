@@ -321,11 +321,18 @@ public interface Transactions {
 	public abstract void addTransactions(Transaction[] trans);
 	
 	/**
-	 * Remove a transaction from the transactions list.
+	 * Exclude a transaction from the transactions list.
 	 * 
-	 * @param tran - the transaction to remove
+	 * @param tran - the transaction to exclude
 	 */
-	public abstract void removeTransaction(Transaction tran);
+	public abstract void excludeTransaction(Transaction tran);
+	
+	/**
+	 * Include a transaction from the transactions list.
+	 * 
+	 * @param tran - the transaction to include
+	 */
+	public abstract void includeTransaction(Transaction tran);
 	
 	/**
 	 * Get the categories stored in the transactions list.
@@ -368,7 +375,7 @@ public interface Transactions {
 	 * 
 	 * @return the list of excluded transactions
 	 */
-	public abstract List<Transaction> getExcludedTransactions();
+	public abstract List<Transaction> getExcluded();
 	
 	//////////////////////////////////////////////////////////////
 	// Filter Methods

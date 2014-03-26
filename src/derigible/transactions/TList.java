@@ -380,9 +380,15 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public void removeTransaction(Transaction tran) {
+	public void excludeTransaction(Transaction tran) {
 		tran.setExcluded(true);
 		excluded.add(tran);
+	}
+	
+	@Override
+	public void includeTransaction(Transaction tran) {
+		tran.setExcluded(false);
+		excluded.remove(tran);
 	}
 
 	@Override
@@ -416,16 +422,16 @@ public class TList implements Transactions{
 	
 	@Override
 	public boolean hasCategory(String category) {
-		return categories.containsKey(category);
+		return categories.containsKey(lower(category));
 	}
 
 	@Override
 	public boolean hasAccount(String account) {
-		return accounts.containsKey(account);
+		return accounts.containsKey(lower(account));
 	}
 	
 	@Override
-	public List<Transaction> getExcludedTransactions() {
+	public List<Transaction> getExcluded() {
 		return excluded;
 	}
 	
@@ -437,8 +443,16 @@ public class TList implements Transactions{
 		if(accounts.containsKey(lower(account))){
 			ArrayList<Transaction> t = new ArrayList<Transaction>();
 			int [] t0 = accounts.get(lower(account));
-			for(int i = 0; i < t0.length; i++){
-				t.add(tlist.get(t0[i]));
+			if(l.equals(tlist)){
+				for(int i = 0; i < t0.length; i++){
+					t.add(tlist.get(t0[i]));
+				}
+			} else {
+				for(int i = 0; i < t0.length; i++){
+					if(l.contains(tlist.get(t0[i])) && !t.contains(tlist.get(t0[i]))){
+						t.add(tlist.get(t0[i]));
+					}
+				}
 			}
 			return t;
 		}
@@ -479,7 +493,7 @@ public class TList implements Transactions{
 			for(int i = 0; i < t0.length; i++){
 				t.add(tlist.get(t0[i]));
 			}
-			return filterExcluded(t);
+			return t;
 		}
 		return new ArrayList<Transaction>();
 	}
@@ -532,7 +546,7 @@ public class TList implements Transactions{
 							}
 						}
 					}
-					return filterExcluded(trans);
+					return trans;
 				}
 			}
 		}
@@ -547,7 +561,7 @@ public class TList implements Transactions{
 			throw new ArrayIndexOutOfBoundsException(msg);
 		}
 		if(end.compareTo(start) == 0){ //Same date
-			return filterExcluded(getByDate(start));
+			return getByDate(start);
 		}
 		ArrayList<Transaction> trans = new ArrayList<Transaction>();
 		Calendar start0 = Calendar.getInstance();

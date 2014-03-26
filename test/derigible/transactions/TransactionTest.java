@@ -317,7 +317,7 @@ public class TransactionTest {
 				t.getByCategories(new String[] {"Dessert", "Home Improvement"}).size());
 		assertEquals("Wrong number of Transactions returned after adding Transaction.", 6,
 				t.getByCategories(
-						new String[] {"Dessert", "Home Improvement", "Groceries"}).size());
+						new String[] {"Dessert", "Home Improvement", "Groceries", "False"}).size());
 	}
 	
 	@Test
@@ -512,10 +512,20 @@ public class TransactionTest {
 	}
 	
 	@Test
+	public void testExclusionStillReturnsObjectInTList(){
+		TList t = setupExclusionTest();
+		Transaction before1 = t.getLastTransaction();
+		t.excludeTransaction(trn2);
+		
+		Transaction after1 = t.getExcluded().get(0);
+		assertSame("Excluded transaction not the same as transaction in TList.", before1, after1);
+	}
+	
+	@Test
 	public void testRemoveTransactionForExclusionFromReturns_getLastTransaction(){
 		TList t = setupExclusionTest();
 		Transaction before1 = t.getLastTransaction();
-		t.removeTransaction(trn2);
+		t.excludeTransaction(trn2);
 		//Should be different transaction
 		Transaction after1 = t.getLastTransaction();
 		assertNotSame("Same Transaction returned as before, should be excluded for getLastTransaction",
@@ -528,7 +538,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		int[] before2 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return the same
 		int[] after2 = t.getMonthsInYearWithTransactions(g.get(Calendar.YEAR));
 		assertEquals("Wrong number of transactions returned for getMonthsInYearWithT.",
@@ -541,7 +551,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		int[] before3 = t.getAllDaysInYearWithTransactions(g.get(Calendar.YEAR));
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return the same
 		int[] after3 = t.getAllDaysInYearWithTransactions(g.get(Calendar.YEAR));
 		assertEquals("Wrong number of transactions returned for getAllDaysInYearWithT.",
@@ -554,7 +564,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		int[] before4 = t.getDaysInMonthInYearWithTransactions(g.get(Calendar.YEAR), g.get(Calendar.MONTH));
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return the same
 		int[] after4 = t.getDaysInMonthInYearWithTransactions(g.get(Calendar.YEAR), g.get(Calendar.MONTH));
 		assertEquals("Wrong number of transactions returned for getDaysInMonthsInYearWithT.",
@@ -567,7 +577,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		Transaction before5 = t.getTransactionAt(5);
 		Transaction before5_1 = t.getTransactionAt(6); //Should stay the same	
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return same
 		Transaction after5 = t.getTransactionAt(5);
 		//Should stay the same
@@ -583,12 +593,12 @@ public class TransactionTest {
 	public void testRemoveTransactionForExclusionFromReturns_geTransactions(){
 		TList t = setupExclusionTest();
 		List<Transaction> before7 = t.getTransactions();
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 1 less
 		List<Transaction> after7 = t.getTransactions();
 		assertEquals("Wrong number of transactions returned for getTransactions.",
 				before7.size() - 1, after7.size());
-		t.removeTransaction(trn2);
+		t.excludeTransaction(trn2);
 		assertEquals("Wrong number of transactions returned for getTransactions.",
 				before7.size() - 2, t.getTransactions().size());
 		cleanupExclusionTest();
@@ -598,11 +608,11 @@ public class TransactionTest {
 	public void testRemoveTransactionForExclusionFromReturns_getYearsWithTransaction(){
 		TList t = setupExclusionTest();
 		int[] before8 = t.getYearsWithTransactions();
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return the same
 		int[] after8 = t.getYearsWithTransactions();
 		
-		t.removeTransaction(trn2);
+		t.excludeTransaction(trn2);
 		//Should return the same
 		int[] after16 = t.getYearsWithTransactions();
 		assertEquals("Wrong number of transactions returned for getYearsWithTransactions.",
@@ -617,7 +627,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 1
 		List<Transaction> after10 = t.getBetweenDates(g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsBetweenDates.",
@@ -629,7 +639,7 @@ public class TransactionTest {
 	public void testRemoveTransactionForExclusionFromReturns_getTransactionsByDate(){
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 0
 		List<Transaction> after9 = t.getByDate(g.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByDate.", 
@@ -649,7 +659,7 @@ public class TransactionTest {
 		assertEquals("Wrong number of transactions returned for getTransactionsByCatAndDates.",
 				1, before.size());
 		
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		
 		List<Transaction> after14 = t.getByCategoriesAndDate(
 				new String[] {"SomethingNew", "Groceries"} , g.getTime());
@@ -665,7 +675,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 1
 		List<Transaction> after14 = t.getByCategoryAndDates("SomethingNew", g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByCatAndDates.",
@@ -678,7 +688,7 @@ public class TransactionTest {
 		TList t = setupExclusionTest();
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 1
 		List<Transaction> after15 = t.getByCategoriesAndDates(new String[] {"SomethingNew", "Groceries"}, g.getTime(), g2.getTime());
 		assertEquals("Wrong number of transactions returned for getTransactionsByCategoriesAndDates.", 
@@ -689,7 +699,7 @@ public class TransactionTest {
 	@Test
 	public void testRemoveTransactionForExclusionFromReturns_getTransactionsByCategory(){
 		TList t = setupExclusionTest();
-		t.removeTransaction(trn);
+		t.excludeTransaction(trn);
 		//Should return 1
 		List<Transaction> after11 = t.getByCategory("SomethingNew");
 		assertEquals("Wrong number of transactions returned for getTransactionsByCategory.",
@@ -713,7 +723,7 @@ public class TransactionTest {
 		GregorianCalendar g = new GregorianCalendar(2012,Calendar.NOVEMBER,23);
 		GregorianCalendar g2 = new GregorianCalendar(2012,Calendar.DECEMBER,24);
 		
-		t.removeTransaction(transact);
+		t.excludeTransaction(transact);
 		
 		//Should be 1
 		List<Transaction> before1 = t.getIncomeBetweenDates(g.getTime(), g2.getTime());
@@ -721,7 +731,7 @@ public class TransactionTest {
 		List<Transaction> before2 = t.getIncomeByDate(g.getTime());
 		//Should be 2
 		List<Transaction> before3 = t.getIncomeTransactions();
-		t.removeTransaction(transact2);
+		t.excludeTransaction(transact2);
 		//Should be 0
 		List<Transaction> before4 = t.getIncomeTransactions();
 		
