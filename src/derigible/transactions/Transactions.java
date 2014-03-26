@@ -390,6 +390,8 @@ public interface Transactions {
 	 * 	
 	 * Filter method should not exclude transactions.
 	 * 
+	 * Only relevant with debit(spending) transactions.
+	 * 
 	 * @param account - the account to filter by
 	 * @param l - the list of transactions
 	 * @return the filtered list of transactions

@@ -9,6 +9,7 @@ import java.util.List;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.Transformation;
+import derigible.utils.StringHelper;
 
 /**
  * @author marphill
@@ -184,6 +185,8 @@ public class TransactionsController {
 	 * @return
 	 */
 	public double getCurrentBalance(){
+		//NOTE: All methods will treat credits and debits from the view point of the user,
+		// thus, a credit looks like income and a debit looks like payout on a bank statement
 		double credited = 0;
 		double debited = 0;
 		for(Transaction t : tlist.getTransactions()){
@@ -192,8 +195,89 @@ public class TransactionsController {
 		for(Transaction t : tlist.getIncomeTransactions()){
 			credited += t.getAmount();
 		}
-		
 		return credited - debited;
 	}
-
+	
+	/**
+	 * Get the current balance for the given account.
+	 * 
+	 * @param account - the account to return the balance
+	 * @return the balance of the account
+	 */
+	public double getCurrentBalanceForAccount(String account){
+		double credited = 0;
+		double debited = 0;
+		for(Transaction t : tlist.getByAccount(account)){
+			if(t.isDebitOrCredit()){
+				credited += t.getAmount();
+			} else {
+				debited += t.getAmount();
+			}
+		}
+		return credited - debited;
+	}
+	
+	/**
+	 * Get the balance of all accounts between dates specified.
+	 * 
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @return the balance between these dates
+	 */
+	public double getBalanceBetweenDates(Date start, Date end){
+		double credited = 0;
+		double debited = 0;
+		for(Transaction t : tlist.getBetweenDates(start, end)){
+			debited += t.getAmount();
+		}
+		for(Transaction t : tlist.getIncomeBetweenDates(start, end)){
+			credited += t.getAmount();
+		}
+		return credited - debited;
+	}
+	
+	/**
+	 * Simply a convenience method to make lowering much cleaner.
+	 */
+	private String lower(String input){
+		return StringHelper.formatStringToLowercase(input);
+	}
+	
+	/**
+	 * Get the balance for the specified account between the given dates.
+	 * 
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @param account - the account to check
+	 * @return the balance
+	 */
+	public double getBalanceBetweenDatesForAccount(Date start, Date end, String account){
+		double credited = 0;
+		double debited = 0;
+		for(Transaction t : tlist.filterByAccount(account, tlist.getBetweenDates(start, end))){
+			debited += t.getAmount();
+		}
+		for(Transaction t : tlist.getIncomeBetweenDates(start, end)){
+			if(lower(t.getAccount()).equals(lower(account))){
+				credited += t.getAmount();
+			}
+		}
+		return credited - debited;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

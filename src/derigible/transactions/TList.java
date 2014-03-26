@@ -328,7 +328,13 @@ public class TList implements Transactions{
 	
 	@Override
 	public List<Transaction> getByAccount(String account) {
-		return filterByAccount(account, tlist);
+		ArrayList<Transaction> trans0 = (ArrayList<Transaction>)filterByAccount(account, tlist);
+		for(Transaction t : tilist){
+			if(lower(account).equals(lower(t.getAccount()))){
+				trans0.add(t);
+			}
+		}
+		return filterExcluded(trans0);
 	}
 
 	@Override

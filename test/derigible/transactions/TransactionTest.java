@@ -767,5 +767,7 @@ public class TransactionTest {
 		
 		assertEquals("Wrong number of transactions returned for account Mastercard.", 3,
 				t.getByAccount("Mastercard").size());
+		assertEquals("Wrong number of transactions returned for account Check #11456", 1,
+				t.getByAccount("Check #11456").size());
 	}
 }

@@ -250,5 +250,50 @@ public class TransControllerTest {
 		assertEquals("Wrong number of transaction returned for include.", 5, 
 				tc.getTransactions().getTransactions().size());
 	}
+	
+	@Test
+	public void testCurrentBalanceForAccount(){
+		TransactionsController tc = new TransactionsController(x2t);
+		assertEquals("Wrong balance for Mastercard account.", -85.57, 
+				tc.getCurrentBalanceForAccount("Mastercard"), .001);
+	}
 
+	@Test
+	public void testCurrentBalanceForAccount_withDebitsAndCredits(){
+		TransactionsController tc = new TransactionsController(x2t);
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", true);
+		tc.getTransactions().addTransaction(transact2);
+		assertEquals("Wrong balance for Mastercard account.", -81.07, 
+				tc.getCurrentBalanceForAccount("Mastercard"), .001);
+	}
+	
+	@Test
+	public void testCurrentBalanceBetweenDates(){
+		TransactionsController tc = new TransactionsController(x2t);
+		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
+		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
+		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
+		assertEquals("Wrong balance for all accounts between dates.", -61.07, 
+				tc.getBalanceBetweenDates(start.getTime(), end.getTime()), .001);
+		assertEquals("Wrong balance for all transactions.", 9.93, 
+				tc.getBalanceBetweenDates(start.getTime(), end2.getTime()), .001);
+	}
+	
+	@Test
+	public void testCurrentBalBetweenDatesForAccount(){
+		TransactionsController tc = new TransactionsController(x2t);
+		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
+		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
+		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
+		assertEquals("Wrong balance for Mastercard account between dates.", -56.57, 
+				tc.getBalanceBetweenDatesForAccount(start.getTime(), end.getTime(), "Mastercard"), .001);
+		assertEquals("Wrong balance for all Mastercard transactions.", -85.57, 
+				tc.getBalanceBetweenDatesForAccount(start.getTime(), end2.getTime(), "Mastercard"), .001);
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
+				4.50, "Dessert","Mastercard", true);
+		tc.getTransactions().addTransaction(transact2);
+		assertEquals("Wrong balance for all Mastercard transactions with a credit.", -81.07, 
+				tc.getBalanceBetweenDatesForAccount(start.getTime(), end2.getTime(), "Mastercard"), .001);
+	}
 }
