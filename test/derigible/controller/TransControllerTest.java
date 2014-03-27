@@ -330,4 +330,56 @@ public class TransControllerTest {
 		assertEquals("Wrong balance for all Mastercard transactions with a credit.", 114.50, 
 				tc.getIncomeBetweenDatesForAccount(start.getTime(), end2.getTime(), "Check #11456"), .001);
 	}
+	
+	@Test
+	public void testGetPossibleDuplicates(){
+		TransactionsController tc = new TransactionsController(x2t);
+		
+		assertEquals("Wrong number of duplicates returned.", 0, 
+				tc.getPossibleDuplicates().size());
+		
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		tc.getTransactions().addTransaction(transact2);
+		
+		assertEquals("Wrong number of duplicates returned.", 1, 
+				tc.getPossibleDuplicates().size());
+		
+		//Wrong amount
+		Transact transact3 = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,16), "Macey's Grocery Store",
+				24.00, "Groceries", "Mastercard", false);
+		tc.getTransactions().addTransaction(transact3);
+		
+		assertEquals("Wrong number of duplicates returned.", 1, 
+				tc.getPossibleDuplicates().size());
+		
+		//Missing the apostrophe in description
+		Transact transact4 = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,16), "Maceys Grocery Store",
+				24.00, "Groceries", "Mastercard", false);
+		tc.getTransactions().addTransaction(transact4);
+		
+		assertEquals("Wrong number of duplicates returned.", 1, 
+				tc.getPossibleDuplicates().size());
+		
+		//Should duplicate at transaction4
+		Transact transact5 = new Transact(new GregorianCalendar(2014,Calendar.NOVEMBER,16), "Maceys Grocery Store",
+				24.00, "Groceries", "Mastercard", false);
+		tc.getTransactions().addTransaction(transact5);
+		
+		assertEquals("Wrong number of duplicates returned.", 2, 
+				tc.getPossibleDuplicates().size());
+	}
+	
+	@Test
+	public void testDuplicatesFoundAreCorrect(){
+		TransactionsController tc = new TransactionsController(x2t);
+		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
+				114.50, "Payroll", "Check #11456", true);
+		tc.getTransactions().addTransaction(transact2);
+		
+		assertEquals("Wrong amount returned.", 2, 
+				tc.getPossibleDuplicates().get(0).length);
+		Transaction[] l = tc.getPossibleDuplicates().get(0);
+		assertTrue("Wrong transactions in return.", l[0] == trans2[5] ? true : l[1] == trans2[5]);
+	}
 }

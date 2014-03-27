@@ -1062,6 +1062,7 @@ public class TransactionsController {
 												for(int i = 0; i < descEntry.getValue().size(); i++){
 													temparray[i] = descEntry.getValue().get(i);
 												}
+												dupes.add(temparray);
 											}
 										}
 									}
