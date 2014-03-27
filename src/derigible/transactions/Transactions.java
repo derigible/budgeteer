@@ -271,7 +271,7 @@ public interface Transactions {
 	 * 
 	 * @return a list of transactions that are income
 	 */
-	public abstract List<Transaction> getIncomeTransactions();
+	public abstract List<Transaction> getCredits();
 	
 	/**
 	 * Get all income transactions on a given date. This is a convenience method to call directly and

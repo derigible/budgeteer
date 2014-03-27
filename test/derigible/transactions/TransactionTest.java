@@ -380,13 +380,13 @@ public class TransactionTest {
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
 				114.50, "Payroll", "Check #11456", true);
 		
-		assertEquals("Wrong number of Income Transactions returned", 1, t.getIncomeTransactions().size());
+		assertEquals("Wrong number of Income Transactions returned", 1, t.getCredits().size());
 		
 		t.addTransaction(transact2);
 		
 		assertEquals("Wrong number of Transactions returned", 5, t.getDebits().size());
 		assertEquals("Wrong number of Income Transactions returned after add.", 2, 
-				t.getIncomeTransactions().size());
+				t.getCredits().size());
 	}
 	
 	@Test
@@ -730,10 +730,10 @@ public class TransactionTest {
 		//Should be 0
 		List<Transaction> before2 = t.getIncomeByDate(g.getTime());
 		//Should be 2
-		List<Transaction> before3 = t.getIncomeTransactions();
+		List<Transaction> before3 = t.getCredits();
 		t.excludeTransaction(transact2);
 		//Should be 0
-		List<Transaction> before4 = t.getIncomeTransactions();
+		List<Transaction> before4 = t.getCredits();
 		
 		assertEquals("Wrong number of transactions returned for getIncomeBetweenDates.", 
 				1, before1.size());

@@ -264,6 +264,8 @@ public class TList implements Transactions{
 
 	@Override
 	public int[] getAllDaysInYearWithTransactions(int year) {
+		//TODO not working correctly. Needs to return the day of the year as an integer, not the integer
+		//stored in the array
 		ArrayList<Integer> days = new ArrayList<Integer>();
 		for(HashMap<Integer, int[]> month : years.get(year).values()){
 			for(Integer i : month.keySet().toArray(new Integer[month.keySet().size()])){
@@ -334,7 +336,7 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public List<Transaction> getIncomeTransactions() {
+	public List<Transaction> getCredits() {
 		return filterExcluded(creditslist);
 	}
 
