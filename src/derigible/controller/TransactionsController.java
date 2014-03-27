@@ -264,6 +264,116 @@ public class TransactionsController {
 		}
 		return credited - debited;
 	}
+	
+	public double getBalanceForCategory(String category){
+		double credited = 0;
+		double debited = 0;
+		for(Transaction t : tlist.getByCategory(category)){
+			debited += t.getAmount();
+		}
+		for(Transaction t : tlist.getIncomeTransactions()){
+			if(lower(t.getCategory()).equals(lower(category))){
+				credited += t.getAmount();
+			}
+		}
+		return credited - debited;
+	}
+	
+	public double getBalanceForCategories(String[] categories){
+		double credited = 0;
+		double debited = 0;
+		for(String category : categories)
+		for(Transaction t : tlist.getByCategory(category)){
+			debited += t.getAmount();
+		}
+		for(Transaction t : tlist.getIncomeTransactions()){
+			if(lower(t.getCategory()).equals(lower(category))){
+				credited += t.getAmount();
+			}
+		}
+		return credited - debited;
+	}
+	
+	public double getBalanceForCategoriesBetweenDates(String[] categories, Date start, Date end){
+		
+	}
+	
+	public double getBalanceForCategoryForAccount(String category, String account){
+		
+	}
+	
+	public double getBalanceForCategoriesForAccount(String[] categories, String account){
+		
+	}
+	
+	public double getBalanceForCategoryForAccountBetweenDates(String category, String account, Date start, Date end){
+		
+	}
+	
+	public double getBalanceForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end){
+		
+	}
+	
+	public double getBalanceForCategoryForAccounts(String category, String[] account){
+		
+	}
+	
+	public double getBalanceForCategoriesForAccounts(String[] categories, String[] account){
+		
+	}
+	
+	public double getBalanceForCategoryForAccountsBetweenDates(String category, String[] account, Date start, Date end){
+		
+	}
+	
+	public double getBalanceForCategoriesForAccountsBetweenDates(String[] categories, String[] account, Date start, Date end){
+		
+	}
+	
+	public double getSpendingForCategory(String category){
+		
+	}
+	
+	public double getSpendingForCategories(String[] categories){
+		
+	}
+	
+	public double getSpendingForCategoriesBetweenDates(String[] categories, Date start, Date end){
+		
+	}
+	
+	public double getSpendingForCategoryForAccount(String category, String account){
+		
+	}
+	
+	public double getSpendingForCategoriesForAccount(String[] categories, String account){
+		
+	}
+	
+	public double getSpendingForCategoryForAccountBetweenDates(String category, String account, Date start, Date end){
+		
+	}
+	
+	public double getSpendingForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end){
+		
+	}
+	
+	public double getSpendingForCategoryForAccounts(String category, String[] account){
+		
+	}
+	
+	public double getSpendingForCategoriesForAccounts(String[] categories, String[] account){
+		
+	}
+	
+	public double getSpendingForCategoryForAccountsBetweenDates(String category, String[] account, Date start, Date end){
+		
+	}
+	
+	public double getSpendingForCategoriesForAccountsBetweenDates(String[] categories, String[] account, Date start, Date end){
+		
+	}
+	
 }
 
 
