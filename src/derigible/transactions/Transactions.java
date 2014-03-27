@@ -20,13 +20,20 @@ public interface Transactions {
 	/**
 	 * Returns all transactions as a List type object.
 	 * 
-	 * This should not return income transactions.
-	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @return List of Transaction objects
 	 */
 	public abstract List<Transaction> getTransactions();
+	
+	/**
+	 * Returns all debit(spending) transactions.
+	 * 
+	 * Excluded Transactions should not be returned.
+	 * 
+	 * @return list of debit Transaction objects
+	 */
+	public abstract List<Transaction> getDebits();
 	
 	/**
 	 * Get the transaction at a specified index. If transactions data structure
@@ -74,6 +81,8 @@ public interface Transactions {
 	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
 	 * it contains excluded transactions.
 	 * 
+	 * Should return if income only.
+	 * 
 	 * @return the int array of years with a Transaction recorded
 	 */
 	public abstract int[] getYearsWithTransactions();
@@ -89,6 +98,8 @@ public interface Transactions {
 	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
 	 * it contains excluded transactions.
 	 * 
+	 * Should return if income only.
+	 * 
 	 * @param year - the year of the months in question
 	 * @return the int array of months within the year with a Transaction recorded
 	 */
@@ -101,6 +112,8 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
 	 * it contains excluded transactions.
+	 * 
+	 * Should return if income only.
 	 * 
 	 * @param year - the year of the days in question
 	 * @param month - the month of the days in question
@@ -116,6 +129,8 @@ public interface Transactions {
 	 * Excluded Transactions SHOULD be returned and handled by client (may want to show that
 	 * it contains excluded transactions.
 	 * 
+	 * Should return if income only.
+	 * 
 	 * @param year - the year of the days in question
 	 * @return the int array of days within the specified year with a Transaction Recorded
 	 */
@@ -125,8 +140,6 @@ public interface Transactions {
 	 * Get all the transactions at a certain date. This is a convenience method to call directly and
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
-	 * 
-	 * This should not return income transactions.
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
@@ -140,8 +153,6 @@ public interface Transactions {
 	 * empty list if none present. Dates provided ARE inclusive. This is a convenience method to call 
 	 * directly and get a filtered list. Use the corresponding filter for all other Transaction 
 	 * lists that you want to filter by this method.
-	 * 
-	 * This should not return income transactions.
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
@@ -158,8 +169,6 @@ public interface Transactions {
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
 	 * 
-	 * This should not return income transactions.
-	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param category - category of transactions to return
@@ -173,8 +182,6 @@ public interface Transactions {
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
 	 * 
-	 * This should not return income transactions.
-	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param categories - categories of transactions to return
@@ -187,8 +194,6 @@ public interface Transactions {
 	 * none present. This is a convenience method to call directly and
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
-	 * 
-	 * This should not return income transactions.
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
@@ -204,8 +209,6 @@ public interface Transactions {
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
 	 * 
-	 * This should not return income transactions.
-	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param cat - category of transactions
@@ -220,8 +223,6 @@ public interface Transactions {
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
 	 * 
-	 * This should not return income transactions.
-	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param cat - category of transactions
@@ -234,9 +235,7 @@ public interface Transactions {
 	
 	/**
 	 * Get all the transactions in the specified account. Should return an empty list if none found.
-	 * 
-	 * This SHOULD return income transactions.
-	 * 
+	 *  
 	 * Excluded Transactions should not be returned.
 	 * 
 	 * @param account - the account to check for
@@ -250,8 +249,6 @@ public interface Transactions {
 	 * Should return an empty list if none found. This is a convenience method to call directly and
 	 * get a filtered list. Use the corresponding filter for all other Transaction lists that you
 	 * want to filter by this method.
-	 * 
-	 * This should not return income transactions.
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
@@ -390,8 +387,6 @@ public interface Transactions {
 	 * 	
 	 * Filter method should not exclude transactions.
 	 * 
-	 * Only relevant with debit(spending) transactions.
-	 * 
 	 * @param account - the account to filter by
 	 * @param l - the list of transactions
 	 * @return the filtered list of transactions
@@ -416,7 +411,7 @@ public interface Transactions {
 	 * the category provided. Transactions must be in the master Transactions list of the Transactions
 	 * object or this will not return the desire results. See filterByAccount for example invocation.
 	 * 
-	 * Filter method should not exclude transactions, except for income transactions.
+	 * Filter method should not exclude transactions..
 	 * 
 	 * @param category - the category to filter by
 	 * @param l - the list of transactions
@@ -429,7 +424,7 @@ public interface Transactions {
 	 * the categories provided. Transactions must be in the master Transactions list of the Transactions
 	 * object or this will not return the desire results. See filterByAccount for example invocation.
 	 * 
-	 * Filter method should not exclude transactions, except for income transactions.
+	 * Filter method should not exclude transactions.
 	 * 
 	 * @param categories - the categories to filter by
 	 * @param l - the list of transactions
@@ -442,7 +437,7 @@ public interface Transactions {
 	 * the date provided. Transactions must be in the master Transactions list of the Transactions
 	 * object or this will not return the desire results. See filterByAccount for example invocation.
 	 * 
-	 * Filter method should not exclude transactions, except for income transactions.
+	 * Filter method should not exclude transactions.
 	 * 
 	 * @param date - the date to filter by
 	 * @param l - the list of transactions
@@ -455,7 +450,7 @@ public interface Transactions {
 	 * the dates provided. Transactions must be in the master Transactions list of the Transactions
 	 * object or this will not return the desire results. See filterByAccount for example invocation.
 	 * 
-	 * Filter method should not exclude transactions, except for income transactions.
+	 * Filter method should not exclude transactions.
 	 * 
 	 * @param start - the start of the dates to filter by
 	 * @param end - the end of the dates to filter by

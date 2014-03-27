@@ -120,7 +120,7 @@ public class Transact implements Transaction {
 		 * @return the debitOrCredit
 		 */
 		@Override
-		public boolean isDebitOrCredit() {
+		public boolean isCredit() {
 			return DebitOrCredit;
 		}
 		/**

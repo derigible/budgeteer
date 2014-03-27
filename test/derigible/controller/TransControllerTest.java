@@ -127,7 +127,7 @@ public class TransControllerTest {
 		
 		tc.excludeBetweenDates(start.getTime(), end.getTime());
 		
-		assertEquals("Wrong number of transaction returned.", 3, 
+		assertEquals("Wrong number of transaction returned.", 4, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -139,12 +139,12 @@ public class TransControllerTest {
 		
 		tc.excludeBetweenDates(start.getTime(), end.getTime());
 		
-		assertEquals("Wrong number of transaction returned for exclude.", 3, 
+		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
 		
 		tc.includeBetweenDates(start.getTime(), end.getTime());
 		
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -155,7 +155,7 @@ public class TransControllerTest {
 		
 		tc.excludeDate(start.getTime());
 		
-		assertEquals("Wrong number of transaction returned for exclude.", 4, 
+		assertEquals("Wrong number of transaction returned for exclude.", 5, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -166,12 +166,12 @@ public class TransControllerTest {
 		
 		tc.excludeDate(start.getTime());
 		
-		assertEquals("Wrong number of transaction returned for exclude.", 4, 
+		assertEquals("Wrong number of transaction returned for exclude.", 5, 
 				tc.getTransactions().getTransactions().size());
 		
 		tc.includeDate(start.getTime());
 		
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -179,7 +179,7 @@ public class TransControllerTest {
 	public void testExcludeCategory(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeCategory("Dessert");
-		assertEquals("Wrong number of transaction returned for exclude.", 3, 
+		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -187,10 +187,10 @@ public class TransControllerTest {
 	public void testIncludeCategory(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeCategory("Dessert");
-		assertEquals("Wrong number of transaction returned for exclude.", 3, 
+		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
 		tc.includeCategory("Dessert");
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -198,7 +198,7 @@ public class TransControllerTest {
 	public void testExcludeCategories(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
-		assertEquals("Wrong number of transaction returned for exclude.", 2, 
+		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -206,10 +206,10 @@ public class TransControllerTest {
 	public void testIncludeCategories(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
-		assertEquals("Wrong number of transaction returned for exclude.", 2, 
+		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 		tc.includeCategories(new String[] {"Dessert", "Groceries"});
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -217,7 +217,7 @@ public class TransControllerTest {
 	public void testExcludeAccount(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeAccount("Mastercard");
-		assertEquals("Wrong number of transaction returned for exclude.", 2, 
+		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -225,10 +225,10 @@ public class TransControllerTest {
 	public void testIncludeAccount(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeAccount("Mastercard");
-		assertEquals("Wrong number of transaction returned for exclude.", 2, 
+		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 		tc.includeAccount("Mastercard");
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -236,7 +236,7 @@ public class TransControllerTest {
 	public void testExcludeAccounts(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
-		assertEquals("Wrong number of transaction returned for exclude.", 1, 
+		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
@@ -244,10 +244,10 @@ public class TransControllerTest {
 	public void testIncludeAccounts(){
 		TransactionsController tc = new TransactionsController(x2t);
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
-		assertEquals("Wrong number of transaction returned for exclude.", 1, 
+		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
 		tc.includeAccounts(new String[] {"Mastercard", "Discover"});
-		assertEquals("Wrong number of transaction returned for include.", 5, 
+		assertEquals("Wrong number of transaction returned for include.", 6, 
 				tc.getTransactions().getTransactions().size());
 	}
 	

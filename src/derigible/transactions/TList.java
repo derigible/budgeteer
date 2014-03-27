@@ -20,13 +20,14 @@ import derigible.utils.StringHelper;
 public class TList implements Transactions{
 	
 	/**
-	 * The transactions list. This list should only hold Debits, no Credits.
+	 * The transactions list. This list should only hold all transactions.
 	 */
 	private ArrayList<Transaction> tlist;
 	/**
 	 * The income transactions list. Should only hold Credits, not Debits.
 	 */
-	private ArrayList<Transaction> tilist = new ArrayList<Transaction>();
+	private ArrayList<Transaction> creditslist = new ArrayList<Transaction>();
+	private ArrayList<Transaction> debitslist = new ArrayList<Transaction>();
 	private HashMap<String, int[]> categories = new HashMap<String, int[]>();
 	private HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>> years = 
 			new HashMap<Integer, HashMap<Integer,HashMap<Integer, int[]>>>();
@@ -60,10 +61,11 @@ public class TList implements Transactions{
 	private void init(Transaction[] trans){
 		tlist = new ArrayList<Transaction>(trans.length);
 		for(int i = 0; i < trans.length; i++){
-			if(!trans[i].isDebitOrCredit()){
-				tlist.add(trans[i]);
+			tlist.add(trans[i]);
+			if(!trans[i].isCredit()){
+				debitslist.add(trans[i]);
 			} else {
-				tilist.add(trans[i]);
+				creditslist.add(trans[i]);
 			}
 		}
 		Transaction[] newt = tlist.toArray(new Transaction[0]);
@@ -187,6 +189,11 @@ public class TList implements Transactions{
 	public List<Transaction> getTransactions() {
 			return filterExcluded(tlist);
 	}
+	
+	@Override
+	public List<Transaction> getDebits() {
+		return filterExcluded(debitslist);
+	}
 
 	@Override
 	public Transaction getTransactionAt(int index) {
@@ -284,7 +291,8 @@ public class TList implements Transactions{
 
 	@Override
 	public List<Transaction> getByCategory(String category) {
-		return filterExcluded(this.filterByCategory(category, tlist));
+		List<Transaction> l =this.filterByCategory(category, tlist);
+		return filterExcluded(l);
 	}
 	
 	@Override
@@ -293,16 +301,9 @@ public class TList implements Transactions{
 	}
 
 	@Override
-	public List<Transaction> getByCategoryAndDate(String cat,
-			Date date) {
-		ArrayList<Transaction> trans = (ArrayList<Transaction>) getByCategory(cat);
-		for(int i =0; i < trans.size(); i++){
-			if(!trans.get(i).getDate().equals(date)){
-				trans.remove(i);
-			}
-		}
-		
-		return filterExcluded(trans);
+	public List<Transaction> getByCategoryAndDate(String cat, Date date) {
+		ArrayList<Transaction> trans = (ArrayList<Transaction>) getByCategory(cat);	
+		return filterExcluded(this.filterByDate(date, trans));
 	}
 
 	@Override
@@ -329,28 +330,17 @@ public class TList implements Transactions{
 	@Override
 	public List<Transaction> getByAccount(String account) {
 		ArrayList<Transaction> trans0 = (ArrayList<Transaction>)filterByAccount(account, tlist);
-		for(Transaction t : tilist){
-			if(lower(account).equals(lower(t.getAccount()))){
-				trans0.add(t);
-			}
-		}
 		return filterExcluded(trans0);
 	}
 
 	@Override
 	public List<Transaction> getIncomeTransactions() {
-		return filterExcluded(tilist);
+		return filterExcluded(creditslist);
 	}
 
 	@Override
 	public List<Transaction> getIncomeByDate(Date date) {
-		ArrayList<Transaction> trans = new ArrayList<Transaction>();
-		for(Transaction inc : tilist){
-			if(inc.getDate().getTime().equals(date)){
-				trans.add(inc);
-			}
-		}
-		return filterExcluded(trans);
+		return filterExcluded(filterByDate(date,creditslist));
 	}
 
 	@Override
@@ -363,25 +353,19 @@ public class TList implements Transactions{
 		if(start.equals(end)){
 			return filterExcluded(this.getIncomeByDate(start));
 		}
-		ArrayList<Transaction> trans = new ArrayList<Transaction>();
-		for(Transaction inc : tilist){
-			if((inc.getDate().getTime().after(start) && inc.getDate().getTime().before(end)) || 
-					(inc.getDate().getTime().equals(start) || inc.getDate().getTime().equals(end))){
-				trans.add(inc);
-			}
-		}
-		return filterExcluded(trans);
+		return filterExcluded(filterByDates(start, end, creditslist));
 	}
 
 	@Override
 	public void addTransaction(Transaction tran) {
-		if(!tran.isDebitOrCredit()){
-			tlist.add(tran);
-			indexCategories(new Transaction[] {tran});
-			indexDates(new Transaction[] {tran});
-			indexAccounts(new Transaction[] {tran});
+		tlist.add(tran);
+		indexCategories(new Transaction[] {tran});
+		indexDates(new Transaction[] {tran});
+		indexAccounts(new Transaction[] {tran});
+		if(!tran.isCredit()){
+			debitslist.add(tran);
 		} else {
-			tilist.add(tran);
+			creditslist.add(tran);
 		}
 	}
 
@@ -400,11 +384,7 @@ public class TList implements Transactions{
 	@Override
 	public void addTransactions(Transaction[] trans) {
 		for(Transaction tran : trans){
-			if(tran.isDebitOrCredit()){
-				tilist.add(tran);
-			} else {
-				addTransaction(tran);
-			}
+			addTransaction(tran);
 		}
 	}
 
@@ -776,4 +756,5 @@ public class TList implements Transactions{
 //        System.out.println("Original Between: " + orig2);
 //        System.out.println("Proposed Between: " + prop2);
 	}
+
 }

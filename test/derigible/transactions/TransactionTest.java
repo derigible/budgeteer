@@ -143,7 +143,7 @@ public class TransactionTest {
 		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,23);
 		
 		assertFalse("Transaction not added to list.", before == after);
-		assertEquals("Transaction list not changed by correct amount.", 6, after);
+		assertEquals("Transaction list not changed by correct amount.", 7, after);
 		assertSame("Category Indexing not working correctly with add event.", transact,
 				t.getByCategory("SomethingNew").get(0));
 		assertSame("Date Indexing not working correctly with add event.", transact,
@@ -222,7 +222,7 @@ public class TransactionTest {
 	public void testGetYearsWithTransactions(){
 		TList t = new TList(trans2);
 		
-		assertEquals("Wrong number of years passed back.", 1, t.getYearsWithTransactions().length);
+		assertEquals("Wrong number of years passed back.", 2, t.getYearsWithTransactions().length);
 		assertTrue("Wrong year passed back.", 2014 == t.getYearsWithTransactions()[0]);
 		
 		Transact transact = new Transact(new GregorianCalendar(2013,Calendar.NOVEMBER,15), "Ice Cream",
@@ -230,7 +230,7 @@ public class TransactionTest {
 		
 		t.addTransaction(transact);
 		
-		assertEquals("Wrong number of years pass back after adding transaction.", 2, 
+		assertEquals("Wrong number of years pass back after adding transaction.", 3, 
 				t.getYearsWithTransactions().length);
 		
 	}
@@ -250,7 +250,7 @@ public class TransactionTest {
 		
 		assertEquals("Wrong number of months passed back for 2014.", 2, 
 				t.getMonthsInYearWithTransactions(2014).length);
-		assertEquals("Wrong number of months passed back for 2015.", 0, 
+		assertEquals("Wrong number of months passed back for 2015.", 1, 
 				t.getMonthsInYearWithTransactions(2015).length);
 	}
 	
@@ -384,7 +384,7 @@ public class TransactionTest {
 		
 		t.addTransaction(transact2);
 		
-		assertEquals("Wrong number of Transactions returned", 5, t.getTransactions().size());
+		assertEquals("Wrong number of Transactions returned", 5, t.getDebits().size());
 		assertEquals("Wrong number of Income Transactions returned after add.", 2, 
 				t.getIncomeTransactions().size());
 	}
@@ -471,7 +471,7 @@ public class TransactionTest {
 		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,23);
 		
 		assertFalse("Transaction not added to list.", before == after);
-		assertEquals("Transaction list not changed by correct amount.", 7, after);
+		assertEquals("Transaction list not changed by correct amount.", 8, after);
 		assertSame("Category Indexing not working correctly with add event.", transact,
 				t.getByCategory("SomethingNew").get(0));
 		assertSame("Date Indexing not working correctly with add event.", transact,
@@ -750,7 +750,7 @@ public class TransactionTest {
 		TList t = new TList(trans2);
 		
 		assertEquals("Wrong number of categories returned.", 
-				3, t.getCategories().length);
+				4, t.getCategories().length);
 	}
 	
 	@Test
@@ -758,7 +758,7 @@ public class TransactionTest {
 		TList t = new TList(trans2);
 		
 		assertEquals("Wrong number of accounts returned.", 
-				3, t.getAccounts().length);
+				4, t.getAccounts().length);
 	}
 	
 	@Test

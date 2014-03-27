@@ -55,7 +55,7 @@ public interface Transaction {
 	 * 
 	 * @return false for Debit, true for Credit (or reverse if primarily used in a sales env)
 	 */
-	public abstract boolean isDebitOrCredit();
+	public abstract boolean isCredit();
 	
 	/**
 	 * Set whether or not the transaction has been excluded from use. Transaction objects should
