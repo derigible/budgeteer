@@ -433,16 +433,77 @@ public class TransactionsController {
 		return credited - debited;
 	}
 	
-	public double getBalanceForCategoriesForAccounts(String[] categories, String[] account){
-		
+	/**
+	 * Get the balance for the categories in the selected accounts.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param accounts - the accounts to search in
+	 * @return the balance
+	 */
+	public double getBalanceForCategoriesForAccounts(String[] categories, String[] accounts){
+		double credited = 0;
+		double debited = 0;
+		List<Transaction> l = tlist.getByCategories(categories);
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, l)){
+				if(t.isCredit()){
+					credited += t.getAmount();
+				} else {
+					debited += t.getAmount();
+				}
+			}
+		}
+		return credited - debited;
 	}
 	
-	public double getBalanceForCategoryForAccountsBetweenDates(String category, String[] account, Date start, Date end){
-		
+	/**
+	 * Get the balance for the category in the selected accounts between the provided dates.
+	 * 
+	 * @param category - the category to filter by
+	 * @param accounts - the accounts to search in
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @return the balance
+	 */
+	public double getBalanceForCategoryForAccountsBetweenDates(String category, String[] accounts, Date start, Date end){
+		double credited = 0;
+		double debited = 0;
+		List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategory(category));
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, l)){
+				if(t.isCredit()){
+					credited += t.getAmount();
+				} else {
+					debited += t.getAmount();
+				}
+			}
+		}
+		return credited - debited;
 	}
 	
-	public double getBalanceForCategoriesForAccountsBetweenDates(String[] categories, String[] account, Date start, Date end){
-		
+	/**
+	 * Get the balance for the categories in the accounts between the dates given.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param accounts - the accounts to search in
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @return the balance
+	 */
+	public double getBalanceForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end){
+		double credited = 0;
+		double debited = 0;
+		List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategories(categories));
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, l)){
+				if(t.isCredit()){
+					credited += t.getAmount();
+				} else {
+					debited += t.getAmount();
+				}
+			}
+		}
+		return credited - debited;
 	}
 	
 	/**
@@ -491,6 +552,12 @@ public class TransactionsController {
 		return debited;
 	}
 	
+	/**
+	 * Get the debits(spending) for the provided category.
+	 * 
+	 * @param category - the category to filter by
+	 * @return the spending
+	 */
 	public double getSpendingForCategory(String category){
 		double debited = 0;
 		for(Transaction t : tlist.filterByCategory(category, tlist.getDebits())){
@@ -499,6 +566,12 @@ public class TransactionsController {
 		return debited;
 	}
 	
+	/**
+	 * Get the debits(spending) for the provided categories.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @return the spending
+	 */
 	public double getSpendingForCategories(String[] categories){
 		double debited = 0;
 		for(String category : categories){
@@ -507,41 +580,133 @@ public class TransactionsController {
 		return debited;
 	}
 	
-	
+	/**
+	 * Get the debits(spending) for the provided categories between the specified dates.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param start - the start of the period
+	 * @param end the end of the period
+	 * @return the spending
+	 */
 	public double getSpendingForCategoriesBetweenDates(String[] categories, Date start, Date end){
-		
+		double debited = 0;
+		for(Transaction t : tlist.filterByDates(start, end, 
+				tlist.filterByCategories(categories, tlist.getDebits()))){
+			debited += t.getAmount();
+		}
+		return debited;
 	}
 	
+	/**
+	 * Get the debits(spending) for the provided categories between the specified dates.
+	 * 
+	 * @param category - the category to filter by
+	 * @param account - the account to search in
+	 * @return the spending
+	 */
 	public double getSpendingForCategoryForAccount(String category, String account){
-		
+		double debited = 0;
+		for(Transaction t : tlist.filterByAccount(account, 
+				tlist.filterByCategory(category, tlist.getDebits()))){
+			debited += t.getAmount();
+		}
+		return debited;
 	}
 	
+	/**
+	 * Get the debits(spending) for the provided categories between the specified dates.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param account - the account to search in
+	 * @return the spending
+	 */
 	public double getSpendingForCategoriesForAccount(String[] categories, String account){
-		
+		double debited = 0;
+		for(Transaction t : tlist.filterByAccount(account, 
+				tlist.filterByCategories(categories, tlist.getDebits()))){
+			debited += t.getAmount();
+		}
+		return debited;
 	}
 	
+	/**
+	 * Get the spending for the category of the account between the dates specified.
+	 * 
+	 * @param category - the category to filter by
+	 * @param account - the account to search in
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @return the spending
+	 */
 	public double getSpendingForCategoryForAccountBetweenDates(String category, String account, Date start, Date end){
-		
+		double debited = 0;
+		for(Transaction t : tlist.filterByAccount(account, 
+				tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getDebits())))){
+			debited += t.getAmount();
+		}
+		return debited;
 	}
 	
+	/**
+	 * Get the spending for the categories for the account between the dates specified.
+	 * 
+	 * @param categories - the categories to filter by
+	 * @param account - the account to search in
+	 * @param start - the start of the period
+	 * @param end - the end of the period
+	 * @return the spending
+	 */
 	public double getSpendingForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end){
-		
+		double debited = 0;
+		for(Transaction t : tlist.filterByAccount(account, 
+				tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits())))){
+			debited += t.getAmount();
+		}
+		return debited;
 	}
 	
-	public double getSpendingForCategoryForAccounts(String category, String[] account){
-		
+	/**
+	 * Get the spending for the category in the accounts between the dates specified.
+	 * 
+	 * @param category - the category to filter by
+	 * @param accounts - the accounts to search in
+	 * @return the spending
+	 */
+	public double getSpendingForCategoryForAccounts(String category, String[] accounts){
+		double debited = 0;
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, 
+					tlist.filterByCategory(category, tlist.getDebits()))){
+				debited += t.getAmount();
+			}
+		}
+		return debited;
 	}
 	
-	public double getSpendingForCategoriesForAccounts(String[] categories, String[] account){
-		
+	public double getSpendingForCategoriesForAccounts(String[] categories, String[] accounts){
+		double debited = 0;
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, 
+					tlist.filterByCategories(categories, tlist.getDebits()))){
+				debited += t.getAmount();
+			}
+		}
+		return debited;
 	}
 	
 	public double getSpendingForCategoryForAccountsBetweenDates(String category, String[] account, Date start, Date end){
 		
 	}
 	
-	public double getSpendingForCategoriesForAccountsBetweenDates(String[] categories, String[] account, Date start, Date end){
-		
+	public double getSpendingForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end){
+		double debited = 0;
+		for(String account : accounts){
+			for(Transaction t : tlist.filterByAccount(account, 
+					tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits())))){
+				debited += t.getAmount();
+			}
+		}
+		return debited;
 	}
 	
 }
