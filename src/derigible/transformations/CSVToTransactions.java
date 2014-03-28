@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -328,9 +327,9 @@ public class CSVToTransactions implements Transformation {
 	 * @return
 	 */
 	private Transaction[] mappedCSVToTransactions(List<String[]> lines) throws IOException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Transact[] trans = new Transact[lines.size()];
-		for (String[] line : lines) {
+		for (int i = 0; i < lines.size(); i++) {
+			String[] line = lines.get(i);
 			Transact t = new Transact();
 			GregorianCalendar g;
 			if(map[0] != -1){
@@ -340,7 +339,27 @@ public class CSVToTransactions implements Transformation {
 				} catch (IOException e) {
 					g = new GregorianCalendar(2012,12,12);
 				}
-			}	
+				t.setDate(g);
+			} else {
+				g = new GregorianCalendar(Integer.parseInt(line[map[8]]), 
+						Integer.parseInt(line[map[9]]), Integer.parseInt(line[map[10]]));
+				t.setDate(g);
+			}
+			t.setDescription(line[map[1]]);
+			try{
+				t.setAmount(Double.parseDouble(line[map[2]]));
+			} catch (NumberFormatException e){
+				t.setAmount(-1);
+			}
+			if(StringU.lower(line[map[3]]).equals("credit")){
+				t.setDebitOrCredit(true);
+			}
+			t.setCategory(line[map[4]]);
+			t.setAccount(line[map[5]]);
+			// Check if user wants to keep notes and labels
+			//Currently just discards them
+			//TODO
+			trans[i] = t;
 		}
 		return trans;
 	}
@@ -358,13 +377,4 @@ public class CSVToTransactions implements Transformation {
 		}
 		throw new IOException("Date Unparseable, switching to default date.");
 	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

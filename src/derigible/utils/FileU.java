@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author marphill
@@ -57,7 +56,8 @@ public final class FileU {
 	
 	/**
 	 * Gets the default location to store the file ($HOME/{username}/Budgeteer)
-	 * @return
+	 * 
+	 * @return the default file writer location
 	 * @throws IOException
 	 */
 	public static PrintWriter getFileWriterToDefaultLocation(String filename) throws IOException{
@@ -73,6 +73,16 @@ public final class FileU {
 			}
 		}
 		return getFileWriter(file);
+	}
+	
+	public static BufferedReader getFileReaderAtDefaultLocation(String filename) throws FileNotFoundException{
+		File file =  new File(System.getProperty("user.home") + "Budgeteer");
+		if(file.exists()){
+			file = new File(file.getAbsolutePath() + filename);
+		} else {
+			throw new FileNotFoundException();
+		}
+		return getFileReader(file);
 	}
 
 	/**
