@@ -180,7 +180,7 @@ public final class StringU {
 	 * @param input - the string to format
 	 * @return the formatted string
 	 */
-	public static String formatStringToLowercase(String input){
+	public static String lower(String input){
 		if(input == null){
         	return null;
         }
@@ -214,7 +214,7 @@ public final class StringU {
      * Test the formatNameString method and report the success/failure.
      */
     private static int test(String input, String expected) {
-        String output = formatStringToLowercase(input);
+        String output = lower(input);
         if (expected == null && output == null) {
             System.out.println("SUCCESS: ["+input+"] => ["+output+"]");
             return 0;

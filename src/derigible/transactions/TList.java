@@ -182,7 +182,7 @@ public class TList implements Transactions{
 	 * Simply a convenience method to make lowering much cleaner.
 	 */
 	private String lower(String input){
-		return StringU.formatStringToLowercase(input);
+		return StringU.lower(input);
 	}
 	
 	@Override

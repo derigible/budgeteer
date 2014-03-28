@@ -3,6 +3,7 @@
  */
 package derigible.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -27,9 +28,24 @@ public class TransactionsController {
 	 * 
 	 * @param transformer - the transformer object that outputs data to an array
 	 */
-	public TransactionsController(Transformation transformer){
+	public TransactionsController(Transformation transformer) throws IOException{
 		tlist = transformer.data_to_transactions();
 //		balance = getCurrentBalance();
+	}
+	
+	/**
+	 * This constructor is here merely to allow for updates to the primary constructor (such as
+	 * add throws Exception clauses) and not have to catch the creation error in my tests.
+	 * 
+	 * @param transformer 
+	 * @param DONOTUSE
+	 */
+	public TransactionsController(Transformation transformer, int DONOTUSE){
+		try{
+			tlist = transformer.data_to_transactions();
+		} catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**

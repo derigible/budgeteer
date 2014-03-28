@@ -20,6 +20,7 @@ import derigible.transactions.Transaction;
 import derigible.transformations.MockTransform;
 import derigible.transformations.Transformation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -83,7 +84,12 @@ public class TransControllerTest {
 	public void setup(){
 		x2t = Mockito.mock(MockTransform.class);
 		t = new TList(trans2);
-		when(x2t.data_to_transactions()).thenReturn(t);
+		try {
+			when(x2t.data_to_transactions()).thenReturn(t);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@After
@@ -102,13 +108,13 @@ public class TransControllerTest {
 	@Test
 	public void testControllerInitialization(){
 		
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		assertSame("Wrong TList object returned - not initialized correcty.", t, tc.getTransactions());
 	}
 	
 	@Test
 	public void testGetCurrentBalance(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		assertEquals("Wrong amount of money returned.", 9.93, tc.getCurrentBalance(), .001);
 		
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
@@ -121,7 +127,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
@@ -133,7 +139,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
@@ -150,7 +156,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeByDate(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		tc.excludeDate(start.getTime());
@@ -161,7 +167,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeByDate(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		tc.excludeDate(start.getTime());
@@ -177,7 +183,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeCategory(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeCategory("Dessert");
 		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
@@ -185,7 +191,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeCategory(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeCategory("Dessert");
 		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
@@ -196,7 +202,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeCategories(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -204,7 +210,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeCategories(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -215,7 +221,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeAccount("Mastercard");
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -223,7 +229,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeAccount("Mastercard");
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -234,7 +240,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testExcludeAccounts(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
 		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
@@ -242,7 +248,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testIncludeAccounts(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
 		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
@@ -253,14 +259,14 @@ public class TransControllerTest {
 	
 	@Test
 	public void testCurrentBalanceForAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		assertEquals("Wrong balance for Mastercard account.", -85.57, 
 				tc.getCurrentBalanceForAccount("Mastercard"), .001);
 	}
 
 	@Test
 	public void testCurrentBalanceForAccount_withDebitsAndCredits(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
 				4.50, "Dessert","Mastercard", true);
 		tc.getTransactions().addTransaction(transact2);
@@ -270,7 +276,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testCurrentBalanceBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -282,7 +288,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testCurrentBalBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -299,7 +305,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testCurrentSpendingBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -316,7 +322,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testCurrentIncomeBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -333,7 +339,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testGetPossibleDuplicates(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		
 		assertEquals("Wrong number of duplicates returned.", 0, 
 				tc.getPossibleDuplicates().size());
@@ -372,7 +378,7 @@ public class TransControllerTest {
 	
 	@Test
 	public void testDuplicatesFoundAreCorrect(){
-		TransactionsController tc = new TransactionsController(x2t);
+		TransactionsController tc = new TransactionsController(x2t,1);
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
 				114.50, "Payroll", "Check #11456", true);
 		tc.getTransactions().addTransaction(transact2);
