@@ -16,9 +16,9 @@ import javax.swing.filechooser.FileSystemView;
  * @author marphill
  * Helper class to make file handling far easier.
  */
-public final class FileHelper {
+public final class FileU {
 	
-	private FileHelper(){
+	private FileU(){
 		//Here to prevent instantiation
 	}
 	

@@ -29,6 +29,8 @@ public interface Transaction {
 	 */
 	public abstract String getDescription();
 	
+	public abstract String getOriginalDescription();
+	
 	/**
 	 * The amount of the transaction.
 	 * 

@@ -19,6 +19,7 @@ public class Transact implements Transaction {
 		private String Category;
 		private String Account;
 		private boolean DebitOrCredit;
+		private String origDescription;
 		/**
 		 * All transactions assumed included.
 		 */
@@ -137,5 +138,14 @@ public class Transact implements Transaction {
 		
 		public void setExcluded(boolean exclude){
 			excluded = exclude;
+		}
+
+		@Override
+		public String getOriginalDescription() {
+			return this.origDescription;
+		}
+		
+		public void setOriginalDescription(String original){
+			this.origDescription = original;
 		}
 }

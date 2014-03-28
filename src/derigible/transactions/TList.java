@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import derigible.utils.StringHelper;
+import derigible.utils.StringU;
 
 
 /**
@@ -182,7 +182,7 @@ public class TList implements Transactions{
 	 * Simply a convenience method to make lowering much cleaner.
 	 */
 	private String lower(String input){
-		return StringHelper.formatStringToLowercase(input);
+		return StringU.formatStringToLowercase(input);
 	}
 	
 	@Override
@@ -394,7 +394,7 @@ public class TList implements Transactions{
 	public String[] getCategories() {
 		String[] tempStrings = categories.keySet().toArray(new String[categories.keySet().size()]);
 		for(int i = 0; i < tempStrings.length; i++){
-			tempStrings[i] = StringHelper.formatString(tempStrings[i]);
+			tempStrings[i] = StringU.formatString(tempStrings[i]);
 		}
 		return tempStrings;
 	}
@@ -403,7 +403,7 @@ public class TList implements Transactions{
 	public String[] getAccounts() {
 		String[] tempStrings = accounts.keySet().toArray(new String[accounts.keySet().size()]);
 		for(int i = 0; i < tempStrings.length; i++){
-			tempStrings[i] = StringHelper.formatString(tempStrings[i]);
+			tempStrings[i] = StringU.formatString(tempStrings[i]);
 		}
 		return tempStrings;
 	}

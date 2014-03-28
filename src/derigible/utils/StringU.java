@@ -7,9 +7,9 @@ package derigible.utils;
  * @author marphill
  *
  */
-public final class StringHelper {
+public final class StringU {
 	
-	private StringHelper(){
+	private StringU(){
 		//Does nothing - methods should be static.
 	}
 	
