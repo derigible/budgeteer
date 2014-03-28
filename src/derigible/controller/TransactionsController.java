@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.Transformation;
@@ -21,7 +20,7 @@ import derigible.transformations.Transformation;
 public class TransactionsController {
 	
 	private Transactions tlist = null;
-	private double balance = 0;
+//	private double balance = 0;
 	
 	/**
 	 * Creates the Transactions list stored in the controller.
@@ -30,7 +29,7 @@ public class TransactionsController {
 	 */
 	public TransactionsController(Transformation transformer){
 		tlist = transformer.data_to_transactions();
-		balance = getCurrentBalance();
+//		balance = getCurrentBalance();
 	}
 	
 	/**
