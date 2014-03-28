@@ -23,6 +23,7 @@ public class CSVToTransactions implements Transformation {
 	private CSVReader csv = null;
 	private int[] map;
 	private String[][] possibleHeaders;
+	private static final int NODATE = 1000;
 
 	/**
 	 * Set the file to the csv reader and the number of columns that are desired
@@ -148,7 +149,7 @@ public class CSVToTransactions implements Transformation {
 	 * 		6 -> Notes
 	 * 		7 -> Labels
 	 * 		8 -> Year
-	 *      9 -> Moth
+	 *      9 -> Month
 	 *      10 -> Day
 	 * </pre>
 	 * 
@@ -195,7 +196,7 @@ public class CSVToTransactions implements Transformation {
 				{"transaction type", "3"}, {"category", "4"}, {"account name", "5"}, 
 				{"total", "2"}, {"credits", "2"}, {"debits", "2"}, {"credit", "2"},
 				{"debit", "2"}, {"information", "6"}, {"info", "6"}, {"account", "5"},
-				{"group", "4"}, {"tag","4"} };
+				{"group", "4"}, {"tag","4"}, {"notes", "6"}, {"labels", "7"} };
 		if(possibleHeaders == null){
 			possibleHeaders = possibleHeadersTemp;
 		}
@@ -219,6 +220,7 @@ public class CSVToTransactions implements Transformation {
 					{
 					   map[i]= -1;   
 					}
+					map[0] = NODATE;
 					map[8] = year;
 					map[9] = month;
 					map[10] = day;
@@ -232,8 +234,12 @@ public class CSVToTransactions implements Transformation {
 			}
 		}
 		for (int i = 0; i < columns.length; i++) {
-			if(StringU.lower(columns[i]).equals(possibleHeaders[i])){
-				map[Integer.parseInt(possibleHeaders[i][1])] = i;
+			String test = StringU.lower(columns[i]);
+			for(int j = 0; j < possibleHeaders.length; j++){
+				if(test.equals(possibleHeaders[j][0])){
+					map[Integer.parseInt(possibleHeaders[j][1])] = i;
+					continue;
+				}
 			}
 		}
 		for(int i = 0; i < map.length; i++){
@@ -247,7 +253,7 @@ public class CSVToTransactions implements Transformation {
 
 	private int testIfContains(String test, String[] target) {
 		for (int i = 0; i < target.length; i++) {
-			if (target[i].equals(test)) {
+			if (StringU.lower(target[i]).equals(test)) {
 				return i;
 			}
 		}
@@ -286,9 +292,9 @@ public class CSVToTransactions implements Transformation {
 	}
 
 	private Transaction[] mint_comCSVToTransactions(List<String[]> lines) {
-		Transact[] trans = new Transact[lines.size()];
-		for (int i = 0; i < lines.size(); i++) {
-			String[] column = lines.get(i);
+		Transact[] trans = new Transact[lines.size() - 1]; //Skip header
+		for (int i = 0; i < lines.size() - 1; i++) {
+			String[] column = lines.get(i + 1); //Skip header
 			Transact t = new Transact();
 			String[] dateData = column[0].split("/");
 			int month = Integer.parseInt(dateData[0]);
@@ -327,12 +333,15 @@ public class CSVToTransactions implements Transformation {
 	 * @return
 	 */
 	private Transaction[] mappedCSVToTransactions(List<String[]> lines) throws IOException {
-		Transact[] trans = new Transact[lines.size()];
-		for (int i = 0; i < lines.size(); i++) {
-			String[] line = lines.get(i);
+		Transact[] trans = new Transact[lines.size() - 1]; //Skipping header
+		int counter = 0;
+		double credits = 0;
+		double debits = 0;
+		for (int i = 0; i < lines.size() - 1; i++) {
+			String[] line = lines.get(i+1); //Skipping header
 			Transact t = new Transact();
 			GregorianCalendar g;
-			if(map[0] != -1){
+			if(map[0] != NODATE){
 				g = new GregorianCalendar();
 				try {
 					g.setTime(parseDate(line[map[0]]));
@@ -348,11 +357,16 @@ public class CSVToTransactions implements Transformation {
 			t.setDescription(line[map[1]]);
 			try{
 				t.setAmount(Double.parseDouble(line[map[2]]));
+				System.out.println("Parsing: " + line[map[2]]);
 			} catch (NumberFormatException e){
+				counter++;
 				t.setAmount(-1);
 			}
 			if(StringU.lower(line[map[3]]).equals("credit")){
 				t.setDebitOrCredit(true);
+				credits += t.getAmount();
+			} else {
+				debits += t.getAmount();
 			}
 			t.setCategory(line[map[4]]);
 			t.setAccount(line[map[5]]);
@@ -361,6 +375,9 @@ public class CSVToTransactions implements Transformation {
 			//TODO
 			trans[i] = t;
 		}
+		System.out.println("Total Not Parsed: " + counter);
+		double balance = credits - debits;
+		System.out.println("credits: "+ credits + "debits: " +debits+ "balance: " + balance);
 		return trans;
 	}
 	

@@ -18,7 +18,7 @@ public class Transact implements Transaction {
 		private double Amount;
 		private String Category;
 		private String Account;
-		private boolean DebitOrCredit;
+		private boolean DebitOrCredit = false;
 		private String origDescription;
 		/**
 		 * All transactions assumed included.

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * @author marphill
@@ -75,6 +77,14 @@ public final class FileU {
 		return getFileWriter(file);
 	}
 	
+	/**
+	 * Use this to get the filename in the Budgeteer folder. Simplifies the gathering of files
+	 * with user settings.
+	 * 
+	 * @param filename - the filename to search for
+	 * @return the file
+	 * @throws FileNotFoundException
+	 */
 	public static BufferedReader getFileReaderAtDefaultLocation(String filename) throws FileNotFoundException{
 		File file =  new File(System.getProperty("user.home") + "Budgeteer");
 		if(file.exists()){
@@ -84,13 +94,24 @@ public final class FileU {
 		}
 		return getFileReader(file);
 	}
-
+	
 	/**
-	 * @param args
+	 * Get the file that is somewhere within the Budgeteer application folder. The path must 
+	 * be of this format:
+	 * 
+	 * 		"path/to/folder"
+	 * 
+	 * Note that the first node does not have a / in front. This is important and must be kept this
+	 * way or nothing will be returned.
+	 * 
+	 * @param path - path to the file
+	 * @return the file as a File object
+	 * @throws URISyntaxException
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public static File getFileInJavaProjectFolder(String path) throws URISyntaxException{
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		URL url = classLoader.getResource(path);
+		
+		return new File(url.toURI());
 	}
-
 }
