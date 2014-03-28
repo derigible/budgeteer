@@ -334,9 +334,7 @@ public class CSVToTransactions implements Transformation {
 	 */
 	private Transaction[] mappedCSVToTransactions(List<String[]> lines) throws IOException {
 		Transact[] trans = new Transact[lines.size() - 1]; //Skipping header
-		int counter = 0;
-		double credits = 0;
-		double debits = 0;
+
 		for (int i = 0; i < lines.size() - 1; i++) {
 			String[] line = lines.get(i+1); //Skipping header
 			Transact t = new Transact();
@@ -357,17 +355,12 @@ public class CSVToTransactions implements Transformation {
 			t.setDescription(line[map[1]]);
 			try{
 				t.setAmount(Double.parseDouble(line[map[2]]));
-				System.out.println("Parsing: " + line[map[2]]);
 			} catch (NumberFormatException e){
-				counter++;
 				t.setAmount(-1);
 			}
 			if(StringU.lower(line[map[3]]).equals("credit")){
 				t.setDebitOrCredit(true);
-				credits += t.getAmount();
-			} else {
-				debits += t.getAmount();
-			}
+			} 
 			t.setCategory(line[map[4]]);
 			t.setAccount(line[map[5]]);
 			// Check if user wants to keep notes and labels
@@ -375,9 +368,6 @@ public class CSVToTransactions implements Transformation {
 			//TODO
 			trans[i] = t;
 		}
-		System.out.println("Total Not Parsed: " + counter);
-		double balance = credits - debits;
-		System.out.println("credits: "+ credits + "debits: " +debits+ "balance: " + balance);
 		return trans;
 	}
 	

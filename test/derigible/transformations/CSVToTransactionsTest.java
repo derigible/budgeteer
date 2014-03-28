@@ -130,4 +130,15 @@ public class CSVToTransactionsTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testMint_comCSVCorrectlyIdentifiedAndParsed(){
+		try{
+			TransactionsController tc = new TransactionsController(mint);
+			assertEquals("Wrong balance returned.", -28354.78, tc.getCurrentBalance(), .001);
+
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+	}
 }
