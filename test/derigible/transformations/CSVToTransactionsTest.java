@@ -60,6 +60,14 @@ public class CSVToTransactionsTest {
 		}
 
 	}
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
 	
 	@After
 	public void cleanUp(){
@@ -141,4 +149,58 @@ public class CSVToTransactionsTest {
 			e.printStackTrace();
 		}
 	}
+
+    /**
+     * Test of data_to_transactions method, of class CSVToTransactions.
+     */
+    @Test
+    public void testData_to_transactions() throws Exception {
+        System.out.println("data_to_transactions");
+        CSVToTransactions instance = null;
+        Transactions expResult = null;
+        Transactions result = instance.data_to_transactions();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setHeaders method, of class CSVToTransactions.
+     */
+    @Test
+    public void testSetHeaders() throws Exception {
+        System.out.println("setHeaders");
+        int[] headerMap = null;
+        CSVToTransactions instance = null;
+        instance.setHeaders(headerMap);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setPossibleHeaders method, of class CSVToTransactions.
+     */
+    @Test
+    public void testSetPossibleHeaders_StringArrArr() {
+        System.out.println("setPossibleHeaders");
+        String[][] headers = null;
+        CSVToTransactions instance = null;
+        instance.setPossibleHeaders(headers);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setPossibleHeaders method, of class CSVToTransactions.
+     */
+    @Test
+    @todo complete
+    public void testSetPossibleHeaders_File() throws Exception {
+        System.out.println("setPossibleHeaders");
+        File file = null;
+        CSVToTransactions instance = null;
+        instance.setPossibleHeaders(file);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
 }

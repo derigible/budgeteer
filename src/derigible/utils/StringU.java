@@ -29,25 +29,25 @@ public final class StringU {
      * Method is quite fast - use it nearly everywhere a name string is output to make it look nice.
      * 
      * Example output:
-     * 
-		[null] => [null]
-		[] => []
-		[A] => [A]
-		[b] => [B]
-		[bob] => [Bob]
-		[BOB] => [Bob]
-		[McDonald] => [McDonald]
-		[a b] => [A B]
-		[A B] => [A B]
-		[jim jones] => [Jim Jones]
-		[JOHN JOE DOE] => [John Joe Doe]
-		[Mike McRae] => [Mike McRae]
-		[mike McRae] => [mike McRae]
-		[  jim  jones] => [Jim Jones]
-		[JOHN   JOE DOE] => [John Joe Doe]
-		[Mike McRae  ] => [Mike McRae]
-		[ mike  McRae ] => [mike McRae]
-     *   
+     * <pre>
+		[null] =&gt; [null]
+		[] =&gt; []
+		[A] =&gt; [A]
+		[b] =&gt; [B]
+		[bob] =&gt; [Bob]
+		[BOB] =&gt; [Bob]
+		[McDonald] =&gt; [McDonald]
+		[a b] =&gt; [A B]
+		[A B] =&gt; [A B]
+		[jim jones] =&gt; [Jim Jones]
+		[JOHN JOE DOE] =&gt; [John Joe Doe]
+		[Mike McRae] =&gt; [Mike McRae]
+		[mike McRae] =&gt; [mike McRae]
+		[  jim  jones] =&gt; [Jim Jones]
+		[JOHN   JOE DOE] =&gt; [John Joe Doe]
+		[Mike McRae  ] =&gt; [Mike McRae]
+		[ mike  McRae ] =&gt; [mike McRae]
+     *   </pre>
 	 * @param input - the string to be formatted
 	 * @return the formatted string
 	 */
@@ -117,24 +117,24 @@ public final class StringU {
 	 * 
 	 * Example output:
 	 * 
-	 *  [null] => [null]
-		[] => []
-		[ ] => []
-		[A] => [A]
-		[b] => [B]
-		[bob] => [Bob]
-		[BOB] => [Bob]
-		[McDonald] => [Mcdonald]
-		[a b] => [A B]
-		[A B] => [A B]
-		[jim jones] => [Jim Jones]
-		[JOHN JOE DOE] => [John Joe Doe]
-		[Mike McRae] => [Mike Mcrae]
-		[mike McRae] => [Mike Mcrae]
-		[  jim  jones] => [Jim Jones]
-		[JOHN   JOE DOE] => [John Joe Doe]
-		[Mike McRae  ] => [Mike Mcrae]
-		[ mike  McRae ] => [Mike Mcrae]
+	 *  [null] =&gt; [null]
+		[] =&gt; []
+		[ ] =&gt; []
+		[A] =&gt; [A]
+		[b] =&gt; [B]
+		[bob] =&gt; [Bob]
+		[BOB] =&gt; [Bob]
+		[McDonald] =&gt; [Mcdonald]
+		[a b] =&gt; [A B]
+		[A B] =&gt; [A B]
+		[jim jones] =&gt; [Jim Jones]
+		[JOHN JOE DOE] =&gt; [John Joe Doe]
+		[Mike McRae] =&gt; [Mike Mcrae]
+		[mike McRae] =&gt; [Mike Mcrae]
+		[  jim  jones] =&gt; [Jim Jones]
+		[JOHN   JOE DOE] =&gt; [John Joe Doe]
+		[Mike McRae  ] =&gt; [Mike Mcrae]
+		[ mike  McRae ] =&gt; [Mike Mcrae]
 
 	 * 
 	 * @param input - the string to be formatted
@@ -230,7 +230,7 @@ public final class StringU {
         return 1;
     }
 	/**
-	 * @param args
+	 * @param args - the console args
 	 */
 	public static void main(String[] args) {
 		int errors = 0;

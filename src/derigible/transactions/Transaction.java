@@ -29,7 +29,11 @@ public interface Transaction {
 	 */
 	public abstract String getDescription();
 	
-	public abstract String getOriginalDescription();
+    /**
+     *
+     * @return the original description
+     */
+    public abstract String getOriginalDescription();
 	
 	/**
 	 * The amount of the transaction.
@@ -69,6 +73,7 @@ public interface Transaction {
 	
 	/**
 	 * All transactions need to be able to be excluded at any given time.
+         * @param exclude the exclusion flag to set
 	 */
 	public abstract void setExcluded(boolean exclude);
 }

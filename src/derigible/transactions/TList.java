@@ -40,7 +40,7 @@ public class TList implements Transactions{
 	/**
 	 * Constructor using an array of transaction objects. 
 	 * 
-	 * @param trans
+	 * @param trans the transactions to add
 	 */
 	public TList(Transaction[] trans){
 		init(trans);
@@ -48,7 +48,7 @@ public class TList implements Transactions{
 	
 	/**
 	 * Constructor using a list of transaction objects.
-	 * @param trans
+	 * @param trans the transactions to add
 	 */
 	public TList(List<Transaction> trans){
 		init(trans.toArray(new Transaction[0]));
@@ -80,12 +80,12 @@ public class TList implements Transactions{
 	 * It is better to take more time upfront and place the keys in a fixed length array
 	 * then worry about null values later. Keys stored in lower case to avoid duplicates.
 	 * 
-	 * @param trans - the transactions to be cindexed
+	 * @param trans the transactions to be cindexed
 	 */
 	private void indexCategories(Transaction[] trans){
 		int arrayend = 0;
 		if(cindexed){
-			arrayend = tlist.size() - 1;
+			arrayend = tlist.size() -1;
 		}
 		for(int i = 0; i < trans.length; i++){
 			if(categories.containsKey(lower(trans[i].getCategory()))){
@@ -94,7 +94,7 @@ public class TList implements Transactions{
 				for(int j = 0; j < tempids.length; j++){
 					newarray[j] = tempids[j];
 				}
-				newarray[newarray.length - 1] = i + arrayend;
+				newarray[newarray.length -1] = i + arrayend;
 				categories.put(lower(trans[i].getCategory()), newarray);
 			} else{
 				int[] tempids = new int[1];
@@ -108,7 +108,7 @@ public class TList implements Transactions{
 	/**
 	 * Same basic idea as index by categories, except for years.
 	 * 
-	 * @param trans - the transactions to be cindexed
+	 * @param trans the transactions to be cindexed
 	 */
 	private void indexDates(Transaction[] trans){
 		int year = 0;
@@ -116,7 +116,7 @@ public class TList implements Transactions{
 		int day = 0;
 		int arrayend = 0;
 		if(dindexed){
-			arrayend = tlist.size() - 1;
+			arrayend = tlist.size()- 1;
 		}
 		for(int i=0; i < trans.length; i++){
 			GregorianCalendar gc = trans[i].getDate();
@@ -133,7 +133,7 @@ public class TList implements Transactions{
 						for(int j = 0; j < transacts0.length; j++){
 							transacts1[j] = transacts0[j];
 						}
-						transacts1[transacts1.length - 1] = i + arrayend;
+						transacts1[transacts1.length- 1] = i + arrayend;
 						days.put(day, transacts1);
 					} else {
 						days.put(day, new int[] {i + arrayend});
@@ -158,7 +158,7 @@ public class TList implements Transactions{
 	private void indexAccounts(Transaction[] trans){
 		int arrayend = 0;
 		if(aindexed){
-			arrayend = tlist.size() - 1;
+			arrayend = tlist.size()- 1;
 		}
 		for(int i = 0; i < trans.length; i++){
 			if(accounts.containsKey(lower(trans[i].getAccount()))){
@@ -167,7 +167,7 @@ public class TList implements Transactions{
 				for(int j = 0; j < tempids.length; j++){
 					newarray[j] = tempids[j];
 				}
-				newarray[newarray.length - 1] = i + arrayend;
+				newarray[newarray.length- 1] = i + arrayend;
 				accounts.put(lower(trans[i].getAccount()), newarray);
 			} else{
 				int[] tempids = new int[1];
@@ -204,10 +204,10 @@ public class TList implements Transactions{
 	 * Used as a means to recursively find the last included index.
 	 */
 	private Transaction getLastTransaction(List<Transaction> trans, int indexreduce){
-		if(trans.size() >= indexreduce && trans.get(trans.size() - indexreduce).isExcluded()){
+		if(trans.size() >= indexreduce && trans.get(trans.size()- indexreduce).isExcluded()){
 			return getLastTransaction(trans, ++indexreduce);
 		} else {
-			return trans.get(trans.size() - indexreduce);
+			return trans.get(trans.size()- indexreduce);
 		}
 	}
 
@@ -424,7 +424,7 @@ public class TList implements Transactions{
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Filter Methods - to use on lists of transactions.
+	// Filter Methods to use on lists of transactions.
 	
 	@Override
 	public List<Transaction> filterByAccount(String account, List<Transaction> l) {
@@ -713,50 +713,53 @@ public class TList implements Transactions{
 		return trans0;
 	}
 	
-	
-	public static void main(String[] args) {
-//		Transaction[] trans = new Transaction[1000000];
-//		for(int i = 0; i < trans.length; i++){
-//			int m =0;
-//			if(i > 11){
-//				m = i % 10;
-//			} else{
-//				m = i;
-//			}
-//			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
-//					30.0 * i, "Category is 1"+ i + " women and children.",
-//					"Mastercard", false);
-//			trans[i] = t;
-//		}
-//		TList t = new TList(trans);
-//		
-//		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
-//		GregorianCalendar g2 = new GregorianCalendar(2015,Calendar.NOVEMBER,13);
-//		
-//		double orig = 0;
-//        double prop =0;
-//        double orig2 = 0;
-//        double prop2 = 0;
-//        int runs = 5;
-//        int iterations = 100000;
-//		
-//		System.out.println("Working on orig");
-//        for(int i = 0; i < runs; i++){
-//        	double results = 0;
-//        	for(int j = 0; j < iterations; j++){
-//        		long start = System.nanoTime();
-//        		t.getTransactionsByDate(g.getTime());
-//        		long end = System.nanoTime();
-//        		results = (double)(end - start);///1000000000L;
-//        	}
-//        	orig += results/iterations;
-//        }
-//        orig = orig/runs;
-//        
-//        System.out.println("Original: " + orig);
-//        System.out.println("Proposed: " + prop);
-//        System.out.println("Original Between: " + orig2);
-//        System.out.println("Proposed Between: " + prop2);
-	}
+    /**
+     *
+     * @param args
+     */
+//    public static void main(String[] args) {
+////		Transaction[] trans = new Transaction[1000000];
+////		for(int i = 0; i < trans.length; i++){
+////			int m =0;
+////			if(i > 11){
+////				m = i % 10;
+////			} else{
+////				m = i;
+////			}
+////			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
+////					30.0 * i, "Category is 1"+ i + " women and children.",
+////					"Mastercard", false);
+////			trans[i] = t;
+////		}
+////		TList t = new TList(trans);
+////		
+////		GregorianCalendar g = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
+////		GregorianCalendar g2 = new GregorianCalendar(2015,Calendar.NOVEMBER,13);
+////		
+////		double orig = 0;
+////        double prop =0;
+////        double orig2 = 0;
+////        double prop2 = 0;
+////        int runs = 5;
+////        int iterations = 100000;
+////		
+////		System.out.println("Working on orig");
+////        for(int i = 0; i < runs; i++){
+////        	double results = 0;
+////        	for(int j = 0; j < iterations; j++){
+////        		long start = System.nanoTime();
+////        		t.getTransactionsByDate(g.getTime());
+////        		long end = System.nanoTime();
+////        		results = (double)(end start);///1000000000L;
+////        	}
+////        	orig += results/iterations;
+////        }
+////        orig = orig/runs;
+////        
+////        System.out.println("Original: " + orig);
+////        System.out.println("Proposed: " + prop);
+////        System.out.println("Original Between: " + orig2);
+////        System.out.println("Proposed Between: " + prop2);
+//	}
 
 }

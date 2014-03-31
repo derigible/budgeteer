@@ -100,7 +100,7 @@ public interface Transactions {
 	 * 
 	 * Should return if income only.
 	 * 
-	 * @param year - the year of the months in question
+	 * @param year the year of the months in question
 	 * @return the int array of months within the year with a Transaction recorded
 	 */
 	public abstract int[] getMonthsInYearWithTransactions(int year);
@@ -115,8 +115,8 @@ public interface Transactions {
 	 * 
 	 * Should return if income only.
 	 * 
-	 * @param year - the year of the days in question
-	 * @param month - the month of the days in question
+	 * @param year the year of the days in question
+	 * @param month the month of the days in question
 	 * @return the int array of days within the month within the year with a Transaction recorded
 	 */
 	public abstract int[] getDaysInMonthInYearWithTransactions(int year, int month);
@@ -131,7 +131,7 @@ public interface Transactions {
 	 * 
 	 * Should return if income only.
 	 * 
-	 * @param year - the year of the days in question
+	 * @param year the year of the days in question
 	 * @return the int array of days within the specified year with a Transaction Recorded
 	 */
 	public abstract int[] getAllDaysInYearWithTransactions(int year);
@@ -143,7 +143,7 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param date - date of Transactions
+	 * @param date date of Transactions
 	 * @return list of transactions on given date
 	 */
 	public abstract List<Transaction> getByDate(Date date);
@@ -156,10 +156,10 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param start - start date of the transactions list
-	 * @param end - end date of the transactions list
+	 * @param start start date of the transactions list
+	 * @param end end date of the transactions list
 	 * @return list of transactions between given dates.
-	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 * @throws ArrayIndexOutOfBoundsException if end &lt; start
 	 */
 	public abstract List<Transaction> getBetweenDates(Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
@@ -171,7 +171,7 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param category - category of transactions to return
+	 * @param category category of transactions to return
 	 * @return list of transactions of a given category
 	 */
 	public abstract List<Transaction> getByCategory(String category);
@@ -184,7 +184,7 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param categories - categories of transactions to return
+	 * @param categories categories of transactions to return
 	 * @return list of transactions of given categories
 	 */
 	public abstract List<Transaction> getByCategories(String[] categories);
@@ -197,8 +197,8 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param categories - categories of transactions to return
-	 * @param date - date of the transactions to return
+	 * @param categories categories of transactions to return
+	 * @param date date of the transactions to return
 	 * @return list of transactions of given categories and date
 	 */
 	public abstract List<Transaction> getByCategoriesAndDate(String[] categories, Date date);
@@ -211,8 +211,8 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param cat - category of transactions
-	 * @param date - date of transactions
+	 * @param cat category of transactions
+	 * @param date date of transactions
 	 * @return list of transactions of a category and date
 	 */
 	public abstract List<Transaction> getByCategoryAndDate(String cat, Date date);
@@ -225,11 +225,11 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param cat - category of transactions
-	 * @param start - start date of the transactions list
-	 * @param end - end date of the transactions list
+	 * @param cat category of transactions
+	 * @param start start date of the transactions list
+	 * @param end end date of the transactions list
 	 * @return list of transaction of category within dates
-	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 * @throws ArrayIndexOutOfBoundsException if end &lt; start
 	 */
 	public abstract List<Transaction> getByCategoryAndDates(String cat, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
@@ -238,7 +238,7 @@ public interface Transactions {
 	 *  
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param account - the account to check for
+	 * @param account the account to check for
 	 * @return the list of transactions in account
 	 */
 	public abstract List<Transaction> getByAccount(String account);
@@ -252,11 +252,11 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param cats - the categories to return
-	 * @param start - start date of the transactions list
-	 * @param end - end date of the transactions list
+	 * @param cats the categories to return
+	 * @param start start date of the transactions list
+	 * @param end end date of the transactions list
 	 * @return list of transactions of categories and dates
-	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 * @throws ArrayIndexOutOfBoundsException if end &lt; start
 	 */
 	public abstract List<Transaction> getByCategoriesAndDates(String[] cats, Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
@@ -282,7 +282,7 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param date - the date of all income transactions
+	 * @param date the date of all income transactions
 	 * @return a list of transactions that are income on a particular date
 	 */
 	public abstract List<Transaction> getIncomeByDate(Date date);
@@ -296,38 +296,38 @@ public interface Transactions {
 	 * 
 	 * Excluded Transactions should not be returned.
 	 * 
-	 * @param start - start date of the income transactions list
-	 * @param end - end date of the income transactions list
+	 * @param start start date of the income transactions list
+	 * @param end end date of the income transactions list
 	 * @return list of income transactions between given dates.
-	 * @throws ArrayIndexOutOfBoundsException if end < start
+	 * @throws ArrayIndexOutOfBoundsException if end &lt; start
 	 */
 	public abstract List<Transaction> getIncomeBetweenDates(Date start, Date end) throws ArrayIndexOutOfBoundsException;
 	
 	/**
 	 * Add a transaction to the transactions list.
 	 * 
-	 * @param tran - the transaction to add
+	 * @param tran the transaction to add
 	 */
 	public abstract void addTransaction(Transaction tran);
 	
 	/**
 	 * Remove a set of transactions from the transactions list.
 	 * 
-	 * @param trans - the transactions to add
+	 * @param trans the transactions to add
 	 */
 	public abstract void addTransactions(Transaction[] trans);
 	
 	/**
 	 * Exclude a transaction from the transactions list.
 	 * 
-	 * @param tran - the transaction to exclude
+	 * @param tran the transaction to exclude
 	 */
 	public abstract void excludeTransaction(Transaction tran);
 	
 	/**
 	 * Include a transaction from the transactions list.
 	 * 
-	 * @param tran - the transaction to include
+	 * @param tran the transaction to include
 	 */
 	public abstract void includeTransaction(Transaction tran);
 	
@@ -351,7 +351,7 @@ public interface Transactions {
 	/**
 	 * Determines if the transactions list has the given category.
 	 * 
-	 * @param category - the category to search for
+	 * @param category the category to search for
 	 * @return true if found, false otherwise
 	 */
 	public abstract boolean hasCategory(String category);
@@ -359,7 +359,7 @@ public interface Transactions {
 	/**
 	 * Determines if the transactions list has the given account.
 	 * 
-	 * @param account - the account to search for
+	 * @param account the account to search for
 	 * @return true if found, false otherwise
 	 */
 	public abstract boolean hasAccount(String account);
@@ -387,8 +387,8 @@ public interface Transactions {
 	 * 	
 	 * Filter method should not exclude transactions.
 	 * 
-	 * @param account - the account to filter by
-	 * @param l - the list of transactions
+	 * @param account the account to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByAccount(String account, List<Transaction> l);
@@ -400,8 +400,8 @@ public interface Transactions {
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
-	 * @param accounts - the accounts to filter by
-	 * @param l - the list of transactions
+	 * @param accounts the accounts to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByAccounts(String[] accounts, List<Transaction> l);
@@ -413,8 +413,8 @@ public interface Transactions {
 	 * 
 	 * Filter method should not exclude transactions..
 	 * 
-	 * @param category - the category to filter by
-	 * @param l - the list of transactions
+	 * @param category the category to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByCategory(String category, List<Transaction> l);
@@ -426,8 +426,8 @@ public interface Transactions {
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
-	 * @param categories - the categories to filter by
-	 * @param l - the list of transactions
+	 * @param categories the categories to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByCategories(String[] categories, List<Transaction> l);
@@ -439,8 +439,8 @@ public interface Transactions {
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
-	 * @param date - the date to filter by
-	 * @param l - the list of transactions
+	 * @param date the date to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByDate(Date date, List<Transaction> l);
@@ -452,9 +452,9 @@ public interface Transactions {
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
-	 * @param start - the start of the dates to filter by
-	 * @param end - the end of the dates to filter by
-	 * @param l - the list of transactions
+	 * @param start the start of the dates to filter by
+	 * @param end the end of the dates to filter by
+	 * @param l the list of transactions
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByDates(Date start, Date end, List<Transaction> l);

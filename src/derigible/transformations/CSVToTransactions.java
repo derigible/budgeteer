@@ -18,6 +18,10 @@ import au.com.bytecode.opencsv.CSVReader;
 import derigible.utils.FileU;
 import derigible.utils.StringU;
 
+/**
+ *
+ * @author Guest-temp
+ */
 public class CSVToTransactions implements Transformation {
 
 	private CSVReader csv = null;
@@ -43,7 +47,8 @@ public class CSVToTransactions implements Transformation {
 	 * NOTE: Date formats that do not match MM/DD/YYYY will throw a parse error and will
 	 * be converted to 12/12/2012.
 	 * 
-	 * @param file - the file to parse
+	 * @param file the file to parse
+         * @throws java.io.FileNotFoundException file for transactions not found
 	 */
 	public CSVToTransactions(File file) throws FileNotFoundException{
 		csv = new CSVReader(FileU.getFileReader(file));
@@ -85,33 +90,33 @@ public class CSVToTransactions implements Transformation {
 	 * The positions of the map array are mapped in the order above, or namely:
 	 * 
 	 * <pre>
-	 * 		0 -> Date
-	 * 		1 -> Description
-	 * 		2 -> Amount
-	 * 		3 -> Transaction Type
-	 * 		4 -> Category
-	 * 		5 -> Account Name
-	 * 		6 -> Notes
-	 * 		7 -> Labels
-	 * 		8 -> Year
-	 *      9 -> Moth
-	 *      10 -> Day
+	 * 		0 &gt; Date
+	 * 		1 &gt; Description
+	 * 		2 &gt; Amount
+	 * 		3 &gt; Transaction Type
+	 * 		4 &gt; Category
+	 * 		5 &gt; Account Name
+	 * 		6 &gt; Notes
+	 * 		7 &gt; Labels
+	 * 		8 &gt; Year
+	 *              9 &gt; Moth
+	 *              10 &gt; Day
 	 * </pre>
 	 * 
 	 * Some CSV exports express date as a Day/Month/Year in different columns.
-	 * If this is the case, put -1 in the Date position and it will skip to the
+	 * If this is the case, put 1 in the Date position and it will skip to the
 	 * values in 9, 10, and 11 to make the date.
 	 * 
 	 * An example of how to use this is as follows:
 	 * 
 	 * <pre>
-	 * 		Date -> -1
-	 * 		Description -> 4
-	 * 		Amount -> 5
+	 * 		Date &gt; 1
+	 * 		Description &gt; 4
+	 * 		Amount &gt; 5
 	 * 		... (Same pattern for the rest)
-	 * 		Year ->  0
-	 * 		Month -> 1
-	 * 		Day	-> 2
+	 * 		Year &gt;  0
+	 * 		Month &gt; 1
+	 * 		Day &gt; 2
 	 * </pre>
 	 * 
 	 * If a column does not match the type expected (ie the map for amount is
@@ -120,8 +125,8 @@ public class CSVToTransactions implements Transformation {
 	 * NOTE: Mint.com CSVs are automatically detected and will remove the
 	 * original description. Therefore, no need to set the headers.
 	 * 
-	 * @param headerMap - the map of values in the csv to the predefined values
-	 * @throws IOException - data type does not match
+	 * @param headerMap the map of values in the csv to the predefined values
+	 * @throws IOException data type does not match
 	 */
 	public void setHeaders(int[] headerMap) throws IOException {
 		if (headerMap.length != 11 || headerMap.length != 8) {
@@ -140,17 +145,17 @@ public class CSVToTransactions implements Transformation {
 	 * following:
 	 * 
 	 * <pre>
-	 * 		0 -> Date
-	 * 		1 -> Description
-	 * 		2 -> Amount
-	 * 		3 -> Transaction Type
-	 * 		4 -> Category
-	 * 		5 -> Account Name
-	 * 		6 -> Notes
-	 * 		7 -> Labels
-	 * 		8 -> Year
-	 *      9 -> Month
-	 *      10 -> Day
+	 * 		0 &gt; Date
+	 * 		1 &gt; Description
+	 * 		2 &gt; Amount
+	 * 		3 &gt; Transaction Type
+	 * 		4 &gt; Category
+	 * 		5 &gt; Account Name
+	 * 		6 &gt; Notes
+	 * 		7 &gt; Labels
+	 * 		8 &gt; Year
+	 *              9 &gt; Month
+	 *              10 &gt; Day
 	 * </pre>
 	 * 
 	 * And example of what these nested array will look like follows:
@@ -163,7 +168,7 @@ public class CSVToTransactions implements Transformation {
 				{"group", "4"}, {"tag","4"} };
 	 * </pre>
 	 * 
-	 * @param headers
+	 * @param headers the headers to set
 	 */
 	public void setPossibleHeaders(String[][] headers){
 		possibleHeaders = headers;
@@ -173,7 +178,8 @@ public class CSVToTransactions implements Transformation {
 	 * Same function as setPossibleHeaders(String[][] headers) but will use a file as a param
 	 * and the parsing into an array is done in this module. File must be an array.
 	 * 
-	 * @param file - the csv containing the possible arrays
+	 * @param file the csv containing the possible arrays
+         * @throws java.io.IOException file for possible headers is not readable
 	 */
 	public void setPossibleHeaders(File file) throws IOException{
 		List<String[]> lines = null;
@@ -203,7 +209,7 @@ public class CSVToTransactions implements Transformation {
 		map = new int[8];
 		for(int i=0;i<map.length;i++)
 		{
-		   map[i]= -1;   
+		   map[i]= 1;   
 		}
 		int year = testIfContains("year", columns);
 		if (year >= 0) {
@@ -218,7 +224,7 @@ public class CSVToTransactions implements Transformation {
 					map = new int[11];
 					for(int i=0;i<map.length;i++)
 					{
-					   map[i]= -1;   
+					   map[i]= 1;   
 					}
 					map[0] = NODATE;
 					map[8] = year;
@@ -243,7 +249,7 @@ public class CSVToTransactions implements Transformation {
 			}
 		}
 		for(int i = 0; i < map.length; i++){
-			if(map[i] == -1){
+			if(map[i] == 1){
 				throw new IOException("Not all keys set. You are missing some values. Please " +
 						"define the headers of your CSV.");
 			}
@@ -257,7 +263,7 @@ public class CSVToTransactions implements Transformation {
 				return i;
 			}
 		}
-		return -1;
+		return 1;
 	}
 
 	/**
@@ -316,17 +322,17 @@ public class CSVToTransactions implements Transformation {
 	/**
 	 * the map:
 	 * * <pre>
-	 * 		0 -> Date
-	 * 		1 -> Description
-	 * 		2 -> Amount
-	 * 		3 -> Transaction Type
-	 * 		4 -> Category
-	 * 		5 -> Account Name
-	 * 		6 -> Notes
-	 * 		7 -> Labels
-	 * 		8 -> Year
-	 *      9 -> Moth
-	 *      10 -> Day
+	 * 		0 > Date
+	 * 		1 > Description
+	 * 		2 > Amount
+	 * 		3 > Transaction Type
+	 * 		4 > Category
+	 * 		5 > Account Name
+	 * 		6 > Notes
+	 * 		7 > Labels
+	 * 		8 > Year
+	 *      9 > Moth
+	 *      10 > Day
 	 * </pre>
 	 * 
 	 * @param lines

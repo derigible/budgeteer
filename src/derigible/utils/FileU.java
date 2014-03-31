@@ -26,9 +26,9 @@ public final class FileU {
 	/**
 	 * Helper method to get the BufferedReader to read a file.
 	 * 
-	 * @param file - the file to read
+	 * @param file the file to read
 	 * @return the BufferedReader
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException the file to read is not found
 	 */
 	public static BufferedReader getFileReader(File file) throws FileNotFoundException  {
 		return new BufferedReader(new FileReader(file));
@@ -37,9 +37,9 @@ public final class FileU {
 	/**
 	 * Helper method to get the BufferedReader to read a file.
 	 * 
-	 * @param file - the file to read's path
+	 * @param file the file to read's path
 	 * @return the BufferedReader
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException  the file to read is not found
 	 */
 	public static BufferedReader getFileReader(String file) throws FileNotFoundException  {
 		return new BufferedReader(new FileReader(file));
@@ -48,9 +48,9 @@ public final class FileU {
 	/**
 	 * Gets a new PrintWriter to write a file.
 	 * 
-	 * @param file - the file to write to
+	 * @param file the file to write to
 	 * @return the printWriter
-	 * @throws IOException
+	 * @throws IOException there was a problem in writing to the file
 	 */
 	public static PrintWriter getFileWriter(File file) throws IOException{
 		return new PrintWriter(new FileWriter(file));
@@ -59,8 +59,9 @@ public final class FileU {
 	/**
 	 * Gets the default location to store the file ($HOME/{username}/Budgeteer)
 	 * 
+         * @param filename the name of the file to write to
 	 * @return the default file writer location
-	 * @throws IOException
+	 * @throws IOException  a problem occurs when writing to the file
 	 */
 	public static PrintWriter getFileWriterToDefaultLocation(String filename) throws IOException{
 		File file =  new File(System.getProperty("user.home") + "Budgeteer");
@@ -81,9 +82,9 @@ public final class FileU {
 	 * Use this to get the filename in the Budgeteer folder. Simplifies the gathering of files
 	 * with user settings.
 	 * 
-	 * @param filename - the filename to search for
+	 * @param filename the filename to search for
 	 * @return the file
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException the file wasn't found
 	 */
 	public static BufferedReader getFileReaderAtDefaultLocation(String filename) throws FileNotFoundException{
 		File file =  new File(System.getProperty("user.home") + "Budgeteer");
@@ -104,9 +105,9 @@ public final class FileU {
 	 * Note that the first node does not have a / in front. This is important and must be kept this
 	 * way or nothing will be returned.
 	 * 
-	 * @param path - path to the file
+	 * @param path path to the file
 	 * @return the file as a File object
-	 * @throws URISyntaxException
+	 * @throws URISyntaxException malformed URI
 	 */
 	public static File getFileInJavaProjectFolder(String path) throws URISyntaxException{
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
