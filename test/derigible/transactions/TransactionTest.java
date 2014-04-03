@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Derigible Enterprises.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Derigible Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.derigible.com/license
+ *
+ * Contributors:
+ *     Derigible Enterprises - initial API and implementation
+ *******************************************************************************/
+
 package derigible.transactions;
 
 import org.junit.AfterClass;
@@ -519,6 +530,7 @@ public class TransactionTest {
 		
 		Transaction after1 = t.getExcluded().get(0);
 		assertSame("Excluded transaction not the same as transaction in TList.", before1, after1);
+        cleanupExclusionTest();
 	}
 	
 	@Test
