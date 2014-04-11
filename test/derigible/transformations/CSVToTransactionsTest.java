@@ -27,7 +27,7 @@ import derigible.transactions.Transact;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.MockTransform;
-import derigible.transformations.Transformation;
+import derigible.transformations.TransformToTransactions;
 import derigible.utils.FileU;
 
 import java.io.File;
@@ -151,6 +151,17 @@ public class CSVToTransactionsTest {
             TransactionsController tc = new TransactionsController(mint);
             assertEquals("Wrong balance returned.", -28354.78, tc.getCurrentBalance(), .001);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testGUIDAddedMint_CSV() {
+        try {
+            TransactionsController tc = new TransactionsController(mint);
+            System.out.println(tc.getTransactions().getLastTransaction().getGUID());
+            assertNotNull("Guid not set.", tc.getTransactions().getLastTransaction().getGUID());
         } catch (IOException e) {
             e.printStackTrace();
         }

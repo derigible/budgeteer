@@ -26,11 +26,13 @@ import java.io.IOException;
  * in a database - use a Transactions class that makes use of this fact. This
  * Class is used primarily for the intent to transform flat files into usable data.
  */
-public interface Transformation {
+public interface TransformToTransactions {
 	
 	/**
 	 * All Transformation objects will return a Transactions object.
      * This is the only requirement for a Transformation object.
+     * Note that the Transformation class should seek to populate
+     * each transaction with a GUID if one is not already found.
      * 
 	 * @return the transactions from the data store
 	 * @throws IOException - if the data store does not match the basic requirements for data in the program

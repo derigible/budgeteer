@@ -28,6 +28,7 @@ public class Transact implements Transaction {
     private String Account;
     private boolean DebitOrCredit = false;
     private String origDescription;
+    private String GUID;
     /**
      * All transactions assumed included.
      */
@@ -176,4 +177,18 @@ public class Transact implements Transaction {
     public void setOriginalDescription(String original) {
         this.origDescription = original;
     }
+
+	/**
+	 * @return the gUID
+	 */
+	public String getGUID() {
+		return GUID;
+	}
+
+	/**
+	 * @param gUID the gUID to set
+	 */
+	public void setGUID(String gUID) {
+		GUID = gUID;
+	}
 }

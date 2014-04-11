@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
-import derigible.transformations.Transformation;
+import derigible.transformations.TransformToTransactions;
 
 /**
  * @author marphill
@@ -37,7 +37,7 @@ public class TransactionsController {
      * @param transformer the transformer object that outputs data to an array
      * @throws java.io.IOException problem reading data from transformer
      */
-    public TransactionsController(Transformation transformer) throws IOException {
+    public TransactionsController(TransformToTransactions transformer) throws IOException {
         tlist = transformer.data_to_transactions();
 //		balance = getCurrentBalance();
     }
@@ -50,7 +50,7 @@ public class TransactionsController {
      * @param transformer the transformer to use
      * @param DONOTUSE DO NOT USE THIS CONSTRUCTOR
      */
-    public TransactionsController(Transformation transformer, int DONOTUSE) {
+    public TransactionsController(TransformToTransactions transformer, int DONOTUSE) {
         try {
             tlist = transformer.data_to_transactions();
         } catch (IOException e) {

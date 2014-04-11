@@ -81,7 +81,21 @@ public interface Transaction {
 	
 	/**
 	 * All transactions need to be able to be excluded at any given time.
-         * @param exclude the exclusion flag to set
+     * @param exclude the exclusion flag to set
 	 */
 	public abstract void setExcluded(boolean exclude);
+	
+	/**
+	 * Set the guid of the transaction.
+	 * 
+	 * @param guid the guid
+	 */
+	public abstract void setGUID(String guid);
+	
+	/**
+	 * Get the guid of the transaction.
+	 * 
+	 * @return the guid
+	 */
+	public abstract String getGUID();
 }

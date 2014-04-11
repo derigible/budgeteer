@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import derigible.controller.GUID;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
 import derigible.transactions.Transaction;
@@ -33,12 +34,13 @@ import derigible.utils.StringU;
  *
  * @author Guest-temp
  */
-public class CSVToTransactions implements Transformation {
+public class CSVToTransactions implements TransformToTransactions {
 
     private CSVReader csv = null;
     private int[] map;
     private String[][] possibleHeaders;
     private static final int NODATE = 1000;
+    private int guid = -1;
 
     /**
      * Set the file to the csv reader and the number of columns that are desired
@@ -111,8 +113,8 @@ public class CSVToTransactions implements Transformation {
      * 		6 =&gt; Notes
      * 		7 =&gt; Labels
      * 		8 =&gt; Year
-     *          9 =&gt; Moth
-     *          10 =&gt; Day
+     *      9 =&gt; Moth
+     *      10 =&gt; Day
      * </pre>
      *
      * Some CSV exports express date as a Day/Month/Year in different columns.
@@ -167,11 +169,11 @@ public class CSVToTransactions implements Transformation {
      * 		6 =&gt; Notes
      * 		7 =&gt; Labels
      * 		8 =&gt; Year
-     *          9 =&gt; Month
-     *          10 =&gt; Day
+     *      9 =&gt; Month
+     *      10 =&gt; Day
      * </pre>
      *
-     * And example of what these nested array will look like follows:
+     * An example of what these nested array will look like follows:
      *
      * <pre>
      * String[][] possibleHeaders = { {"date","0"}, {"description","1"}, {"amount", "2"},
@@ -209,7 +211,17 @@ public class CSVToTransactions implements Transformation {
             possibleHeaders[i][1] = lines.get(i)[1];
         }
     }
-
+    
+    /**
+     * Set the column index that has the GUID assigned to it. If this method is not used, the
+     * transactions will be provided a new GUID.
+     * 
+     * @param index - the GUID column
+     */
+    public void setGUIDLocation(int index){
+    	guid = index;
+    }
+    
     private boolean testIfBasicsInCSV(String[] columns) throws IOException {
         //Hardcoded values should hopefully never be needed.
         String[][] possibleHeadersTemp = {{"date", "0"}, {"description", "1"}, {"amount", "2"},
@@ -326,6 +338,7 @@ public class CSVToTransactions implements Transformation {
             }
             t.setCategory(column[5]);
             t.setAccount(column[6]);
+            t.setGUID(GUID.generate());
             trans[i] = t;
         }
         return trans;
@@ -343,8 +356,8 @@ public class CSVToTransactions implements Transformation {
      * 		6 =&gt; Notes
      * 		7 =&gt; Labels
      * 		8 =&gt; Year
-     *          9 =&gt; Moth
-     *          10 =&gt; Day
+     *      9 =&gt; Moth
+     *      10 =&gt; Day
      * </pre>
      *
      * @param lines
@@ -381,6 +394,12 @@ public class CSVToTransactions implements Transformation {
             }
             t.setCategory(line[map[4]]);
             t.setAccount(line[map[5]]);
+            if(guid == -1){
+            	t.setGUID(GUID.generate());
+            } else {
+            	t.setGUID(line[guid]);
+            }
+            
 	    // Check if user wants to keep notes and labels
             //Currently just discards them
             //TODO

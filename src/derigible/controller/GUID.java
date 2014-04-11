@@ -66,10 +66,10 @@ public class GUID
      try {
        byte ip[] = java.net.InetAddress.getLocalHost().getAddress();
 
-       for (int i = 0; i < ip.length; i++) {
-         int n = ip[i];
+       for (byte element : ip) {
+         int n = element;
 
-         if (ip[i] < 0) {
+         if (element < 0) {
            n += 256;
          } //if
          iphex += pad(Integer.toHexString(n), 4);

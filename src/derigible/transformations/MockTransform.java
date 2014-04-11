@@ -19,7 +19,7 @@ import derigible.transactions.Transactions;
  * @author marphill
  *
  */
-public class MockTransform implements Transformation {
+public class MockTransform implements TransformToTransactions {
 
 	@Override
 	public Transactions data_to_transactions() {

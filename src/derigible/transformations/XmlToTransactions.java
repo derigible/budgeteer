@@ -17,7 +17,7 @@ import derigible.transactions.Transactions;
  *
  * @author Guest-temp
  */
-public final class XmlToTransactions implements Transformation {
+public final class XmlToTransactions implements TransformToTransactions {
 
 	@Override
 	public Transactions data_to_transactions() {

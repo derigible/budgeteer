@@ -26,7 +26,7 @@ import derigible.transactions.TList;
 import derigible.transactions.Transact;
 import derigible.transactions.Transaction;
 import derigible.transformations.MockTransform;
-import derigible.transformations.Transformation;
+import derigible.transformations.TransformToTransactions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.LinkedList;
  *
  */
 public class TransControllerTest {
-	Transformation x2t;
+	TransformToTransactions x2t;
 	TList t;
 	static Transaction[] trans;
 	static Transaction[] trans2;
