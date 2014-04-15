@@ -35,6 +35,14 @@ public interface Transactions {
 	public abstract List<Transaction> getTransactions();
 	
 	/**
+	 * Get a transaction by the transaction GUID.
+	 * 
+	 * @param GUID - the transaction GUID
+	 * @return the transaction
+	 */
+	public abstract Transaction getTransactionByGUID(String GUID);
+	
+	/**
 	 * Returns all debit(spending) transactions.
 	 * 
 	 * Excluded Transactions should not be returned.

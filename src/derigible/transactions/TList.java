@@ -39,6 +39,7 @@ public class TList implements Transactions {
     private HashMap<Integer, HashMap<Integer, HashMap<Integer, int[]>>> years
             = new HashMap<Integer, HashMap<Integer, HashMap<Integer, int[]>>>();
     private HashMap<String, int[]> accounts = new HashMap<String, int[]>();
+    private HashMap<String, Transaction> transactions = new HashMap<String, Transaction>();
     private boolean cindexed = false;
     private boolean dindexed = false;
     private boolean aindexed = false;
@@ -77,6 +78,7 @@ public class TList implements Transactions {
             } else {
                 creditslist.add(tran);
             }
+            transactions.put(tran.getGUID(), tran);
         }
         Transaction[] newt = tlist.toArray(new Transaction[0]);
         indexCategories(newt);
@@ -199,6 +201,11 @@ public class TList implements Transactions {
     @Override
     public List<Transaction> getTransactions() {
         return filterExcluded(tlist);
+    }
+    
+    @Override
+    public Transaction getTransactionByGUID(String guid){
+    	return transactions.get(guid);
     }
 
     @Override

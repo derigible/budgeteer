@@ -18,6 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import derigible.controller.GUID;
 //import static org.mockito.Mockito.*;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
@@ -56,6 +57,7 @@ public class TransactionTest {
 			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
 					30.0 * i, "Category is 1"+ i + " women and children.",
 					"Mastercard", false);
+			t.setGUID(GUID.generate());
 			trans[i] = t;
 			talist.add(t);
 			tllist.add(t);
@@ -73,6 +75,9 @@ public class TransactionTest {
 				4.50, "Dessert", "Mastercard", false);
 		trans2[5] = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
 				114.50, "Payroll", "Check #11456", true);
+		for(Transaction t : trans2){
+			t.setGUID(GUID.generate());
+		}
 	}
 	
 	@AfterClass
@@ -781,5 +786,13 @@ public class TransactionTest {
 				t.getByAccount("Mastercard").size());
 		assertEquals("Wrong number of transactions returned for account Check #11456", 1,
 				t.getByAccount("Check #11456").size());
+	}
+	
+	@Test
+	public void testGetTransactionByGUID(){
+		TList t = new TList(trans2);
+		
+		assertSame("Wrong transaction found.", t.getTransactionByGUID(trans2[0].getGUID()),
+				trans2[0]);
 	}
 }

@@ -63,6 +63,7 @@ public class TransControllerTest {
 			Transact t = new Transact(new GregorianCalendar(2014,m, 13), "This is transact " + i,
 					30.0 * i, "Category is 1"+ i + " women and children.",
 					"Mastercard", false);
+			t.setGUID(GUID.generate());
 			trans[i] = t;
 			talist.add(t);
 			tllist.add(t);
@@ -80,6 +81,9 @@ public class TransControllerTest {
 				4.50, "Dessert", "Mastercard", false);
 		trans2[5] = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
 				114.50, "Payroll", "Check #11456", true);
+		for(Transaction t : trans2){
+			t.setGUID(GUID.generate());
+		}
 	}
 	
 	@AfterClass
