@@ -21,6 +21,7 @@ import java.util.Map;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.TransformToTransactions;
+import derigible.transformations.TransactionsToCSV;
 
 /**
  * @author marphill
@@ -29,7 +30,6 @@ import derigible.transformations.TransformToTransactions;
 public class TransactionsController {
 
     private Transactions tlist = null;
-//	private double balance = 0;
 
     /**
      * Creates the Transactions list stored in the controller.
@@ -39,7 +39,6 @@ public class TransactionsController {
      */
     public TransactionsController(TransformToTransactions transformer) throws IOException {
         tlist = transformer.data_to_transactions();
-//		balance = getCurrentBalance();
     }
 
     /**
@@ -1121,7 +1120,9 @@ public class TransactionsController {
         return dupes;
     }
 
-    public void transactionsToStorage(String filename){
-    	//TODO implement
+    public void transactionsToCSV(String filename, boolean toAppStorage){
+    	TransactionsToCSV csv = new TransactionsToCSV();
+    	csv.setFileName(filename);
+    	csv.excludeId(toAppStorage);
     }
 }

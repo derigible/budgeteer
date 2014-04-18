@@ -19,7 +19,7 @@ import java.util.GregorianCalendar;
  * A Solid implementation of the Transaction object. For most use cases you will
  * want to use this object.
  */
-public class Transact implements Transaction {
+public class Transact implements Transaction, Splittable {
 
     private GregorianCalendar date;
     private String description;
@@ -30,6 +30,8 @@ public class Transact implements Transaction {
     private String origDescription;
     private String GUID = "0";
     private String note = "";
+    private SubTransaction[] subTrans;
+    private int arrayPoint = 0;
     /**
      * All transactions assumed included.
      */
@@ -201,5 +203,51 @@ public class Transact implements Transaction {
 	@Override
 	public void addNote(String note) {
 		note += "; " + note;
+	}
+
+	/**
+	 * Get the sub-transactions associated with this transaction, if any.
+	 * 
+	 * @return the sub transactions
+	 */
+	public SubTransaction[] getSubTransactions() {
+		return subTrans;
+	}
+
+	/**
+	 * Add a sub transaction to this transaction.
+	 * 
+	 * @param split the sub transaction to set
+	 */
+	public void addSubTransactions(SubTransaction split) {
+		if(this.subTrans == null){
+			subTrans = new SubTransaction[6];
+		} else if(subTrans.length == arrayPoint){ //Array is full, resize
+			SubTransaction[] temp = new SubTransaction[subTrans.length + 3];
+			for(int i = 0; i < subTrans.length; i++){
+				temp[i] = subTrans[i];
+			}
+		} 
+		subTrans[arrayPoint] = split;
+		arrayPoint++;
+	}
+	
+	
+	public void removeSubTransaction(SubTransaction split){
+		removeSubTransaction(split.getGUID());
+	}
+	
+	
+	public void removeSubTransaction(String GUID){
+		for(int j = 0; j < subTrans.length; j++){
+			if(subTrans[j].getGUID().equals(GUID)){
+				SubTransaction[] temp = new SubTransaction[subTrans.length + 3];
+				for(int i = j; i < subTrans.length; i++){
+					temp[i] = subTrans[i];
+				}
+				arrayPoint--;
+				break;
+			}
+		}
 	}
 }

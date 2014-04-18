@@ -17,8 +17,6 @@ import derigible.transactions.TList;
 import derigible.utils.FileU;
 //import org.junit.Ignore;
 
-
-
 /**
  * @author marcphillips
  *
@@ -74,5 +72,4 @@ public class TransactionsToCSVTest {
 			e.printStackTrace();
 		}
 	}
-
 }

@@ -396,7 +396,7 @@ public interface Transactions {
 	/**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the account provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. Invocations will look something 
+	 * object or this will not return the desired results. Invocations will look something 
 	 * like the following:
 	 * 
 	 * 		tlist.filterByAccount("Account1", tlist.getTransactions()); // equivalent to getTransactionsByAccount
@@ -412,7 +412,7 @@ public interface Transactions {
 	/**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the accounts provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * object or this will not return the desired results. See filterByAccount for example invocation.
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
@@ -425,7 +425,7 @@ public interface Transactions {
 	/**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the category provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * object or this will not return the desired results. See filterByAccount for example invocation.
 	 * 
 	 * Filter method should not exclude transactions..
 	 * 
@@ -438,7 +438,7 @@ public interface Transactions {
 	/**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the categories provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * object or this will not return the desired results. See filterByAccount for example invocation.
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
@@ -451,7 +451,7 @@ public interface Transactions {
 	/**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the date provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * object or this will not return the desired results. See filterByAccount for example invocation.
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
@@ -464,7 +464,7 @@ public interface Transactions {
 	 /**
 	 * Takes in a list of transactions and filters them against the master Transactions list and
 	 * the dates provided. Transactions must be in the master Transactions list of the Transactions
-	 * object or this will not return the desire results. See filterByAccount for example invocation.
+	 * object or this will not return the desired results. See filterByAccount for example invocation.
 	 * 
 	 * Filter method should not exclude transactions.
 	 * 
