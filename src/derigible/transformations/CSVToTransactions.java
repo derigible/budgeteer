@@ -40,7 +40,6 @@ public class CSVToTransactions implements TransformToTransactions {
     private int[] map;
     private String[][] possibleHeaders;
     private static final int NODATE = 1000;
-    private int guid = -1;
 
     /**
      * Set the file to the csv reader and the number of columns that are desired
@@ -105,16 +104,17 @@ public class CSVToTransactions implements TransformToTransactions {
      *
      * <pre>
      * 		0 =&gt; Date
-     * 		1 =&gt; Description
-     * 		2 =&gt; Amount
-     * 		3 =&gt; Transaction Type
-     * 		4 =&gt; Category
-     * 		5 =&gt; Account Name
-     * 		6 =&gt; Notes
-     * 		7 =&gt; Labels
-     * 		8 =&gt; Year
-     *      9 =&gt; Moth
-     *      10 =&gt; Day
+     * 		1 =&gt; GUID
+     * 		2 =&gt; Description
+     * 		3 =&gt; Amount
+     * 		4 =&gt; Transaction Type
+     * 		5 =&gt; Category
+     * 		6 =&gt; Account Name
+     * 		8 =&gt; Notes
+     * 		8 =&gt; Labels
+     * 		9 =&gt; Year
+     *      10 =&gt; Month
+     *      11 =&gt; Day
      * </pre>
      *
      * Some CSV exports express date as a Day/Month/Year in different columns.
@@ -124,9 +124,9 @@ public class CSVToTransactions implements TransformToTransactions {
      * An example of how to use this is as follows:
      *
      * <pre>
-     * 		Date =&gt; 1
-     * 		Description =&gt; 4
-     * 		Amount =&gt; 5
+     * 		Date =&gt; 2
+     * 		Description =&gt; 5
+     * 		Amount =&gt; 6
      * 		... (Same pattern for the rest)
      * 		Year =&gt;  0
      * 		Month =&gt; 1
@@ -143,9 +143,9 @@ public class CSVToTransactions implements TransformToTransactions {
      * @throws IOException data type does not match
      */
     public void setHeaders(int[] headerMap) throws IOException {
-        if (headerMap.length != 11 || headerMap.length != 8) {
+        if (headerMap.length != 12 || headerMap.length != 9) {
             throw new IOException(
-                    "Incorrect  number of columns defined. Must have 8 or 11 defined.");
+                    "Incorrect  number of columns defined. Must have 9 or 12 defined.");
         }
         map = headerMap;
     }
@@ -161,26 +161,27 @@ public class CSVToTransactions implements TransformToTransactions {
      *
      * <pre>
      * 		0 =&gt; Date
-     * 		1 =&gt; Description
-     * 		2 =&gt; Amount
-     * 		3 =&gt; Transaction Type
-     * 		4 =&gt; Category
-     * 		5 =&gt; Account Name
-     * 		6 =&gt; Notes
-     * 		7 =&gt; Labels
-     * 		8 =&gt; Year
-     *      9 =&gt; Month
-     *      10 =&gt; Day
+     * 		1 =&gt; GUID
+     * 		2 =&gt; Description
+     * 		3 =&gt; Amount
+     * 		4 =&gt; Transaction Type
+     * 		5 =&gt; Category
+     * 		6 =&gt; Account Name
+     * 		8 =&gt; Notes
+     * 		8 =&gt; Labels
+     * 		9 =&gt; Year
+     *      10 =&gt; Month
+     *      11 =&gt; Day
      * </pre>
      *
      * An example of what these nested array will look like follows:
      *
      * <pre>
-     * String[][] possibleHeaders = { {"date","0"}, {"description","1"}, {"amount", "2"},
-     * {"transaction type", "3"}, {"category", "4"}, {"account name", "5"},
-     * {"total", "2"}, {"credits", "2"}, {"debits", "2"}, {"credit", "2"},
-     * {"debit", "2"}, {"information", "6"}, {"info", "6"}, {"account", "5"},
-     * {"group", "4"}, {"tag","4"} };
+     * String[][] possibleHeaders = {{"date", "0"}, {"description", "2"}, {"amount", "3"},
+     *   {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
+     *   {"total", "3"}, {"credits", "3"}, {"debits", "3"}, {"credit", "3"},
+     *   {"debit", "3"}, {"information", "7"}, {"info", "7"}, {"account", "6"},
+     *   {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"}};
      * </pre>
      *
      * @param headers the headers to set
@@ -212,27 +213,17 @@ public class CSVToTransactions implements TransformToTransactions {
         }
     }
     
-    /**
-     * Set the column index that has the GUID assigned to it. If this method is not used, the
-     * transactions will be provided a new GUID.
-     * 
-     * @param index - the GUID column
-     */
-    public void setGUIDLocation(int index){
-    	guid = index;
-    }
-    
     private boolean testIfBasicsInCSV(String[] columns) throws IOException {
         //Hardcoded values should hopefully never be needed.
-        String[][] possibleHeadersTemp = {{"date", "0"}, {"description", "1"}, {"amount", "2"},
-        {"transaction type", "3"}, {"category", "4"}, {"account name", "5"},
-        {"total", "2"}, {"credits", "2"}, {"debits", "2"}, {"credit", "2"},
-        {"debit", "2"}, {"information", "6"}, {"info", "6"}, {"account", "5"},
-        {"group", "4"}, {"tag", "4"}, {"notes", "6"}, {"labels", "7"}};
+        String[][] possibleHeadersTemp = {{"date", "0"}, {"description", "2"}, {"amount", "3"},
+        {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
+        {"total", "3"}, {"credits", "3"}, {"debits", "3"}, {"credit", "3"},
+        {"debit", "3"}, {"information", "7"}, {"info", "7"}, {"account", "6"},
+        {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"}};
         if (possibleHeaders == null) {
             possibleHeaders = possibleHeadersTemp;
         }
-        map = new int[8];
+        map = new int[9];
         for (int i = 0; i < map.length; i++) {
             map[i] = -1;
         }
@@ -246,14 +237,15 @@ public class CSVToTransactions implements TransformToTransactions {
                         throw new IOException(
                                 "Date and year/month/day defined. Can only have one or the other");
                     }
-                    map = new int[11];
+                    map = new int[12];
                     for (int i = 0; i < map.length; i++) {
                         map[i] = 1;
                     }
                     map[0] = NODATE;
-                    map[8] = year;
-                    map[9] = month;
-                    map[10] = day;
+                    map[1] = -1;
+                    map[9] = year;
+                    map[10] = month;
+                    map[11] = day;
                 } else {
                     throw new IOException(
                             "Year and month found but does not contain a day.");
@@ -272,7 +264,8 @@ public class CSVToTransactions implements TransformToTransactions {
             }
         }
         for (int i = 0; i < map.length; i++) {
-            if (map[i] == -1) {
+        	//Don't check the GUID column - check this separately.
+            if (map[i] == -1 && i != 1) {
                 throw new IOException("Not all keys set. You are missing some values. Please "
                         + "define the headers of your CSV.");
             }
@@ -348,16 +341,17 @@ public class CSVToTransactions implements TransformToTransactions {
      * the map:
      * * <pre>
      * 		0 =&gt; Date
-     * 		1 =&gt; Description
-     * 		2 =&gt; Amount
-     * 		3 =&gt; Transaction Type
-     * 		4 =&gt; Category
-     * 		5 =&gt; Account Name
-     * 		6 =&gt; Notes
-     * 		7 =&gt; Labels
-     * 		8 =&gt; Year
-     *      9 =&gt; Moth
-     *      10 =&gt; Day
+     * 		1 =&gt; GUID
+     * 		2 =&gt; Description
+     * 		3 =&gt; Amount
+     * 		4 =&gt; Transaction Type
+     * 		5 =&gt; Category
+     * 		6 =&gt; Account Name
+     * 		7 =&gt; Notes
+     * 		8 =&gt; Labels
+     * 		9 =&gt; Year
+     *      10 =&gt; Month
+     *      11 =&gt; Day
      * </pre>
      *
      * @param lines
@@ -375,31 +369,32 @@ public class CSVToTransactions implements TransformToTransactions {
                 try {
                     g.setTime(parseDate(line[map[0]]));
                 } catch (IOException e) {
-                    g = new GregorianCalendar(2012, 12, 12);
+                    g = new GregorianCalendar(2012, 11, 12);
                 }
                 t.setDate(g);
             } else {
-                g = new GregorianCalendar(Integer.parseInt(line[map[8]]),
-                        Integer.parseInt(line[map[9]]), Integer.parseInt(line[map[10]]));
+            	//GregorianCalendar starts months at 0, decrement months by 1
+                g = new GregorianCalendar(Integer.parseInt(line[map[9]]),
+                        Integer.parseInt(line[map[10]]) - 1, Integer.parseInt(line[map[11]])); 
                 t.setDate(g);
             }
-            t.setDescription(line[map[1]]);
+            t.setDescription(line[map[2]]);
             try {
-                t.setAmount(Double.parseDouble(line[map[2]]));
+                t.setAmount(Double.parseDouble(line[map[3]]));
             } catch (NumberFormatException e) {
                 t.setAmount(-1);
             }
-            if (StringU.lower(line[map[3]]).equals("credit")) {
+            if (StringU.lower(line[map[4]]).equals("credit")) {
                 t.setDebitOrCredit(true);
             }
-            t.setCategory(line[map[4]]);
-            t.setAccount(line[map[5]]);
-            if(guid == -1){
+            t.setCategory(line[map[5]]);
+            t.setAccount(line[map[6]]);
+            if(map[1] == -1 ){
             	t.setGUID(GUID.generate());
             } else {
-            	t.setGUID(line[guid]);
+            	t.setGUID(line[map[1]]);
             }
-            
+
 	    // Check if user wants to keep notes and labels
             //Currently just discards them
             //TODO

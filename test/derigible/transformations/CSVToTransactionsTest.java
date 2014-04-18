@@ -11,33 +11,25 @@
 
 package derigible.transformations;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-//import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import derigible.controller.TransactionsController;
-import derigible.transactions.Transact;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
-import derigible.transformations.MockTransform;
-import derigible.transformations.TransformToTransactions;
-import derigible.utils.FileU;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.LinkedList;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+//import org.junit.Ignore;
+import org.junit.Test;
+
+import derigible.controller.TransactionsController;
+import derigible.utils.FileU;
 
 
 /**
@@ -51,6 +43,8 @@ public class CSVToTransactionsTest {
     private CSVToTransactions cgood;
     private CSVToTransactions cbad;
     private CSVToTransactions mint;
+    private CSVToTransactions csvwithguid;
+    private CSVToTransactions csvdateandyear;
 
     @BeforeClass
     public static void setCSVFiles() {
@@ -73,6 +67,8 @@ public class CSVToTransactionsTest {
         cgood = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/csvModified.csv"));
         cbad = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/completelyBadFormat.csv"));
         mint = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/transactions.csv"));
+        csvwithguid = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/transactionswguid.csv"));
+        csvdateandyear = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/dateandyears.csv"));
     }
 
     @After
@@ -120,9 +116,9 @@ public class CSVToTransactionsTest {
     @Test
     public void testCSVGoodKeysDefinedOutPutWorks() {
         try {
-            String[][] possibleHeadersTemp = {{"description", "1"}, {"amount", "2"},
-            {"transaction type", "3"}, {"category", "4"}, {"account name", "5"},
-            {"notes", "6"}, {"labels", "7"}};
+            String[][] possibleHeadersTemp = {{"description", "2"}, {"amount", "3"},
+            {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
+            {"notes", "7"}, {"labels", "8"}};
             cgood.setPossibleHeaders(possibleHeadersTemp);
             cgood.data_to_transactions();
         } catch (IOException e) {
@@ -134,9 +130,9 @@ public class CSVToTransactionsTest {
     @Test
     public void testCreditsAndDebitsAddedCorrectly() {
         try {
-            String[][] possibleHeadersTemp = {{"description", "1"}, {"amount", "2"},
-            {"transaction type", "3"}, {"category", "4"}, {"account name", "5"},
-            {"notes", "6"}, {"labels", "7"}};
+            String[][] possibleHeadersTemp = {{"description", "2"}, {"amount", "3"},
+            {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
+            {"notes", "7"}, {"labels", "8"}};
             cgood.setPossibleHeaders(possibleHeadersTemp);
             TransactionsController tc = new TransactionsController(cgood);
             assertEquals("Wrong balance returned.", 1836.73, tc.getCurrentBalance(), .001);
@@ -161,6 +157,22 @@ public class CSVToTransactionsTest {
         try {
             TransactionsController tc = new TransactionsController(mint);
             System.out.println(tc.getTransactions().getLastTransaction().getGUID());
+            assertNotNull("Guid not set.", tc.getTransactions().getLastTransaction().getGUID());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test(expected=IOException.class)
+    public void testGUIDDateAndYearInCSV() throws IOException{ 	
+    	TransactionsController tc = new TransactionsController(csvdateandyear);
+    }
+    
+    @Test
+    public void testGUIDAddedFromPredefinedGUIDInCSV() {
+        try {
+            TransactionsController tc = new TransactionsController(csvwithguid);
+            System.out.println("The Guid: " +tc.getTransactions().getLastTransaction().getGUID());
             assertNotNull("Guid not set.", tc.getTransactions().getLastTransaction().getGUID());
         } catch (IOException e) {
             e.printStackTrace();

@@ -98,4 +98,18 @@ public interface Transaction {
 	 * @return the guid
 	 */
 	public abstract String getGUID();
+	
+	/**
+	 * Get the notes of the transaction.
+	 * 
+	 * @return the notes
+	 */
+	public abstract String getNotes();
+	
+	/**
+	 * Add a note to the notes of the transaction.
+	 * 
+	 * @param note the note to add
+	 */
+	public abstract void addNote(String note);
 }

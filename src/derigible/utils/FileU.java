@@ -71,13 +71,13 @@ public final class FileU {
      * @throws IOException a problem occurs when writing to the file
      */
     public static PrintWriter getFileWriterToDefaultLocation(String filename) throws IOException {
-        File file = new File(System.getProperty("user.home") + "Budgeteer");
+        File file = new File(System.getProperty("user.home") + "/Budgeteer");
         if (file.exists()) {
-            file = new File(file.getAbsolutePath() + filename);
+            file = new File(file.getAbsolutePath() + "/" + filename);
         } else {
             boolean result = file.mkdir();
             if (result) {
-                file = new File(file.getAbsolutePath() + filename);
+                file = new File(file.getAbsolutePath() + "/" + filename);
             } else {
                 throw new IOException("Directory not created");
             }
@@ -94,9 +94,9 @@ public final class FileU {
      * @throws FileNotFoundException the file wasn't found
      */
     public static BufferedReader getFileReaderAtDefaultLocation(String filename) throws FileNotFoundException {
-        File file = new File(System.getProperty("user.home") + "Budgeteer");
+        File file = new File(System.getProperty("user.home") + "/Budgeteer");
         if (file.exists()) {
-            file = new File(file.getAbsolutePath() + filename);
+            file = new File(file.getAbsolutePath() + "/" + filename);
         } else {
             throw new FileNotFoundException();
         }

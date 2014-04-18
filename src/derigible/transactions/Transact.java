@@ -28,7 +28,8 @@ public class Transact implements Transaction {
     private String Account;
     private boolean DebitOrCredit = false;
     private String origDescription;
-    private String GUID;
+    private String GUID = "0";
+    private String note = "";
     /**
      * All transactions assumed included.
      */
@@ -190,5 +191,15 @@ public class Transact implements Transaction {
 	 */
 	public void setGUID(String gUID) {
 		GUID = gUID;
+	}
+
+	@Override
+	public String getNotes() {
+		return note;
+	}
+
+	@Override
+	public void addNote(String note) {
+		note += "; " + note;
 	}
 }

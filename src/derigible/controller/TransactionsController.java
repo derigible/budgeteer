@@ -1121,4 +1121,7 @@ public class TransactionsController {
         return dupes;
     }
 
+    public void transactionsToStorage(String filename){
+    	//TODO implement
+    }
 }
