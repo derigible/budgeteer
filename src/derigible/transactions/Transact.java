@@ -19,7 +19,7 @@ import java.util.GregorianCalendar;
  * A Solid implementation of the Transaction object. For most use cases you will
  * want to use this object.
  */
-public class Transact implements Transaction, Splittable {
+public class Transact implements Splittable {
 
     private GregorianCalendar date;
     private String description;
@@ -32,6 +32,7 @@ public class Transact implements Transaction, Splittable {
     private String note = "";
     private SubTransaction[] subTrans;
     private int arrayPoint = 0;
+    private double amountAllocated = 0;
     /**
      * All transactions assumed included.
      */
@@ -219,7 +220,11 @@ public class Transact implements Transaction, Splittable {
 	 * 
 	 * @param split the sub transaction to set
 	 */
-	public void addSubTransactions(SubTransaction split) {
+	public void addSubTransaction(SubTransaction split) {
+		if((amountAllocated + split.getAmount()) > this.Amount){
+			split.setAmount(this.Amount - amountAllocated);
+			split.addNote("SubTransaction amount truncated to fit allowed amount. Amount changed to: " + (this.Amount - amountAllocated));
+		} 
 		if(this.subTrans == null){
 			subTrans = new SubTransaction[6];
 		} else if(subTrans.length == arrayPoint){ //Array is full, resize
@@ -230,18 +235,30 @@ public class Transact implements Transaction, Splittable {
 		} 
 		subTrans[arrayPoint] = split;
 		arrayPoint++;
+		amountAllocated += split.getAmount();
 	}
 	
-	
+	/**
+	 * Remove the subtransaction from the transaction.
+	 * 
+	 * @param split the sub transaction to remove
+	 */
 	public void removeSubTransaction(SubTransaction split){
 		removeSubTransaction(split.getGUID());
 	}
 	
-	
+	/**
+	 * Remove the subtransaction from the transaction by its GUID.
+	 * 
+	 * @param GUID the guid of the subtransaction to remove
+	 */
 	public void removeSubTransaction(String GUID){
 		for(int j = 0; j < subTrans.length; j++){
+			if(subTrans[j] == null){ //GUID not found, must not be in subtransaction list
+				break;
+			}
 			if(subTrans[j].getGUID().equals(GUID)){
-				SubTransaction[] temp = new SubTransaction[subTrans.length + 3];
+				SubTransaction[] temp = new SubTransaction[subTrans.length - j];
 				for(int i = j; i < subTrans.length; i++){
 					temp[i] = subTrans[i];
 				}
@@ -249,5 +266,49 @@ public class Transact implements Transaction, Splittable {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void addSubTransaction(double amount) {
+		this.addSubTransaction(new SubTransaction(this, amount));		
+	}
+
+	@Override
+	public double getUndividedAmount() {
+		return this.Amount - this.amountAllocated;
+	}
+
+	@Override
+	public double getDividedAmount() {
+		return this.amountAllocated;
+	}
+
+	@Override
+	public void updateSubTransactions() {
+		amountAllocated = 0;
+		for(int i = 0; i < subTrans.length; i++){
+			if(subTrans[i] == null){ //no more sub transactions in list
+				break;
+			}
+			amountAllocated += subTrans[i].getAmount();
+		}
+	}
+
+	@Override
+	public SubTransaction getSubTransaction(SubTransaction split) {
+		return this.getSubTransaction(split.getGUID());
+	}
+
+	@Override
+	public SubTransaction getSubTransaction(String GUID) {
+		for(int i = 0 ; i < subTrans.length; i++){
+			if(subTrans[i] == null){ //GUID not found, must not be in subtransaction list
+				break;
+			}
+			if(subTrans[i].getGUID().equals(subTrans[i].getGUID())){
+				return subTrans[i];
+			}
+		}
+		return null;
 	}
 }

@@ -34,7 +34,7 @@ import java.util.List;
  * @author marphill
  *
  */
-public class TransactionTest { 
+public class TransactionsTest { 
 	static Transaction[] trans;
 	static Transaction[] trans2;
 	static ArrayList<Transact> talist = new ArrayList<Transact>();
