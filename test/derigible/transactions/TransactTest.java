@@ -51,5 +51,52 @@ public class TransactTest {
 		st1.setDescription(description);
 		
 		assertEquals("Wrong amount divided.", 50.00, t.getDividedAmount(), .001);
+		assertEquals("Wrong description.", "This is a description.", st1.getDescription());
+		assertEquals("Wrong amount undivided.", 100, t.getUndividedAmount(), .001);
+		
+		SubTransaction st2 = new SubTransaction(t, 25);
+		assertEquals("Wrong amount divided.", 75.00, t.getDividedAmount(), .001);
+		assertEquals("Wrong description.", "", st2.getDescription());
+		assertEquals("Wrong amount undivided.", 75, t.getUndividedAmount(), .001);
+		
+		SubTransaction st3 = new SubTransaction(t, 80);
+		assertEquals("Wrong amount divided.", 150.00, t.getDividedAmount(), .001);
+		System.out.println(st3.getNotes());
+		assertEquals("Wrong description.", "SubTransaction amount truncated to fit allowed amount. Amount changed to: " + 75.00, st3.getNotes());
+		assertEquals("Wrong amount undivided.", 0.0, t.getUndividedAmount(), .001);
 	}
+	
+	@Test
+	public void testSubTransactionRemoval(){
+		Transact t = new Transact(new GregorianCalendar(), "test desc",
+				150.00, "test", "testaccount", true);
+		t.setGUID(GUID.generate());
+		t.addNote("This is a test note");
+		
+		SubTransaction st1 = new SubTransaction(t);
+		st1.setAmount(50);
+		String description = "This is a description.";
+		st1.setDescription(description);
+		SubTransaction st2 = new SubTransaction(t, 25);
+		SubTransaction st3 = new SubTransaction(t, 80);			
+		
+		assertEquals("Wrong amount divided.", 150.00, t.getDividedAmount(), .001);
+		
+		t.removeSubTransaction(st1);
+		assertEquals("Wrong amount divided.", 100.00, t.getDividedAmount(), .001);
+		assertEquals("Wrong description.", "This is a description.", st1.getDescription());
+		assertEquals("Wrong amount undivided.", 50, t.getUndividedAmount(), .001);
+		
+		t.removeSubTransaction(st2);
+		assertEquals("Wrong amount divided.", 75.00, t.getDividedAmount(), .001);
+		assertEquals("Wrong description.", "", st2.getDescription());
+		assertEquals("Wrong amount undivided.", 75, t.getUndividedAmount(), .001);
+		
+		t.removeSubTransaction(st3);
+		assertEquals("Wrong amount divided.", 0.0, t.getDividedAmount(), .001);
+		assertEquals("Wrong description.", "SubTransaction amount truncated to fit allowed amount. Amount changed to: " + 75.00, st3.getNotes());
+		assertEquals("Wrong amount undivided.", 150.0, t.getUndividedAmount(), .001);
+	}
+	
+	//TODO test whether or not the array resize is occurring correctly
 }

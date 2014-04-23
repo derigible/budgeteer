@@ -165,10 +165,6 @@ public class Transact implements Splittable {
         excluded = exclude;
     }
 
-    /**
-     *
-     * @return the original description
-     */
     @Override
     public String getOriginalDescription() {
         return this.origDescription;
@@ -182,16 +178,12 @@ public class Transact implements Splittable {
         this.origDescription = original;
     }
 
-	/**
-	 * @return the gUID
-	 */
+    @Override
 	public String getGUID() {
 		return GUID;
 	}
 
-	/**
-	 * @param gUID the gUID to set
-	 */
+	@Override
 	public void setGUID(String gUID) {
 		GUID = gUID;
 	}
@@ -214,12 +206,12 @@ public class Transact implements Splittable {
 	public SubTransaction[] getSubTransactions() {
 		return subTrans;
 	}
+	
+	public boolean hasSubTransactions(){
+		return subTrans != null ? (subTrans[0] != null ? true : false) : false;
+	}
 
-	/**
-	 * Add a sub transaction to this transaction.
-	 * 
-	 * @param split the sub transaction to set
-	 */
+	@Override
 	public void addSubTransaction(SubTransaction split) {
 		if((amountAllocated + split.getAmount()) > this.Amount){
 			split.setAmount(this.Amount - amountAllocated);
@@ -258,9 +250,9 @@ public class Transact implements Splittable {
 				break;
 			}
 			if(subTrans[j].getGUID().equals(GUID)){
-				SubTransaction[] temp = new SubTransaction[subTrans.length - j];
-				for(int i = j; i < subTrans.length; i++){
-					temp[i] = subTrans[i];
+				amountAllocated -= subTrans[j].getAmount();
+				for(int i = j+1; i < subTrans.length; i++){
+					subTrans[i - 1] = subTrans[i];
 				}
 				arrayPoint--;
 				break;

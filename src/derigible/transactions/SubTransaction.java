@@ -33,6 +33,7 @@ public class SubTransaction implements Transaction {
 	private double amountFromOriginal;
 	private String description;
 	private String guid;
+	private String notes = "";
 	
 	public SubTransaction(Transact t){
 		init(t, 0, "");
@@ -48,10 +49,10 @@ public class SubTransaction implements Transaction {
 	
 	private void init(Transact t, double amount, String description){
 		this.t = t;
-		t.addSubTransaction(this);
 		amountFromOriginal = amount;
 		this.description = description;
 		this.guid = GUID.generate();
+		t.addSubTransaction(this);
 	}
 	
 	//More constructors for different Transaction types here.
@@ -149,7 +150,7 @@ public class SubTransaction implements Transaction {
 	 */
 	@Override
 	public String getNotes() {
-		return t.getNotes();
+		return notes;
 	}
 
 	/* (non-Javadoc)
@@ -157,7 +158,7 @@ public class SubTransaction implements Transaction {
 	 */
 	@Override
 	public void addNote(String note) {
-		t.addNote(note);
+		notes += note;
 	}
 
 	/**
@@ -166,6 +167,7 @@ public class SubTransaction implements Transaction {
 	 * @param amountFromOriginal the amount from the original transaction
 	 */
 	public void setAmount(double amountFromOriginal) {
+		//TODO fix bug where setAmount after adding transaction will go over amount specified
 		this.amountFromOriginal = amountFromOriginal;
 		t.updateSubTransactions();
 	}

@@ -12,10 +12,7 @@ package derigible.transformations;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
