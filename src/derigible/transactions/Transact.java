@@ -207,6 +207,7 @@ public class Transact implements Splittable {
 		return subTrans;
 	}
 	
+	@Override
 	public boolean hasSubTransactions(){
 		return subTrans != null ? (subTrans[0] != null ? true : false) : false;
 	}
@@ -219,11 +220,12 @@ public class Transact implements Splittable {
 		} 
 		if(this.subTrans == null){
 			subTrans = new SubTransaction[6];
-		} else if(subTrans.length == arrayPoint){ //Array is full, resize
+		} else if(subTrans.length == arrayPoint + 1){ //Array is full, resize
 			SubTransaction[] temp = new SubTransaction[subTrans.length + 3];
 			for(int i = 0; i < subTrans.length; i++){
 				temp[i] = subTrans[i];
 			}
+			subTrans = temp;
 		} 
 		subTrans[arrayPoint] = split;
 		arrayPoint++;

@@ -45,8 +45,7 @@ public class TransactTest {
 		t.setGUID(GUID.generate());
 		t.addNote("This is a test note");
 		
-		SubTransaction st1 = new SubTransaction(t);
-		st1.setAmount(50);
+		SubTransaction st1 = new SubTransaction(t, 50);
 		String description = "This is a description.";
 		st1.setDescription(description);
 		
@@ -73,8 +72,7 @@ public class TransactTest {
 		t.setGUID(GUID.generate());
 		t.addNote("This is a test note");
 		
-		SubTransaction st1 = new SubTransaction(t);
-		st1.setAmount(50);
+		SubTransaction st1 = new SubTransaction(t, 50);
 		String description = "This is a description.";
 		st1.setDescription(description);
 		SubTransaction st2 = new SubTransaction(t, 25);
@@ -98,5 +96,25 @@ public class TransactTest {
 		assertEquals("Wrong amount undivided.", 150.0, t.getUndividedAmount(), .001);
 	}
 	
-	//TODO test whether or not the array resize is occurring correctly
+	@Test
+	public void testSubTransactionArrayResize(){
+		Transact t = new Transact(new GregorianCalendar(), "test desc",
+				150.00, "test", "testaccount", true);
+		t.setGUID(GUID.generate());
+		t.addNote("This is a test note");
+		
+		SubTransaction st1 = new SubTransaction(t, 5);
+		String description = "This is a description.";
+		st1.setDescription(description);
+		SubTransaction st2 = new SubTransaction(t, 5);
+		SubTransaction st3 = new SubTransaction(t, 5);		
+		SubTransaction st4 = new SubTransaction(t, 5);
+		SubTransaction st5 = new SubTransaction(t, 5);
+		SubTransaction st6 = new SubTransaction(t, 5);
+		SubTransaction st7 = new SubTransaction(t, 5);
+		
+		assertEquals("Wrong amount divided.", 35.00, t.getDividedAmount(), .001);
+		assertEquals("Wrong amount undivided.", 115, t.getUndividedAmount(), .001);
+		assertEquals("Wrong size for array.", 9, t.getSubTransactions().length);
+	}
 }

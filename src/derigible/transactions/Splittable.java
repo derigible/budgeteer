@@ -82,4 +82,11 @@ public interface Splittable extends Transaction {
 	 */
 	public abstract SubTransaction getSubTransaction(String GUID);
 	
+	/**
+	 * Tell whether or not there are any subtransactions to be found.
+	 * 
+	 * @return true if has a subtransaction
+	 */
+	public abstract boolean hasSubTransactions();
+	
 }

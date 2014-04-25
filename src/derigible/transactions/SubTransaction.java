@@ -35,10 +35,6 @@ public class SubTransaction implements Transaction {
 	private String guid;
 	private String notes = "";
 	
-	public SubTransaction(Transact t){
-		init(t, 0, "");
-	}
-	
 	public SubTransaction(Transact t, double amount){
 		init(t, amount, "");
 	}
@@ -162,12 +158,12 @@ public class SubTransaction implements Transaction {
 	}
 
 	/**
-	 * Set the amount taken from the original transaction.
+	 * Set the amount taken from the original transaction. This method should only be used
+	 * inside of a Transaction object to reset an overage of a new SubTransaction.
 	 * 
 	 * @param amountFromOriginal the amount from the original transaction
 	 */
-	public void setAmount(double amountFromOriginal) {
-		//TODO fix bug where setAmount after adding transaction will go over amount specified
+	protected void setAmount(double amountFromOriginal) {
 		this.amountFromOriginal = amountFromOriginal;
 		t.updateSubTransactions();
 	}
