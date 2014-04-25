@@ -27,9 +27,7 @@ import derigible.transformations.TransactionsToCSV;
  * @author marphill
  *
  */
-public class TransactionsController {
-
-    private Transactions tlist = null;
+public class TransactionsController extends AbstractController {
 
     /**
      * Creates the Transactions list stored in the controller.
@@ -38,7 +36,7 @@ public class TransactionsController {
      * @throws java.io.IOException problem reading data from transformer
      */
     public TransactionsController(TransformToTransactions transformer) throws IOException {
-        tlist = transformer.data_to_transactions();
+        super(transformer);
     }
 
     /**
@@ -50,11 +48,7 @@ public class TransactionsController {
      * @param DONOTUSE DO NOT USE THIS CONSTRUCTOR
      */
     public TransactionsController(TransformToTransactions transformer, int DONOTUSE) {
-        try {
-            tlist = transformer.data_to_transactions();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super(transformer, DONOTUSE);
     }
 
     /**
@@ -75,9 +69,7 @@ public class TransactionsController {
      * @param category the category of transactions to exclude
      */
     public void excludeCategory(String category) {
-        for (Transaction t : tlist.getByCategory(category)) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeCategory(category, tlist.getTransactions());
     }
 
     /**
@@ -87,9 +79,7 @@ public class TransactionsController {
      */
     public void includeCategory(String category) {
         List<Transaction> l = tlist.getExcluded();
-        for (Transaction t : tlist.filterByCategory(category, l)) {
-            tlist.includeTransaction(t);
-        }
+        super.includeCategory(category, l);
     }
 
     /**
@@ -98,9 +88,7 @@ public class TransactionsController {
      * @param categories the categories of transactions to exclude
      */
     public void excludeCategories(String[] categories) {
-        for (Transaction t : tlist.getByCategories(categories)) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeCategories(categories, tlist.getByCategories(categories));
     }
 
     /**
@@ -109,10 +97,7 @@ public class TransactionsController {
      * @param categories the categories to include
      */
     public void includeCategories(String[] categories) {
-        List<Transaction> l = tlist.getExcluded();
-        for (Transaction t : tlist.filterByCategories(categories, l)) {
-            tlist.includeTransaction(t);
-        }
+        super.includeCategories(categories, tlist.getExcluded());
     }
 
     /**
@@ -121,9 +106,7 @@ public class TransactionsController {
      * @param date the date of transactions to exclude
      */
     public void excludeDate(Date date) {
-        for (Transaction t : tlist.getByDate(date)) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeDate(date, tlist.getTransactions());
     }
 
     /**
@@ -132,10 +115,7 @@ public class TransactionsController {
      * @param date the date to include
      */
     public void includeDate(Date date) {
-        List<Transaction> l = tlist.getExcluded();
-        for (Transaction t : tlist.filterByDate(date, l)) {
-            tlist.includeTransaction(t);
-        }
+        super.includeDate(date, tlist.getExcluded());
     }
 
     /**
@@ -145,9 +125,7 @@ public class TransactionsController {
      * @param end the end of the dates to exclude
      */
     public void excludeBetweenDates(Date start, Date end) {
-        for (Transaction t : tlist.getBetweenDates(start, end)) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeBetweenDates(start, end, tlist.getTransactions());
     }
 
     /**
@@ -157,10 +135,7 @@ public class TransactionsController {
      * @param end the end of the dates to include
      */
     public void includeBetweenDates(Date start, Date end) {
-        List<Transaction> l = tlist.getExcluded();
-        for (Transaction t : tlist.filterByDates(start, end, l)) {
-            tlist.includeTransaction(t);
-        }
+        super.includeBetweenDates(start, end, tlist.getExcluded());
     }
 
     /**
@@ -169,9 +144,7 @@ public class TransactionsController {
      * @param account the account of transactions to exclude
      */
     public void excludeAccount(String account) {
-        for (Transaction t : tlist.filterByAccount(account, tlist.getTransactions())) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeAccount(account, tlist.getTransactions());
     }
 
     /**
@@ -180,9 +153,7 @@ public class TransactionsController {
      * @param account the account of transactions to include
      */
     public void includeAccount(String account) {
-        for (Transaction t : tlist.filterByAccount(account, tlist.getExcluded())) {
-            tlist.includeTransaction(t);
-        }
+        super.includeAccount(account, tlist.getTransactions());
     }
 
     /**
@@ -191,9 +162,7 @@ public class TransactionsController {
      * @param accounts the accounts to exclude transactions
      */
     public void excludeAccounts(String[] accounts) {
-        for (Transaction t : tlist.filterByAccounts(accounts, tlist.getTransactions())) {
-            tlist.excludeTransaction(t);
-        }
+        super.excludeAccounts(accounts, tlist.getTransactions());
     }
 
     /**
@@ -202,9 +171,7 @@ public class TransactionsController {
      * @param accounts the accounts to include transactions
      */
     public void includeAccounts(String[] accounts) {
-        for (Transaction t : tlist.filterByAccounts(accounts, tlist.getExcluded())) {
-            tlist.includeTransaction(t);
-        }
+        super.includeAccounts(accounts, tlist.getTransactions());
     }
 
     /**
@@ -216,17 +183,7 @@ public class TransactionsController {
      * @return the current balance
      */
     public double getCurrentBalance() {
-		//NOTE: All methods will treat credits and debits from the view point of the user,
-        // thus, a credit looks like income and a debit looks like payout on a bank statement
-        double credited = 0;
-        double debited = 0;
-        for (Transaction t : tlist.getDebits()) {
-            debited += t.getAmount();
-        }
-        for (Transaction t : tlist.getCredits()) {
-            credited += t.getAmount();
-        }
-        return credited - debited;
+      return super.getCurrentBalance(tlist.getDebits(), tlist.getCredits());
     }
 
     /**
@@ -238,16 +195,7 @@ public class TransactionsController {
      * @return the balance of the account
      */
     public double getCurrentBalanceForAccount(String account) {
-        double credited = 0;
-        double debited = 0;
-        for (Transaction t : tlist.getByAccount(account)) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getCurrentBalanceForAccount(account, tlist.getTransactions());
     }
 
     /**
@@ -260,16 +208,7 @@ public class TransactionsController {
      * @return the balance between these dates
      */
     public double getBalanceBetweenDates(Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        for (Transaction t : tlist.getBetweenDates(start, end)) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceBetweenDates(start, end, tlist.getTransactions());
     }
 
     /**
@@ -283,16 +222,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceBetweenDatesForAccount(Date start, Date end, String account) {
-        double credited = 0;
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account, tlist.getBetweenDates(start, end))) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceBetweenDatesForAccount(start, end, account, tlist.getTransactions());
     }
 
     /**
@@ -304,16 +234,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategory(String category) {
-        double credited = 0;
-        double debited = 0;
-        for (Transaction t : tlist.getByCategory(category)) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategory(category, tlist.getTransactions());
     }
 
     /**
@@ -325,18 +246,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategories(String[] categories) {
-        double credited = 0;
-        double debited = 0;
-        for (String category : categories) {
-            for (Transaction t : tlist.getByCategory(category)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategories(categories, tlist.getTransactions());
     }
 
     /**
@@ -350,19 +260,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoriesBetweenDates(String[] categories, Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getBetweenDates(start, end);
-        for (String category : categories) {
-            for (Transaction t : tlist.filterByCategory(category, l)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoriesBetweenDates(categories, start, end, tlist.getTransactions());
     }
 
     /**
@@ -375,17 +273,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccount(String category, String account) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByAccount(account);
-        for (Transaction t : tlist.filterByCategory(category, l)) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoryForAccount(category, account, tlist.getTransactions());
     }
 
     /**
@@ -398,17 +286,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccount(String[] categories, String account) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByAccount(account);
-        for (Transaction t : tlist.filterByCategories(categories, l)) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoriesForAccount(categories, account, tlist.getTransactions());
     }
 
     /**
@@ -423,17 +301,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByAccount(account);
-        for (Transaction t : tlist.filterByDates(start, end, tlist.filterByCategory(category, l))) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoryForAccountBetweenDates(category, account, start, end, tlist.getTransactions());
     }
 
     /**
@@ -449,17 +317,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByAccount(account);
-        for (Transaction t : tlist.filterByDates(start, end, tlist.filterByCategories(categories, l))) {
-            if (t.isCredit()) {
-                credited += t.getAmount();
-            } else {
-                debited += t.getAmount();
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoriesBetweenDates(categories, start, end, tlist.getTransactions());
     }
 
     /**
@@ -472,19 +330,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccounts(String category, String[] accounts) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByCategory(category);
-        for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account, l)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoryForAccounts(category, accounts, tlist.getTransactions());
     }
 
     /**
@@ -497,19 +343,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccounts(String[] categories, String[] accounts) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.getByCategories(categories);
-        for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account, l)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoriesForAccounts(categories, accounts, tlist.getTransactions());
     }
 
     /**
@@ -525,19 +359,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccountsBetweenDates(String category, String[] accounts, Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategory(category));
-        for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account, l)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoryForAccountsBetweenDates(category, accounts, start, end, tlist.getTransactions());
     }
 
     /**
@@ -553,19 +375,7 @@ public class TransactionsController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end) {
-        double credited = 0;
-        double debited = 0;
-        List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategories(categories));
-        for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account, l)) {
-                if (t.isCredit()) {
-                    credited += t.getAmount();
-                } else {
-                    debited += t.getAmount();
-                }
-            }
-        }
-        return credited - debited;
+        return super.getBalanceForCategoriesForAccountsBetweenDates(categories, accounts, start, end, tlist.getTransactions());
     }
 
     /**
