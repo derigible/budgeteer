@@ -595,4 +595,11 @@ abstract class AbstractController {
         return credited - debited;
     }
 	
+    /**
+     * The export method of all transactions in the controller.
+     * 
+     * @param filename the file to put the output
+     * @param toAppStorage determines if this should go to app storage
+     */
+    public abstract void transactionsToCSV(String filename, boolean toAppStorage);
 }

@@ -930,9 +930,14 @@ public class TransactionsController extends AbstractController {
         return dupes;
     }
 
+    @Override
     public void transactionsToCSV(String filename, boolean toAppStorage){
     	TransactionsToCSV csv = new TransactionsToCSV();
     	csv.setFileName(filename);
     	csv.excludeId(toAppStorage);
+    }
+    
+    public BudgetController makeBudget(String name){
+    	return new BudgetController(tlist, name);
     }
 }
