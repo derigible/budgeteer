@@ -134,7 +134,7 @@ public class CSVToTransactionsTest {
             {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
             {"notes", "7"}, {"labels", "8"}};
             cgood.setPossibleHeaders(possibleHeadersTemp);
-            TransactionsController tc = new TransactionsController(cgood);
+            TransactionsController tc = new TransactionsController(cgood.data_to_transactions());
             assertEquals("Wrong balance returned.", 1836.73, tc.getCurrentBalance(), .001);
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,7 +144,7 @@ public class CSVToTransactionsTest {
     @Test
     public void testMint_comCSVCorrectlyIdentifiedAndParsed() {
         try {
-            TransactionsController tc = new TransactionsController(mint);
+            TransactionsController tc = new TransactionsController(mint.data_to_transactions());
             assertEquals("Wrong balance returned.", -28354.78, tc.getCurrentBalance(), .001);
 
         } catch (IOException e) {
@@ -155,7 +155,7 @@ public class CSVToTransactionsTest {
     @Test
     public void testGUIDAddedMint_CSV() {
         try {
-            TransactionsController tc = new TransactionsController(mint);
+            TransactionsController tc = new TransactionsController(mint.data_to_transactions());
             System.out.println(tc.getTransactions().getLastTransaction().getGUID());
             assertNotNull("Guid not set.", tc.getTransactions().getLastTransaction().getGUID());
         } catch (IOException e) {
@@ -165,13 +165,13 @@ public class CSVToTransactionsTest {
     
     @Test(expected=IOException.class)
     public void testGUIDDateAndYearInCSV() throws IOException{ 	
-    	TransactionsController tc = new TransactionsController(csvdateandyear);
+    	TransactionsController tc = new TransactionsController(csvdateandyear.data_to_transactions());
     }
     
     @Test
     public void testGUIDAddedFromPredefinedGUIDInCSV() {
         try {
-            TransactionsController tc = new TransactionsController(csvwithguid);
+            TransactionsController tc = new TransactionsController(csvwithguid.data_to_transactions());
             System.out.println("The Guid: " +tc.getTransactions().getLastTransaction().getGUID());
             assertNotNull("Guid not set.", tc.getTransactions().getLastTransaction().getGUID());
         } catch (IOException e) {

@@ -118,15 +118,15 @@ public class TransControllerTest {
 
 
 	@Test
-	public void testControllerInitialization(){
+	public void testControllerInitialization() throws IOException{
 		
-		TransactionsController tc = new TransactionsController(x2t,1);
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		assertSame("Wrong TList object returned - not initialized correcty.", t, tc.getTransactions());
 	}
 	
 	@Test
-	public void testGetCurrentBalance(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testGetCurrentBalance() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		assertEquals("Wrong amount of money returned.", 9.93, tc.getCurrentBalance(), .001);
 		
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
@@ -138,8 +138,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeBetweenDates() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
@@ -150,8 +150,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testIncludeBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeBetweenDates() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		
@@ -167,8 +167,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeByDate(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeByDate() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		tc.excludeDate(start.getTime());
@@ -178,8 +178,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testIncludeByDate(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeByDate() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,13);
 		
 		tc.excludeDate(start.getTime());
@@ -194,16 +194,16 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeCategory(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeCategory() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeCategory("Dessert");
 		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
 	@Test
-	public void testIncludeCategory(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeCategory() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeCategory("Dessert");
 		assertEquals("Wrong number of transaction returned for exclude.", 4, 
 				tc.getTransactions().getTransactions().size());
@@ -213,16 +213,16 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeCategories(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeCategories() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
 	@Test
-	public void testIncludeCategories(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeCategories() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeCategories(new String[] {"Dessert", "Groceries"});
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -232,16 +232,16 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeAccount("Mastercard");
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
 	@Test
-	public void testIncludeAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeAccount("Mastercard");
 		assertEquals("Wrong number of transaction returned for exclude.", 3, 
 				tc.getTransactions().getTransactions().size());
@@ -251,16 +251,16 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testExcludeAccounts(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testExcludeAccounts() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
 		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
 	}
 	
 	@Test
-	public void testIncludeAccounts(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testIncludeAccounts() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		tc.excludeAccounts(new String[] {"Mastercard", "Discover"});
 		assertEquals("Wrong number of transaction returned for exclude.", 2, 
 				tc.getTransactions().getTransactions().size());
@@ -270,15 +270,15 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testCurrentBalanceForAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentBalanceForAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		assertEquals("Wrong balance for Mastercard account.", -85.57, 
 				tc.getCurrentBalanceForAccount("Mastercard"), .001);
 	}
 
 	@Test
-	public void testCurrentBalanceForAccount_withDebitsAndCredits(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentBalanceForAccount_withDebitsAndCredits() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Ice Cream",
 				4.50, "Dessert","Mastercard", true);
 		tc.getTransactions().addTransaction(transact2);
@@ -287,8 +287,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testCurrentBalanceBetweenDates(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentBalanceBetweenDates() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -299,8 +299,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testCurrentBalBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentBalBetweenDatesForAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -316,8 +316,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testCurrentSpendingBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentSpendingBetweenDatesForAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -333,8 +333,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testCurrentIncomeBetweenDatesForAccount(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testCurrentIncomeBetweenDatesForAccount() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		GregorianCalendar start = new GregorianCalendar(2014,Calendar.NOVEMBER,12);
 		GregorianCalendar end = new GregorianCalendar(2014,Calendar.NOVEMBER,14);
 		GregorianCalendar end2 = new GregorianCalendar(2015,Calendar.NOVEMBER,15);
@@ -350,8 +350,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testGetPossibleDuplicates(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testGetPossibleDuplicates() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		
 		assertEquals("Wrong number of duplicates returned.", 0, 
 				tc.getPossibleDuplicates().size());
@@ -389,8 +389,8 @@ public class TransControllerTest {
 	}
 	
 	@Test
-	public void testDuplicatesFoundAreCorrect(){
-		TransactionsController tc = new TransactionsController(x2t,1);
+	public void testDuplicatesFoundAreCorrect() throws IOException{
+		TransactionsController tc = new TransactionsController(x2t.data_to_transactions());
 		Transact transact2 = new Transact(new GregorianCalendar(2015,Calendar.JANUARY,15), "Paycheck #1123",
 				114.50, "Payroll", "Check #11456", true);
 		tc.getTransactions().addTransaction(transact2);

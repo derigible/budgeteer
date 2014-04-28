@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
-import derigible.transformations.TransformToTransactions;
 import derigible.transformations.TransactionsToCSV;
 
 /**
@@ -29,36 +28,20 @@ import derigible.transformations.TransactionsToCSV;
  */
 public class TransactionsController extends AbstractController {
 
+    private Transactions tlist = null;
+
     /**
      * Creates the Transactions list stored in the controller.
      *
      * @param transformer the transformer object that outputs data to an array
      * @throws java.io.IOException problem reading data from transformer
      */
-    public TransactionsController(TransformToTransactions transformer) throws IOException {
-        super(transformer);
+    public TransactionsController(Transactions trans) throws IOException {
+        tlist = trans;
     }
 
-    /**
-     * This constructor is here merely to allow for updates to the primary
-     * constructor (such as add throws Exception clauses) and not have to catch
-     * the creation error in my tests.
-     *
-     * @param transformer the transformer to use
-     * @param DONOTUSE DO NOT USE THIS CONSTRUCTOR
-     */
-    public TransactionsController(TransformToTransactions transformer, int DONOTUSE) {
-        super(transformer, DONOTUSE);
-    }
 
-    /**
-     * Client should never have access directly to the transactions list. All
-     * interactions should go through the controller or the Transactions object.
-     * In this way the transactions can be kept encapsulated and away from the
-     * client.
-     *
-     * @return the Transactions object
-     */
+    @Override
     public Transactions getTransactions() {
         return tlist;
     }
@@ -69,7 +52,9 @@ public class TransactionsController extends AbstractController {
      * @param category the category of transactions to exclude
      */
     public void excludeCategory(String category) {
-        super.excludeCategory(category, tlist.getTransactions());
+        for (Transaction t : tlist.getByCategory(category)) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -79,7 +64,9 @@ public class TransactionsController extends AbstractController {
      */
     public void includeCategory(String category) {
         List<Transaction> l = tlist.getExcluded();
-        super.includeCategory(category, l);
+        for (Transaction t : tlist.filterByCategory(category, l)) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -88,7 +75,9 @@ public class TransactionsController extends AbstractController {
      * @param categories the categories of transactions to exclude
      */
     public void excludeCategories(String[] categories) {
-        super.excludeCategories(categories, tlist.getByCategories(categories));
+        for (Transaction t : tlist.getByCategories(categories)) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -97,7 +86,10 @@ public class TransactionsController extends AbstractController {
      * @param categories the categories to include
      */
     public void includeCategories(String[] categories) {
-        super.includeCategories(categories, tlist.getExcluded());
+        List<Transaction> l = tlist.getExcluded();
+        for (Transaction t : tlist.filterByCategories(categories, l)) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -106,7 +98,9 @@ public class TransactionsController extends AbstractController {
      * @param date the date of transactions to exclude
      */
     public void excludeDate(Date date) {
-        super.excludeDate(date, tlist.getTransactions());
+        for (Transaction t : tlist.getByDate(date)) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -115,7 +109,10 @@ public class TransactionsController extends AbstractController {
      * @param date the date to include
      */
     public void includeDate(Date date) {
-        super.includeDate(date, tlist.getExcluded());
+        List<Transaction> l = tlist.getExcluded();
+        for (Transaction t : tlist.filterByDate(date, l)) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -125,7 +122,9 @@ public class TransactionsController extends AbstractController {
      * @param end the end of the dates to exclude
      */
     public void excludeBetweenDates(Date start, Date end) {
-        super.excludeBetweenDates(start, end, tlist.getTransactions());
+        for (Transaction t : tlist.getBetweenDates(start, end)) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -135,7 +134,10 @@ public class TransactionsController extends AbstractController {
      * @param end the end of the dates to include
      */
     public void includeBetweenDates(Date start, Date end) {
-        super.includeBetweenDates(start, end, tlist.getExcluded());
+        List<Transaction> l = tlist.getExcluded();
+        for (Transaction t : tlist.filterByDates(start, end, l)) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -144,7 +146,9 @@ public class TransactionsController extends AbstractController {
      * @param account the account of transactions to exclude
      */
     public void excludeAccount(String account) {
-        super.excludeAccount(account, tlist.getTransactions());
+        for (Transaction t : tlist.filterByAccount(account, tlist.getTransactions())) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -153,7 +157,9 @@ public class TransactionsController extends AbstractController {
      * @param account the account of transactions to include
      */
     public void includeAccount(String account) {
-        super.includeAccount(account, tlist.getTransactions());
+        for (Transaction t : tlist.filterByAccount(account, tlist.getExcluded())) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -162,7 +168,9 @@ public class TransactionsController extends AbstractController {
      * @param accounts the accounts to exclude transactions
      */
     public void excludeAccounts(String[] accounts) {
-        super.excludeAccounts(accounts, tlist.getTransactions());
+        for (Transaction t : tlist.filterByAccounts(accounts, tlist.getTransactions())) {
+            tlist.excludeTransaction(t);
+        }
     }
 
     /**
@@ -171,7 +179,9 @@ public class TransactionsController extends AbstractController {
      * @param accounts the accounts to include transactions
      */
     public void includeAccounts(String[] accounts) {
-        super.includeAccounts(accounts, tlist.getTransactions());
+        for (Transaction t : tlist.filterByAccounts(accounts, tlist.getExcluded())) {
+            tlist.includeTransaction(t);
+        }
     }
 
     /**
@@ -183,7 +193,17 @@ public class TransactionsController extends AbstractController {
      * @return the current balance
      */
     public double getCurrentBalance() {
-      return super.getCurrentBalance(tlist.getDebits(), tlist.getCredits());
+		//NOTE: All methods will treat credits and debits from the view point of the user,
+        // thus, a credit looks like income and a debit looks like payout on a bank statement
+        double credited = 0;
+        double debited = 0;
+        for (Transaction t : tlist.getDebits()) {
+            debited += t.getAmount();
+        }
+        for (Transaction t : tlist.getCredits()) {
+            credited += t.getAmount();
+        }
+        return credited - debited;
     }
 
     /**
@@ -195,7 +215,7 @@ public class TransactionsController extends AbstractController {
      * @return the balance of the account
      */
     public double getCurrentBalanceForAccount(String account) {
-        return super.getCurrentBalanceForAccount(account, tlist.getTransactions());
+        return calculate(tlist.getByAccount(account));
     }
 
     /**
@@ -208,7 +228,7 @@ public class TransactionsController extends AbstractController {
      * @return the balance between these dates
      */
     public double getBalanceBetweenDates(Date start, Date end) {
-        return super.getBalanceBetweenDates(start, end, tlist.getTransactions());
+        return calculate(tlist.getBetweenDates(start, end));
     }
 
     /**
@@ -222,7 +242,7 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceBetweenDatesForAccount(Date start, Date end, String account) {
-        return super.getBalanceBetweenDatesForAccount(start, end, account, tlist.getTransactions());
+        return calculate(tlist.filterByAccount(account, tlist.getBetweenDates(start, end)));
     }
 
     /**
@@ -234,7 +254,7 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategory(String category) {
-        return super.getBalanceForCategory(category, tlist.getTransactions());
+        return calculate(tlist.getByCategory(category));
     }
 
     /**
@@ -246,7 +266,11 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategories(String[] categories) {
-        return super.getBalanceForCategories(categories, tlist.getTransactions());
+        double balance = 0;
+        for (String category : categories) {
+            balance += calculate(tlist.getByCategory(category));
+        }
+        return balance;
     }
 
     /**
@@ -260,7 +284,12 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoriesBetweenDates(String[] categories, Date start, Date end) {
-        return super.getBalanceForCategoriesBetweenDates(categories, start, end, tlist.getTransactions());
+        double balance = 0;
+        List<Transaction> l = tlist.getBetweenDates(start, end);
+        for (String category : categories) {
+            balance += calculate(tlist.filterByCategory(category, l));
+        }
+        return balance;
     }
 
     /**
@@ -273,7 +302,8 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccount(String category, String account) {
-        return super.getBalanceForCategoryForAccount(category, account, tlist.getTransactions());
+        List<Transaction> l = tlist.getByAccount(account);
+        return calculate(tlist.filterByCategory(category, l));
     }
 
     /**
@@ -286,7 +316,8 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccount(String[] categories, String account) {
-        return super.getBalanceForCategoriesForAccount(categories, account, tlist.getTransactions());
+        List<Transaction> l = tlist.getByAccount(account);
+        return calculate(tlist.filterByCategories(categories, l));
     }
 
     /**
@@ -301,7 +332,8 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
-        return super.getBalanceForCategoryForAccountBetweenDates(category, account, start, end, tlist.getTransactions());
+        List<Transaction> l = tlist.getByAccount(account);
+        return calculate(tlist.filterByDates(start, end, tlist.filterByCategory(category, l)));
     }
 
     /**
@@ -317,7 +349,8 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
-        return super.getBalanceForCategoriesBetweenDates(categories, start, end, tlist.getTransactions());
+        List<Transaction> l = tlist.getByAccount(account);
+        return calculate(tlist.filterByDates(start, end, tlist.filterByCategories(categories, l)));
     }
 
     /**
@@ -330,7 +363,12 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccounts(String category, String[] accounts) {
-        return super.getBalanceForCategoryForAccounts(category, accounts, tlist.getTransactions());
+        double balance = 0;
+        List<Transaction> l = tlist.getByCategory(category);
+        for (String account : accounts) {
+            balance += calculate(tlist.filterByAccount(account, l));
+        }
+        return balance;
     }
 
     /**
@@ -343,7 +381,12 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccounts(String[] categories, String[] accounts) {
-        return super.getBalanceForCategoriesForAccounts(categories, accounts, tlist.getTransactions());
+        double balance = 0;
+        List<Transaction> l = tlist.getByCategories(categories);
+        for (String account : accounts) {
+            balance += calculate(tlist.filterByAccount(account, l));
+        }
+        return balance;
     }
 
     /**
@@ -359,7 +402,12 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoryForAccountsBetweenDates(String category, String[] accounts, Date start, Date end) {
-        return super.getBalanceForCategoryForAccountsBetweenDates(category, accounts, start, end, tlist.getTransactions());
+        double balance = 0;
+        List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategory(category));
+        for (String account : accounts) {
+            balance += calculate(tlist.filterByAccount(account, l));
+        }
+        return balance;
     }
 
     /**
@@ -375,7 +423,12 @@ public class TransactionsController extends AbstractController {
      * @return the balance
      */
     public double getBalanceForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end) {
-        return super.getBalanceForCategoriesForAccountsBetweenDates(categories, accounts, start, end, tlist.getTransactions());
+        double balance = 0;
+        List<Transaction> l = tlist.filterByDates(start, end, tlist.getByCategories(categories));
+        for (String account : accounts) {
+            balance += calculate(tlist.filterByAccount(account, l));
+        }
+        return balance;
     }
 
     /**
@@ -385,11 +438,7 @@ public class TransactionsController extends AbstractController {
      * @return the income of the account
      */
     public double getCurrentIncomeForAccount(String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account, tlist.getCredits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account, tlist.getCredits()));
     }
 
     /**
@@ -400,11 +449,7 @@ public class TransactionsController extends AbstractController {
      * @return the income between these dates
      */
     public double getIncomeBetweenDates(Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByDates(start, end, tlist.getCredits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByDates(start, end, tlist.getCredits()));
     }
 
     /**
@@ -416,12 +461,7 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeBetweenDatesForAccount(Date start, Date end, String account) {
-        double debited = 0;
-        List<Transaction> l = tlist.filterByDates(start, end, tlist.getCredits());
-        for (Transaction t : tlist.filterByAccount(account, l)) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account, tlist.filterByDates(start, end, tlist.getCredits())));
     }
 
     /**
@@ -431,11 +471,7 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategory(String category) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByCategory(category, tlist.getCredits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByCategory(category, tlist.getCredits()));
     }
 
     /**
@@ -462,12 +498,8 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoriesBetweenDates(String[] categories, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByDates(start, end,
-                tlist.filterByCategories(categories, tlist.getCredits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByDates(start, end,
+                tlist.filterByCategories(categories, tlist.getCredits())));
     }
 
     /**
@@ -479,12 +511,8 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoryForAccount(String category, String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByCategory(category, tlist.getCredits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account,
+                tlist.filterByCategory(category, tlist.getCredits())));
     }
 
     /**
@@ -496,12 +524,8 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoriesForAccount(String[] categories, String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByCategories(categories, tlist.getCredits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account,
+                tlist.filterByCategories(categories, tlist.getCredits())));
     }
 
     /**
@@ -515,12 +539,8 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getCredits())))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account,
+                tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getCredits()))));
     }
 
     /**
@@ -534,12 +554,8 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getCredits())))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateCredits(tlist.filterByAccount(account,
+                tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getCredits()))));
     }
 
     /**
@@ -551,14 +567,12 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoryForAccounts(String category, String[] accounts) {
-        double debited = 0;
+        double balance = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByCategory(category, tlist.getCredits()))) {
-                debited += t.getAmount();
-            }
+            balance += calculateCredits(tlist.filterByAccount(account,
+                    tlist.filterByCategory(category, tlist.getCredits())));
         }
-        return debited;
+        return balance;
     }
 
     /**
@@ -569,14 +583,12 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoriesForAccounts(String[] categories, String[] accounts) {
-        double debited = 0;
+        double balance = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByCategories(categories, tlist.getCredits()))) {
-                debited += t.getAmount();
-            }
+            balance += calculateCredits(tlist.filterByAccount(account,
+                    tlist.filterByCategories(categories, tlist.getCredits())));
         }
-        return debited;
+        return balance;
     }
 
     /**
@@ -590,14 +602,12 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoryForAccountsBetweenDates(String category, String[] accounts, Date start, Date end) {
-        double debited = 0;
+        double balance = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getCredits())))) {
-                debited += t.getAmount();
-            }
+            balance += calculateCredits(tlist.filterByAccount(account,
+                    tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getCredits()))));
         }
-        return debited;
+        return balance;
     }
 
     /**
@@ -611,14 +621,12 @@ public class TransactionsController extends AbstractController {
      * @return the income
      */
     public double getIncomeForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end) {
-        double debited = 0;
+        double balance = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getCredits())))) {
-                debited += t.getAmount();
-            }
+            balance += calculateCredits(tlist.filterByAccount(account,
+                    tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getCredits()))));
         }
-        return debited;
+        return balance;
     }
 
     /**
@@ -628,11 +636,7 @@ public class TransactionsController extends AbstractController {
      * @return the spending of the account
      */
     public double getCurrentSpendingForAccount(String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account, tlist.getDebits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account, tlist.getDebits()));
     }
 
     /**
@@ -643,11 +647,7 @@ public class TransactionsController extends AbstractController {
      * @return the spending between these dates
      */
     public double getSpendingBetweenDates(Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByDates(start, end, tlist.getDebits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByDates(start, end, tlist.getDebits()));
     }
 
     /**
@@ -659,12 +659,7 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingBetweenDatesForAccount(Date start, Date end, String account) {
-        double debited = 0;
-        List<Transaction> l = tlist.filterByDates(start, end, tlist.getDebits());
-        for (Transaction t : tlist.filterByAccount(account, l)) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account, tlist.filterByDates(start, end, tlist.getDebits())));
     }
 
     /**
@@ -674,11 +669,7 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategory(String category) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByCategory(category, tlist.getDebits())) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByCategory(category, tlist.getDebits()));
     }
 
     /**
@@ -705,12 +696,8 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategoriesBetweenDates(String[] categories, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByDates(start, end,
-                tlist.filterByCategories(categories, tlist.getDebits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByDates(start, end,
+                tlist.filterByCategories(categories, tlist.getDebits())));
     }
 
     /**
@@ -722,12 +709,8 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategoryForAccount(String category, String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByCategory(category, tlist.getDebits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account,
+                tlist.filterByCategory(category, tlist.getDebits())));
     }
 
     /**
@@ -739,12 +722,8 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategoriesForAccount(String[] categories, String account) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByCategories(categories, tlist.getDebits()))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account,
+                tlist.filterByCategories(categories, tlist.getDebits())));
     }
 
     /**
@@ -758,12 +737,8 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getDebits())))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account,
+                tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getDebits()))));
     }
 
     /**
@@ -777,12 +752,8 @@ public class TransactionsController extends AbstractController {
      * @return the spending
      */
     public double getSpendingForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
-        double debited = 0;
-        for (Transaction t : tlist.filterByAccount(account,
-                tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits())))) {
-            debited += t.getAmount();
-        }
-        return debited;
+        return calculateDebits(tlist.filterByAccount(account,
+                tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits()))));
     }
 
     /**
@@ -796,10 +767,8 @@ public class TransactionsController extends AbstractController {
     public double getSpendingForCategoryForAccounts(String category, String[] accounts) {
         double debited = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByCategory(category, tlist.getDebits()))) {
-                debited += t.getAmount();
-            }
+        	debited += calculateDebits(tlist.filterByAccount(account,
+                    tlist.filterByCategory(category, tlist.getDebits())));
         }
         return debited;
     }
@@ -814,10 +783,8 @@ public class TransactionsController extends AbstractController {
     public double getSpendingForCategoriesForAccounts(String[] categories, String[] accounts) {
         double debited = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByCategories(categories, tlist.getDebits()))) {
-                debited += t.getAmount();
-            }
+            debited += calculateDebits(tlist.filterByAccount(account,
+                    tlist.filterByCategories(categories, tlist.getDebits())));
         }
         return debited;
     }
@@ -835,10 +802,8 @@ public class TransactionsController extends AbstractController {
     public double getSpendingForCategoryForAccountsBetweenDates(String category, String[] accounts, Date start, Date end) {
         double debited = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getDebits())))) {
-                debited += t.getAmount();
-            }
+            debited += calculateDebits(tlist.filterByAccount(account,
+                    tlist.filterByDates(start, end, tlist.filterByCategory(category, tlist.getDebits()))));
         }
         return debited;
     }
@@ -856,10 +821,8 @@ public class TransactionsController extends AbstractController {
     public double getSpendingForCategoriesForAccountsBetweenDates(String[] categories, String[] accounts, Date start, Date end) {
         double debited = 0;
         for (String account : accounts) {
-            for (Transaction t : tlist.filterByAccount(account,
-                    tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits())))) {
-                debited += t.getAmount();
-            }
+            debited += calculateDebits(tlist.filterByAccount(account,
+                    tlist.filterByDates(start, end, tlist.filterByCategories(categories, tlist.getDebits()))));
         }
         return debited;
     }
@@ -930,14 +893,9 @@ public class TransactionsController extends AbstractController {
         return dupes;
     }
 
-    @Override
     public void transactionsToCSV(String filename, boolean toAppStorage){
     	TransactionsToCSV csv = new TransactionsToCSV();
     	csv.setFileName(filename);
     	csv.excludeId(toAppStorage);
-    }
-    
-    public BudgetController makeBudget(String name){
-    	return new BudgetController(tlist, name);
     }
 }

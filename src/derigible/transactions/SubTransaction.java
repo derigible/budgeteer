@@ -35,15 +35,15 @@ public class SubTransaction implements Transaction {
 	private String guid;
 	private String notes = "";
 	
-	public SubTransaction(Transact t, double amount){
+	public SubTransaction(Splittable t, double amount){
 		init(t, amount, "");
 	}
 	
-	public SubTransaction(Transact t, double amount, String description){
+	public SubTransaction(Splittable t, double amount, String description){
 		init(t, amount, description);
 	}
 	
-	private void init(Transact t, double amount, String description){
+	private void init(Splittable t, double amount, String description){
 		this.t = t;
 		amountFromOriginal = amount;
 		this.description = description;

@@ -42,7 +42,7 @@ public class TransactionsToCSVTest {
 			e.printStackTrace();
 		}
         try {
-			list = (TList) new TransactionsController(csv).getTransactions();
+			list = (TList) new TransactionsController(csv.data_to_transactions()).getTransactions();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
