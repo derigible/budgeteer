@@ -46,7 +46,7 @@ class BudgetController extends AbstractController {
 	 * @param name the name of the budget
 	 * @param inBudget the transactions in the budget
 	 */
-	protected BudgetController(Transactions t, String name, List<Transaction> inBudget){
+	public BudgetController(Transactions t, String name, List<Transaction> inBudget){
 		NAME = name;
 		init(t, inBudget);
 	}
@@ -59,7 +59,7 @@ class BudgetController extends AbstractController {
 	 * @param t the transactions of the system
 	 * @param name the name of the budget
 	 */
-	protected BudgetController(Transactions t, String name){
+	public BudgetController(Transactions t, String name){
 		NAME = name;
 		init(t, new ArrayList<Transaction>());
 	}
@@ -311,7 +311,7 @@ class BudgetController extends AbstractController {
      * @param end the end of the period
      * @return the balance
      */
-    protected double getBalanceForCategoriesBetweenDates(String[] categories, Date start, Date end) {
+    public double getBalanceForCategoriesBetweenDates(String[] categories, Date start, Date end) {
         double balance = 0;
         List<Transaction> l = tlist.filterByDates(start, end, getValues());
         for (String category : categories) {
@@ -329,7 +329,7 @@ class BudgetController extends AbstractController {
      * @param account the account for the category
      * @return the balance
      */
-    protected double getBalanceForCategoryForAccount(String category, String account) {
+    public double getBalanceForCategoryForAccount(String category, String account) {
         List<Transaction> l0 = tlist.filterByAccount(account, getValues());
         return calculate(tlist.filterByCategory(category, l0));
     }
@@ -343,7 +343,7 @@ class BudgetController extends AbstractController {
      * @param account the account to search by
      * @return the balance
      */
-    protected double getBalanceForCategoriesForAccount(String[] categories, String account) {
+    public double getBalanceForCategoriesForAccount(String[] categories, String account) {
         List<Transaction> l0 = tlist.filterByAccount(account, getValues());
         return calculate(tlist.filterByCategories(categories, l0));
     }
@@ -359,7 +359,7 @@ class BudgetController extends AbstractController {
      * @param end the end of the period
      * @return the balance
      */
-    protected double getBalanceForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
+    public double getBalanceForCategoryForAccountBetweenDates(String category, String account, Date start, Date end) {
         List<Transaction> l0 = tlist.filterByAccount(account, getValues());
         return calculate(tlist.filterByDates(start, end, tlist.filterByCategory(category, l0)));
     }
@@ -376,7 +376,7 @@ class BudgetController extends AbstractController {
      * @param end the end of the period
      * @return the balance
      */
-    protected double getBalanceForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
+    public double getBalanceForCategoriesForAccountBetweenDates(String[] categories, String account, Date start, Date end) {
         List<Transaction> l0 = tlist.filterByAccount(account, getValues());
         return calculate(tlist.filterByDates(start, end, tlist.filterByCategories(categories, l0)));
     }
@@ -390,7 +390,7 @@ class BudgetController extends AbstractController {
      * @param accounts the accounts to search
      * @return the balance
      */
-    protected double getBalanceForCategoryForAccounts(String category, String[] accounts) {
+    public double getBalanceForCategoryForAccounts(String category, String[] accounts) {
         double balance = 0;
         List<Transaction> l0 = tlist.filterByCategory(category, getValues());
         for (String account : accounts) {
@@ -408,7 +408,7 @@ class BudgetController extends AbstractController {
      * @param accounts the accounts to search in
      * @return the balance
      */
-    protected double getBalanceForCategoriesForAccounts(String[] categories, String[] accounts) {
+    public double getBalanceForCategoriesForAccounts(String[] categories, String[] accounts) {
         double balance = 0;
         List<Transaction> l0 = tlist.filterByCategories(categories, getValues());
         for (String account : accounts) {          
