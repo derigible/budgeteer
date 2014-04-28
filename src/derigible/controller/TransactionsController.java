@@ -11,6 +11,7 @@
 
 package derigible.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -18,8 +19,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import derigible.transactions.TList;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
+import derigible.transformations.CSVToBudget;
 import derigible.transformations.TransactionsToCSV;
 
 /**
@@ -893,8 +897,23 @@ public class TransactionsController extends AbstractController {
         return dupes;
     }
 
-    public void transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
+    @Override
+    public File transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
     	TransactionsToCSV csv = new TransactionsToCSV(filename, toAppStorage);
-    	csv.transactions_to_storage(this.tlist);
+    	return csv.transactions_to_storage(this.tlist);
+    }
+    
+    /**
+     * Creates an empty BudgetController object with the given name.
+     * 
+     * @param budgetName the name of the budget
+     * @return the BudgetController
+     */
+    public BudgetController createBudget(String budgetName){
+    	return new BudgetController(tlist, budgetName);
+    }
+    
+    public BudgetController createBudgetFromFile(String budgetName, File file) throws IOException{
+    	return new BudgetController(tlist, budgetName, new CSVToBudget(file, tlist).data_to_transactions().getTransactions());
     }
 }

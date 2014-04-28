@@ -10,6 +10,7 @@
  *******************************************************************************/
 package derigible.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,14 +25,27 @@ import derigible.transformations.BudgetToCSV;
 /**
  * @author marcphillips
  * 
- * A controller that will 
- *
+ * A controller that will store all of the budget transactions for a given budget and 
+ * perform basic calculations and operations on that list. A budget has a name, and that
+ * name should be kept unique as it will be saved in app storage by that name. It is
+ * recommended that BudgetControllers be kept in a SET to ensure that only one is ever
+ * made. This will require checking to make sure that a BudgetController that already
+ * exists is not overwritten unless explicitly meant to.
  */
 class BudgetController extends AbstractController {
 	private Transactions tlist;
 	private final String NAME;
 	private HashMap<String, Transaction> budget = new HashMap<String, Transaction>();
 
+	/**
+	 * This class is made only by the TransactionsController. Takes in the translist
+	 * of the controller and creates a new budget object. An empty budget list
+	 * will be created with this option.
+	 * 
+	 * @param t the transactions of the system
+	 * @param name the name of the budget
+	 * @param inBudget the transactions in the budget
+	 */
 	protected BudgetController(Transactions t, String name, List<Transaction> inBudget){
 		NAME = name;
 		init(t, inBudget);
@@ -450,9 +464,9 @@ class BudgetController extends AbstractController {
     }
 
 	@Override
-	public void transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
+	public File transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
 		BudgetToCSV csv = new BudgetToCSV(NAME, toAppStorage);
-		csv.transactions_to_storage(new TList(getValues()));
+		return csv.transactions_to_storage(new TList(getValues()));
 	}
     
 }

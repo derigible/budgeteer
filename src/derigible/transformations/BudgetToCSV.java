@@ -12,13 +12,10 @@ package derigible.transformations;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
-import derigible.utils.FileU;
 
 /**
  * @author marcphillips
@@ -28,8 +25,12 @@ public class BudgetToCSV extends TransformToStorage {
 	private File file;
 	
 	public BudgetToCSV(String budgetName, boolean toAppStorage){
-		filename = "transactions_" + budgetName + ".csv";
+		filename = "budgets/transactions_" + budgetName + ".csv"; //Save to budgets folder
 		this.toAppStorage = toAppStorage;
+		File test = new File(System.getProperty("user.home") + "/Budgeteer/budgets");
+		if(!test.isDirectory()){ //Ensure budgets folder is there
+			test.mkdir();
+		}
 	}
 
 	/* (non-Javadoc)

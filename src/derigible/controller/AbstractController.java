@@ -10,6 +10,7 @@
  *******************************************************************************/
 package derigible.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,9 +36,10 @@ abstract class AbstractController {
      * 
      * @param filename the file to put the output
      * @param toAppStorage determines if this should go to app storage
+     * @return the csv file object
      * @throws IOException 
      */
-    public abstract void transactionsToCSV(String filename, boolean toAppStorage) throws IOException;
+    public abstract File transactionsToCSV(String filename, boolean toAppStorage) throws IOException;
     
     /**
      * Calculate the balance of the list provided.
