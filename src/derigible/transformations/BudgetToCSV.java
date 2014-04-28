@@ -10,29 +10,26 @@
  *******************************************************************************/
 package derigible.transformations;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
+import derigible.utils.FileU;
 
 /**
  * @author marcphillips
  *
  */
-public class TransactionsToCSV extends TransformToStorage {
+public class BudgetToCSV extends TransformToStorage {
+	private File file;
 	
-	public TransactionsToCSV(String filename, boolean toAppStorage){
-		filename = "transactions.csv";
+	public BudgetToCSV(String budgetName, boolean toAppStorage){
+		filename = "transactions_" + budgetName + ".csv";
 		this.toAppStorage = toAppStorage;
-	}
-	
-	public TransactionsToCSV(){
-		filename = "transactions.csv";
 	}
 
 	/* (non-Javadoc)
@@ -40,30 +37,13 @@ public class TransactionsToCSV extends TransformToStorage {
 	 */
 	@Override
 	public File transactions_to_storage(Transactions list) throws IOException {
-		CSVWriter csv = this.getCSVWriter();
-		String[] headers = {"id", "month", "day", "year", "description", "amount",
-				"category", "account", "debit_or_credit", "original_description", "note"};
-		if(!toAppStorage){
-			headers[0] = "";
-		}
+		CSVWriter csv = this.getCSVWriter();	
+		String[] headers = {"id"};
 		csv.writeNext(headers);
 		String[] row;
 		for(Transaction t : list.getTransactions()){	
-			row = new String[11];
-			if(toAppStorage){		
-				row[0] = t.getGUID();	
-			} 
-			GregorianCalendar c = t.getDate();
-			row[1] = Integer.toString(c.get(Calendar.MONTH) + 1);
-			row[2] = Integer.toString(c.get(Calendar.DAY_OF_MONTH));		
-			row[3] = Integer.toString(c.get(Calendar.YEAR));
-			row[4] = t.getDescription();
-			row[5] = Double.toString(t.getAmount());
-			row[6] = t.getCategory();
-			row[7] = t.getAccount();
-			row[8] = t.isCredit() ? "credit" : "debit";
-			row[9] = t.getOriginalDescription();
-			row[10] = t.getNotes();
+			row = new String[11];	
+			row[0] = t.getGUID();	
 			csv.writeNext(row);
 		}
 		csv.close();

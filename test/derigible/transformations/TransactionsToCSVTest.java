@@ -62,10 +62,8 @@ public class TransactionsToCSVTest {
 	
 	@Test
 	public void testChangeNameAndExcludeID(){
-		TransactionsToCSV ttc = new TransactionsToCSV();
+		TransactionsToCSV ttc = new TransactionsToCSV("test.csv", true);
 		try {
-			ttc.setFileName("test.csv");
-			ttc.excludeId(true);
 			ttc.transactions_to_storage(list);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

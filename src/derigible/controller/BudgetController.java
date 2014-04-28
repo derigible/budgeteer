@@ -1,8 +1,16 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2014 Derigible Enterprises.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Derigible Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.derigible.com/license
+ *
+ * Contributors:
+ *     Derigible Enterprises - initial API and implementation
+ *******************************************************************************/
 package derigible.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +19,7 @@ import java.util.List;
 import derigible.transactions.TList;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
+import derigible.transformations.BudgetToCSV;
 
 /**
  * @author marcphillips
@@ -29,7 +38,7 @@ class BudgetController extends AbstractController {
 	}
 	
 	/**
-	 * This class is made only by the TransactionsContoller. Takes in the translist
+	 * This class is made only by the TransactionsController. Takes in the translist
 	 * of the controller and creates a new budget object. An empty budget list
 	 * will be created with this option.
 	 * 
@@ -47,12 +56,6 @@ class BudgetController extends AbstractController {
 		for(Transaction t0 : inBudget){
 			budget.put(t0.getGUID(), t0);
 		}
-	}
-
-	@Override
-	public void transactionsToCSV(String filename, boolean toAppStorage) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -441,5 +444,15 @@ class BudgetController extends AbstractController {
         }
         return balance;
     }
+    
+    public String getName(){
+    	return NAME;
+    }
+
+	@Override
+	public void transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
+		BudgetToCSV csv = new BudgetToCSV(NAME, toAppStorage);
+		csv.transactions_to_storage(new TList(getValues()));
+	}
     
 }

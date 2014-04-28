@@ -893,9 +893,8 @@ public class TransactionsController extends AbstractController {
         return dupes;
     }
 
-    public void transactionsToCSV(String filename, boolean toAppStorage){
-    	TransactionsToCSV csv = new TransactionsToCSV();
-    	csv.setFileName(filename);
-    	csv.excludeId(toAppStorage);
+    public void transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
+    	TransactionsToCSV csv = new TransactionsToCSV(filename, toAppStorage);
+    	csv.transactions_to_storage(this.tlist);
     }
 }
