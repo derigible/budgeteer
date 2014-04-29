@@ -81,6 +81,55 @@ public class BudgetController extends AbstractController {
 		return new ArrayList<Transaction>(budget.values());
 	}
 	
+	/**
+	 * Add a single transaction to the budget.
+	 * 
+	 * @param t transaction to add
+	 */
+	public void addTransaction(Transaction t){
+		budget.put(t.getGUID(), t);
+	}
+	
+	/**
+	 * Add an array of transactions to the budget.
+	 * 
+	 * @param trans the transaction array
+	 */
+	public void addTransactions(Transaction[] trans){
+		for(Transaction t0 : trans){
+			addTransaction(t0);
+		}
+	}
+	
+	/**
+	 * Remove the transaction from the budget. Does nothing if not found.
+	 * 
+	 * @param t the transaction to remove
+	 */
+	public void removeTransaction(Transaction t){
+		removeTransaction(t.getGUID());
+	}
+	
+	/**
+	 * Remove the transaction from the budget by the GUID. Does nothing if not found.
+	 * 
+	 * @param GUID the GUID of the transaction to remove.
+	 */
+	public void removeTransaction(String GUID){
+		budget.remove(GUID);
+	}
+	
+	/**
+	 * Remove transactions from the budget. Does nothing if not found.
+	 * 
+	 * @param trans the transactions to remove
+	 */
+	public void removeTransactions(Transaction[] trans){
+		for(Transaction t0 : trans){
+			removeTransaction(t0.getGUID());
+		}
+	}
+	
 	 /**
      * Exclude all transactions of a given category for this budget. This
      * action removes the transaction from the budget list.
@@ -459,6 +508,11 @@ public class BudgetController extends AbstractController {
         return balance;
     }
     
+    /**
+     * Get the name of the Budget.
+     * 
+     * @return the budget name
+     */
     public String getName(){
     	return NAME;
     }

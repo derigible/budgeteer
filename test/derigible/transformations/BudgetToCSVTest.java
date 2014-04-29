@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import derigible.controller.BudgetsController;
 import derigible.controller.TransactionsController;
 import derigible.controller.BudgetController;
 import derigible.utils.FileU;
@@ -45,7 +46,8 @@ public class BudgetToCSVTest {
 		}
         try {
         	tc = new TransactionsController(csv.data_to_transactions());
-        	bc = tc.createBudget("test");
+        	BudgetsController bsc = new BudgetsController(tc);
+        	bc = bsc.createNewBudget("test");
         	bc.includeCategory("test");
         	assertEquals("Wrong number of transactions in budget.", 3, bc.getTransactions().getTransactions().size());
 		} catch (IOException e) {
@@ -76,7 +78,8 @@ public class BudgetToCSVTest {
 		String path = new File(System.getProperty("user.home") + "/Budgeteer/budgets").getAbsolutePath();
 		assertEquals("Wrong path to file.", path, f.getParent());
 		try {
-			bc = tc.createBudgetFromFile("test", f);
+			BudgetsController bsc = new BudgetsController(tc);
+			bc = bsc.readInBudget("test", f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -908,11 +908,19 @@ public class TransactionsController extends AbstractController {
      * @param budgetName the name of the budget
      * @return the BudgetController
      */
-    public BudgetController createBudget(String budgetName){
+    protected BudgetController createBudget(String budgetName){
     	return new BudgetController(tlist, budgetName);
     }
     
-    public BudgetController createBudgetFromFile(String budgetName, File file) throws IOException{
+    /**
+     * Creates a budget from a file.
+     * 
+     * @param budgetName the name for the new budget
+     * @param file the file of the budget
+     * @return the BudgetController for the budget
+     * @throws IOException
+     */
+    protected BudgetController createBudgetFromFile(String budgetName, File file) throws IOException{
     	return new BudgetController(tlist, budgetName, new CSVToBudget(file, tlist).data_to_transactions().getTransactions());
     }
 }
