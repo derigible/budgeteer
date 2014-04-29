@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import derigible.controller.TransactionsController;
+import derigible.transactions.Transactions;
 import derigible.utils.FileU;
 
 
@@ -121,6 +122,24 @@ public class CSVToTransactionsTest {
             {"notes", "7"}, {"labels", "8"}};
             cgood.setPossibleHeaders(possibleHeadersTemp);
             cgood.data_to_transactions();
+        } catch (IOException e) {
+            assertFalse("Error message received.", "Not all keys set. You are missing some values. Please define the headers of your CSV."
+                    .equals(e.getMessage()));
+        }
+    }
+    
+    @Test
+    public void testCSVGoodHasCorrectAmountInCategories(){
+    	try {
+            String[][] possibleHeadersTemp = {{"description", "2"}, {"amount", "3"},
+            {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
+            {"notes", "7"}, {"labels", "8"}};
+            cgood.setPossibleHeaders(possibleHeadersTemp);
+            Transactions tlist = cgood.data_to_transactions();
+            assertEquals("Wrong number in category Mortgage & Rent.", 21, tlist.getByCategory("Mortgage & Rent").size());
+            assertEquals("Wrong number in category Mortgage & Rent.", 18, tlist.getByCategory("Utilities").size());
+            assertEquals("Wrong number in category Mortgage & Rent.", 114, tlist.getByCategory("Fast Food").size());
+            assertEquals("Wrong number in category Mortgage & Rent.", 3, tlist.getByCategory("test").size());
         } catch (IOException e) {
             assertFalse("Error message received.", "Not all keys set. You are missing some values. Please define the headers of your CSV."
                     .equals(e.getMessage()));

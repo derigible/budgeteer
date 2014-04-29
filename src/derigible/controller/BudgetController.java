@@ -32,7 +32,7 @@ import derigible.transformations.BudgetToCSV;
  * made. This will require checking to make sure that a BudgetController that already
  * exists is not overwritten unless explicitly meant to.
  */
-class BudgetController extends AbstractController {
+public class BudgetController extends AbstractController {
 	private Transactions tlist;
 	private final String NAME;
 	private HashMap<String, Transaction> budget = new HashMap<String, Transaction>();
@@ -46,7 +46,7 @@ class BudgetController extends AbstractController {
 	 * @param name the name of the budget
 	 * @param inBudget the transactions in the budget
 	 */
-	public BudgetController(Transactions t, String name, List<Transaction> inBudget){
+	protected BudgetController(Transactions t, String name, List<Transaction> inBudget){
 		NAME = name;
 		init(t, inBudget);
 	}
@@ -59,7 +59,7 @@ class BudgetController extends AbstractController {
 	 * @param t the transactions of the system
 	 * @param name the name of the budget
 	 */
-	public BudgetController(Transactions t, String name){
+	protected BudgetController(Transactions t, String name){
 		NAME = name;
 		init(t, new ArrayList<Transaction>());
 	}
@@ -465,6 +465,18 @@ class BudgetController extends AbstractController {
 
 	@Override
 	public File transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
+		BudgetToCSV csv = new BudgetToCSV(NAME+"_"+filename, toAppStorage);
+		return csv.transactions_to_storage(new TList(getValues()));
+	}
+	
+	/**
+	 * Create the budget CSV with the budgetname in the filename only.
+	 * 
+	 * @param toAppStorage store in app storage or not
+	 * @return the file that was created
+	 * @throws IOException
+	 */
+	public File transactionsToCSV(boolean toAppStorage) throws IOException{
 		BudgetToCSV csv = new BudgetToCSV(NAME, toAppStorage);
 		return csv.transactions_to_storage(new TList(getValues()));
 	}

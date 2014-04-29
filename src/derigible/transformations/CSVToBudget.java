@@ -51,16 +51,16 @@ public class CSVToBudget implements TransformToTransactions {
 		
         try {
             lines = csv.readAll();
-            if(lines.get(0)[0].length() > 1){
-            	throw new IOException("Row too big. Should only be one row. Not a budget.");
-            }
         } catch (IOException e) {
             throw new IOException("Problem reading the budget csv. Please make sure"
-                    + "that the file is not corrupted in some way.");
+                    + "that the file is not corrupted in some way: " + e.getMessage());
         }
-        Transaction[] trans = new Transaction[lines.size()];
-        for(int i = 0; i < trans.length; i ++){
-        	trans[i] = tlist.getTransactionByGUID(lines.get(i)[0]);
+        if(lines.get(0).length > 1){
+        	throw new IOException("Row too big. Should only be one column. Not a budget.");
+        }
+        Transaction[] trans = new Transaction[lines.size() - 1];//Skip header
+        for(int i = 1; i <= trans.length; i ++){//Skip header
+        	trans[i - 1] = tlist.getTransactionByGUID(lines.get(i)[0]);//Skip header
         }
 		return new TList(trans);
 	}

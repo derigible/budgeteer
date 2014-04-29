@@ -99,7 +99,6 @@ public class TransControllerTest {
 		try {
 			when(x2t.data_to_transactions()).thenReturn(t);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

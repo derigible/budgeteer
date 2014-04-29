@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import derigible.transactions.TList;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.CSVToBudget;

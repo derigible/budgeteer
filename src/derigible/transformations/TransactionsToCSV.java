@@ -27,7 +27,10 @@ import derigible.transactions.Transactions;
 public class TransactionsToCSV extends TransformToStorage {
 	
 	public TransactionsToCSV(String filename, boolean toAppStorage){
-		filename = "transactions.csv";
+		if(filename.charAt(filename.length() - 4) != '.'){
+			filename += ".csv";
+		}
+		this.filename = filename;
 		this.toAppStorage = toAppStorage;
 	}
 	

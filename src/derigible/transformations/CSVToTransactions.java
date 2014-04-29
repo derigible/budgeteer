@@ -386,6 +386,8 @@ public class CSVToTransactions implements TransformToTransactions {
             }
             if (StringU.lower(line[map[4]]).equals("credit")) {
                 t.setDebitOrCredit(true);
+            } else {
+            	t.setDebitOrCredit(false);
             }
             t.setCategory(line[map[5]]);
             t.setAccount(line[map[6]]);

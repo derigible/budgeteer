@@ -22,8 +22,17 @@ import derigible.transactions.Transactions;
  *
  */
 public class BudgetToCSV extends TransformToStorage {
-	private File file;
 	
+	/**
+	 * Creates a budget to csv transformer object that will give a name to the file
+	 * according to the budgetName given. If the toAppStorage is marked true, then
+	 * the file will be saved in the /Budgeteer/budgets directory, else it will
+	 * look for a file object. If none exists, will save it to the directory previously
+	 * mentioned.
+	 * 
+	 * @param budgetName the name of the budget
+	 * @param toAppStorage store in app storage
+	 */
 	public BudgetToCSV(String budgetName, boolean toAppStorage){
 		filename = "budgets/transactions_" + budgetName + ".csv"; //Save to budgets folder
 		this.toAppStorage = toAppStorage;
@@ -43,7 +52,7 @@ public class BudgetToCSV extends TransformToStorage {
 		csv.writeNext(headers);
 		String[] row;
 		for(Transaction t : list.getTransactions()){	
-			row = new String[11];	
+			row = new String[1];	
 			row[0] = t.getGUID();	
 			csv.writeNext(row);
 		}

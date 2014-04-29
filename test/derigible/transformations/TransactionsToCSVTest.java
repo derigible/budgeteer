@@ -32,19 +32,16 @@ public class TransactionsToCSVTest {
         try {
         	fgood = FileU.getFileInJavaProjectFolder("testDocs/csvModified.csv");
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
         	csv = new CSVToTransactions(fgood);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         try {
 			list = (TList) new TransactionsController(csv.data_to_transactions()).getTransactions();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -55,7 +52,6 @@ public class TransactionsToCSVTest {
 		try {
 			ttc.transactions_to_storage(list);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -66,7 +62,6 @@ public class TransactionsToCSVTest {
 		try {
 			ttc.transactions_to_storage(list);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
