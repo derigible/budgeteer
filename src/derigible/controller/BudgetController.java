@@ -535,4 +535,17 @@ public class BudgetController extends AbstractController {
 		return csv.transactions_to_storage(new TList(getValues()));
 	}
     
+	/**
+	 * Create the budget CSV with the budgetname as the filename in the specified directory.
+	 * 
+	 * @param dir the directory to add the budget
+	 * @return the file of the budget
+	 * @throws IOException
+	 */
+	public File transactionsToCSV(String dir) throws IOException{
+		BudgetToCSV csv = new BudgetToCSV(NAME, true);
+		csv.mkDirs(dir);
+		csv.setDir(dir);
+		return csv.transactions_to_storage(new TList(getValues()));
+	}
 }

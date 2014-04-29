@@ -32,6 +32,7 @@ abstract class TransformToStorage {
 	protected String filename;
 	protected File file;
 	protected boolean toAppStorage = false;
+	protected String dir;
 	
 	/**
 	 * Set the location where the file is to be written.
@@ -45,12 +46,21 @@ abstract class TransformToStorage {
 
 	/**
 	 * All classes that implement this interface use this method to push all
-	 * transactions in the Transactions object to storage. This is the only
-	 * defined method of a TransformToStorage object.
+	 * transactions in the Transactions object to storage. 
 	 */
     public abstract File transactions_to_storage(Transactions list) throws IOException;
     
+    //TODO This really should be put in an intermediary class
     protected CSVWriter getCSVWriter() throws IOException{
+    	if(filename.charAt(filename.length() - 4) != '.'){
+    		filename += ".csv";
+    	}
+    	if(dir != null){
+    		if(filename.charAt(0) != '/'){
+    			filename = "/" + filename;
+    		}
+    		filename = dir + filename;
+    	}
     	CSVWriter csv;
     	if(toAppStorage){
 			csv = new CSVWriter(FileU.getFileWriterToDefaultLocation(filename));
@@ -70,6 +80,36 @@ abstract class TransformToStorage {
 	 * @param filename the filename
 	 */
 	public void setFileName(String filename){
+		if(filename.charAt(0) != '/'){
+			filename = "/" + filename;
+		}
 		this.filename = filename;
+	}
+	
+	/**
+	 * Make the directories as needed in the directory to store the Transformation.
+	 * 
+	 * @param dirs the directories
+	 */
+	public void mkDirs(String dirs){
+		if(dirs.charAt(0) != '/'){
+			dirs = "/" + dirs;
+		}
+		File create = new File(System.getProperty("user.home") + "/Budgeteer"+dirs);
+		if(!create.isDirectory()){
+			create.mkdirs();
+		}
+	}
+	
+	/**
+	 * Set the directory to store the file within the Budgeteer folder.
+	 * 
+	 * @param dir the directory to store in
+	 */
+	public void setDir(String dir){
+		if(dir.charAt(0) != '/'){
+			dir = "/" + dir;
+		}
+		this.dir = dir;
 	}
 }

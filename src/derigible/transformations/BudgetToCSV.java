@@ -34,12 +34,8 @@ public class BudgetToCSV extends TransformToStorage {
 	 * @param toAppStorage store in app storage
 	 */
 	public BudgetToCSV(String budgetName, boolean toAppStorage){
-		filename = "budgets/transactions_" + budgetName + ".csv"; //Save to budgets folder
+		filename = "budget_" + budgetName + ".csv"; //Save to budgets folder
 		this.toAppStorage = toAppStorage;
-		File test = new File(System.getProperty("user.home") + "/Budgeteer/budgets");
-		if(!test.isDirectory()){ //Ensure budgets folder is there
-			test.mkdir();
-		}
 	}
 
 	/* (non-Javadoc)
@@ -47,6 +43,16 @@ public class BudgetToCSV extends TransformToStorage {
 	 */
 	@Override
 	public File transactions_to_storage(Transactions list) throws IOException {
+		if(dir == null){
+			dir = "";
+		}
+		File test = new File(System.getProperty("user.home") + "/Budgeteer"+dir+"/budgets");
+		if(!test.isDirectory()){ //Ensure budgets folder is there
+			test.mkdir();
+		}
+		if(filename.charAt(6) == '_'){
+			filename = "/budgets/" + filename;
+		}
 		CSVWriter csv = this.getCSVWriter();	
 		String[] headers = {"id"};
 		csv.writeNext(headers);
@@ -58,5 +64,21 @@ public class BudgetToCSV extends TransformToStorage {
 		}
 		csv.close();
 		return file;
+	}
+	
+	/**
+	 * Set the filename of the csv. The csv is optional. Adds the budgets directory.
+	 * 
+	 * @param filename the filename
+	 */
+	@Override
+	public void setFileName(String filename){
+		if(filename.charAt(0) != '/'){
+			filename = "/" + filename;
+		}
+		if(filename.charAt(1) != 'b'){
+			filename = "/budgets" + filename;
+		}
+		this.filename = filename;
 	}
 }

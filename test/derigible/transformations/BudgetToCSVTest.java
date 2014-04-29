@@ -29,6 +29,7 @@ public class BudgetToCSVTest {
 
 	private static BudgetController bc = null;
 	private static TransactionsController tc = null;
+	private static BudgetsController bsc = null;
 	
 	@BeforeClass
     public static void setCSVFiles() {
@@ -46,7 +47,7 @@ public class BudgetToCSVTest {
 		}
         try {
         	tc = new TransactionsController(csv.data_to_transactions());
-        	BudgetsController bsc = new BudgetsController(tc);
+        	bsc = new BudgetsController(tc);
         	bc = bsc.createNewBudget("test");
         	bc.includeCategory("test");
         	assertEquals("Wrong number of transactions in budget.", 3, bc.getTransactions().getTransactions().size());
@@ -78,11 +79,18 @@ public class BudgetToCSVTest {
 		String path = new File(System.getProperty("user.home") + "/Budgeteer/budgets").getAbsolutePath();
 		assertEquals("Wrong path to file.", path, f.getParent());
 		try {
-			BudgetsController bsc = new BudgetsController(tc);
-			bc = bsc.readInBudget("test", f);
+			BudgetsController bsc0 = new BudgetsController(tc);
+			bc = bsc0.readInBudget("test", f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		assertEquals("Wrong number of transactions.", 3, bc.getTransactions().getTransactions().size());
+	}
+	
+	@Test
+	public void testBudgetsToCSV() throws IOException{
+		BudgetController bc = bsc.createNewBudget("discover");
+		bc.includeAccount("Discover :");
+		bsc.budgetsToCSV();
 	}
 }

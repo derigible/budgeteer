@@ -13,6 +13,7 @@ package derigible.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author marcphillips
@@ -53,7 +54,7 @@ public class BudgetsController {
 	}
 	
 	/**
-	 * Create a budget from a budget file. Give it a name, preferrably the name of the old
+	 * Create a budget from a budget file. Give it a name, preferably the name of the old
 	 * budget. The name must be unique or an IOException will be thrown.
 	 * 
 	 * @param budgetName the name of the budget
@@ -70,7 +71,15 @@ public class BudgetsController {
 		return b;
 	}
 	
-	public void budgetsToCSV(){
-		//TODO write this
+	/**
+	 * Send all the budgets in the BudgetsController to CSV storage within 
+	 * a directory that is labeled after the TransactionsController's GUID.
+	 * 
+	 * @throws IOException
+	 */
+	public void budgetsToCSV() throws IOException{
+		for(Map.Entry<String, BudgetController> entry : budgets.entrySet()){
+			entry.getValue().transactionsToCSV(tc.getGuid());
+		}
 	}
 }

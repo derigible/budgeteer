@@ -32,18 +32,33 @@ import derigible.transformations.TransactionsToCSV;
 public class TransactionsController extends AbstractController {
 
     private Transactions tlist = null;
+    private String guid = null;
 
     /**
-     * Creates the Transactions list stored in the controller.
+     * Creates the Transactions list stored in the controller. Will be given a
+     * GUID, in essence creating a brand new TransactionsController.
      *
-     * @param transformer the transformer object that outputs data to an array
-     * @throws java.io.IOException problem reading data from transformer
+     * @param trans the transactions list
      */
-    public TransactionsController(Transactions trans) throws IOException {
+    public TransactionsController(Transactions trans) {
         tlist = trans;
+        guid = GUID.generate();
     }
 
-
+    /**
+     * Creates a TransactionsController with the specified GUID. This is 
+     * used when data for the controller is stored in files and not in a
+     * database. These files should all be stored in a directory named
+     * after this GUID.
+     * 
+     * @param trans the transactions list
+     * @param GUID the GUID of the TransactionsController
+     */
+    public TransactionsController(Transactions trans, String GUID){
+    	tlist = trans;
+    	guid = GUID;
+    }
+    
     @Override
     public Transactions getTransactions() {
         return tlist;
@@ -899,6 +914,8 @@ public class TransactionsController extends AbstractController {
     @Override
     public File transactionsToCSV(String filename, boolean toAppStorage) throws IOException{
     	TransactionsToCSV csv = new TransactionsToCSV(filename, toAppStorage);
+    	csv.mkDirs(this.guid);
+    	csv.setDir(this.guid);
     	return csv.transactions_to_storage(this.tlist);
     }
     
@@ -923,4 +940,14 @@ public class TransactionsController extends AbstractController {
     protected BudgetController createBudgetFromFile(String budgetName, File file) throws IOException{
     	return new BudgetController(tlist, budgetName, new CSVToBudget(file, tlist).data_to_transactions().getTransactions());
     }
+
+	/**
+	 * Get the GUID of this transactioncontroller.
+	 * 
+	 * @return the guid
+	 */
+	public String getGuid() {
+		return guid;
+	}
+
 }

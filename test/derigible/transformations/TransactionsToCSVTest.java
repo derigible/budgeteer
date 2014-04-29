@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import derigible.controller.TransactionsController;
 import derigible.transformations.TransactionsToCSV;
-import derigible.transactions.TList;
+import derigible.transactions.Transactions;
 import derigible.utils.FileU;
 //import org.junit.Ignore;
 
@@ -23,7 +23,8 @@ import derigible.utils.FileU;
  */
 public class TransactionsToCSVTest {
 
-	private static TList list = null;
+	private static Transactions list = null;
+	private static TransactionsController tc = null;
 	
 	@BeforeClass
     public static void setCSVFiles() {
@@ -40,7 +41,9 @@ public class TransactionsToCSVTest {
 			e.printStackTrace();
 		}
         try {
-			list = (TList) new TransactionsController(csv.data_to_transactions()).getTransactions();
+        	tc = new TransactionsController(csv.data_to_transactions());
+			list = tc.getTransactions();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -64,5 +67,10 @@ public class TransactionsToCSVTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testT2CFromController() throws IOException{
+		tc.transactionsToCSV("transactions", true);
 	}
 }
