@@ -73,4 +73,9 @@ public class TransactionsToCSVTest {
 	public void testT2CFromController() throws IOException{
 		tc.transactionsToCSV("transactions", true);
 	}
+	
+	@Test
+	public void testT2CFromControllerHasSubTrans() throws IOException{
+
+	}
 }

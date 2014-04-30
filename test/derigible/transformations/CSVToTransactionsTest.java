@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import derigible.controller.TransactionsController;
+import derigible.transactions.Splittable;
 import derigible.transactions.Transactions;
 import derigible.utils.FileU;
 
@@ -196,6 +197,20 @@ public class CSVToTransactionsTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Test
+    public void testPGUIDCreatesSubTransactions() throws URISyntaxException, IOException {
+    	CSVToTransactions csv = new CSVToTransactions(FileU.getFileInJavaProjectFolder("testDocs/transactionswguidandpguid.csv"));
+    	TransactionsController tc = new TransactionsController(csv.data_to_transactions());
+    	Splittable t = (Splittable) tc.getTransactions().getTransactionByGUID("0000014572407fb6bc9cacd80010003200ab00a6");
+    	assertTrue("Should have a SubTransaction.", t.hasSubTransactions());
+    	Splittable t2 = (Splittable) tc.getTransactions().getTransactionByGUID("000001457240800bcc45272b0010003200ab00a6");
+    	int count = 0;
+    	while(t2.getSubTransactions()[count] != null){
+    		count++;
+    	}
+    	assertEquals("Wrong number of SubTransactions.", 2, count);
     }
 
 //    /**

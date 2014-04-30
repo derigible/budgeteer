@@ -65,45 +65,37 @@ public class Transact implements Splittable {
         DebitOrCredit = doc;
     }
 
-    /**
-     * @return the account
-     */
     @Override
     public String getAccount() {
         return Account;
     }
 
-    /**
-     * @param account the account to set
-     */
     public void setAccount(String account) {
         Account = account;
     }
 
-    /**
-     * @return the date
-     */
     @Override
     public GregorianCalendar getDate() {
         return date;
     }
 
     /**
+     * Set the date.
+     * 
      * @param date the date to set
      */
     public void setDate(GregorianCalendar date) {
         this.date = date;
     }
 
-    /**
-     * @return the description
-     */
     @Override
     public String getDescription() {
         return description;
     }
 
     /**
+     * Set the description.
+     * 
      * @param description the description to set
      */
     public void setDescription(String description) {
@@ -111,44 +103,47 @@ public class Transact implements Splittable {
     }
 
     /**
+     * If this has been subdivided, will return the amount that has not been subdivided. If all
+     * of the transaction has been subdivided, will return zero.
+     * 
      * @return the amount
      */
     @Override
     public double getAmount() {
-        return Amount;
+        return this.hasSubTransactions() ? this.getUndividedAmount() : Amount;
     }
 
     /**
+     * Set the amount of the transaction. Best not to call this once object is used. Consider getting rid of.
+     * 
      * @param amount the amount to set
      */
     public void setAmount(double amount) {
         Amount = amount;
     }
 
-    /**
-     * @return the category
-     */
     @Override
     public String getCategory() {
         return Category;
     }
 
     /**
+     * Set the category of the transaction.
+     * 
      * @param category the category to set
      */
     public void setCategory(String category) {
         Category = category;
     }
 
-    /**
-     * @return the debitOrCredit
-     */
     @Override
     public boolean isCredit() {
         return DebitOrCredit;
     }
 
     /**
+     * Set whether this is a debit or credit.
+     * 
      * @param debitOrCredit the debitOrCredit to set
      */
     public void setDebitOrCredit(boolean debitOrCredit) {
@@ -171,7 +166,8 @@ public class Transact implements Splittable {
     }
 
     /**
-     *
+     * Set the original description.
+     * 
      * @param original the original description
      */
     public void setOriginalDescription(String original) {
@@ -198,11 +194,7 @@ public class Transact implements Splittable {
 		note += "; " + note;
 	}
 
-	/**
-	 * Get the sub-transactions associated with this transaction, if any.
-	 * 
-	 * @return the sub transactions
-	 */
+	@Override
 	public SubTransaction[] getSubTransactions() {
 		return subTrans;
 	}
@@ -232,20 +224,12 @@ public class Transact implements Splittable {
 		amountAllocated += split.getAmount();
 	}
 	
-	/**
-	 * Remove the subtransaction from the transaction.
-	 * 
-	 * @param split the sub transaction to remove
-	 */
+	@Override
 	public void removeSubTransaction(SubTransaction split){
 		removeSubTransaction(split.getGUID());
 	}
 	
-	/**
-	 * Remove the subtransaction from the transaction by its GUID.
-	 * 
-	 * @param GUID the guid of the subtransaction to remove
-	 */
+	@Override
 	public void removeSubTransaction(String GUID){
 		for(int j = 0; j < subTrans.length; j++){
 			if(subTrans[j] == null){ //GUID not found, must not be in subtransaction list

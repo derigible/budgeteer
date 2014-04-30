@@ -55,7 +55,7 @@ public class TransactTest {
 		
 		SubTransaction st2 = new SubTransaction(t, 25);
 		assertEquals("Wrong amount divided.", 75.00, t.getDividedAmount(), .001);
-		assertEquals("Wrong description.", "", st2.getDescription());
+		assertFalse("Wrong description.", st2.getDescription().isEmpty());
 		assertEquals("Wrong amount undivided.", 75, t.getUndividedAmount(), .001);
 		
 		SubTransaction st3 = new SubTransaction(t, 80);
@@ -87,12 +87,10 @@ public class TransactTest {
 		
 		t.removeSubTransaction(st2);
 		assertEquals("Wrong amount divided.", 75.00, t.getDividedAmount(), .001);
-		assertEquals("Wrong description.", "", st2.getDescription());
 		assertEquals("Wrong amount undivided.", 75, t.getUndividedAmount(), .001);
 		
 		t.removeSubTransaction(st3);
 		assertEquals("Wrong amount divided.", 0.0, t.getDividedAmount(), .001);
-		assertEquals("Wrong description.", "SubTransaction amount truncated to fit allowed amount. Amount changed to: " + 75.00, st3.getNotes());
 		assertEquals("Wrong amount undivided.", 150.0, t.getUndividedAmount(), .001);
 	}
 	

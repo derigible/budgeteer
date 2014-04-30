@@ -19,6 +19,13 @@ package derigible.transactions;
 public interface Splittable extends Transaction {
 	
 	/**
+	 * Get the sub-transactions associated with this transaction, if any.
+	 * 
+	 * @return the sub transactions
+	 */
+	public abstract SubTransaction[] getSubTransactions();
+	
+	/**
 	 * Remove a sub transaction from the list. Will do nothing if sub transaction not in list.
 	 * 
 	 * @param split the sub transaction to remove

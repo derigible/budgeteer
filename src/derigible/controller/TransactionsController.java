@@ -942,7 +942,7 @@ public class TransactionsController extends AbstractController {
     }
 
 	/**
-	 * Get the GUID of this transactioncontroller.
+	 * Get the GUID of this transactionscontroller.
 	 * 
 	 * @return the guid
 	 */

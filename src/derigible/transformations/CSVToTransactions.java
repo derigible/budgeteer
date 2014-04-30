@@ -18,10 +18,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 import derigible.controller.GUID;
+import derigible.transactions.SubTransaction;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
 import derigible.transactions.Transaction;
@@ -43,10 +47,10 @@ public class CSVToTransactions implements TransformToTransactions {
 
     /**
      * Set the file to the csv reader and the number of columns that are desired
-     * to keep. Must keep at least 9 columns, defined by the following:
+     * to keep. Must keep at least 11 columns, defined by the following:
      *
-     * Date Description Amount Transaction Type Category Account Name Notes
-     * Labels
+     * Date GUID Description Amount Transaction Type Category Account Name Notes
+     * Labels Paretn Guid
      *
      * CSVToTransactions will attempt to match possible similar names to these
      * columns. The user is encouraged to use the setPossibleHeaders method to
@@ -110,11 +114,12 @@ public class CSVToTransactions implements TransformToTransactions {
      * 		4 =&gt; Transaction Type
      * 		5 =&gt; Category
      * 		6 =&gt; Account Name
-     * 		8 =&gt; Notes
+     * 		7 =&gt; Notes
      * 		8 =&gt; Labels
-     * 		9 =&gt; Year
-     *      10 =&gt; Month
-     *      11 =&gt; Day
+     * 		9 =&gt; Parent Guid
+     *      10 =&gt; Year
+     *      11 =&gt; Month
+     *      12 =&gt; Day
      * </pre>
      *
      * Some CSV exports express date as a Day/Month/Year in different columns.
@@ -143,9 +148,9 @@ public class CSVToTransactions implements TransformToTransactions {
      * @throws IOException data type does not match
      */
     public void setHeaders(int[] headerMap) throws IOException {
-        if (headerMap.length != 12 || headerMap.length != 9) {
+        if (headerMap.length != 13 || headerMap.length != 10) {
             throw new IOException(
-                    "Incorrect  number of columns defined. Must have 9 or 12 defined.");
+                    "Incorrect  number of columns defined. Must have 10 or 13 defined.");
         }
         map = headerMap;
     }
@@ -167,11 +172,12 @@ public class CSVToTransactions implements TransformToTransactions {
      * 		4 =&gt; Transaction Type
      * 		5 =&gt; Category
      * 		6 =&gt; Account Name
-     * 		8 =&gt; Notes
+     * 		7 =&gt; Notes
      * 		8 =&gt; Labels
-     * 		9 =&gt; Year
-     *      10 =&gt; Month
-     *      11 =&gt; Day
+     *      9 =&gt; Parent Guid
+     * 		10 =&gt; Year
+     *      11 =&gt; Month
+     *      12 =&gt; Day
      * </pre>
      *
      * An example of what these nested array will look like follows:
@@ -181,7 +187,8 @@ public class CSVToTransactions implements TransformToTransactions {
      *   {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
      *   {"total", "3"}, {"credits", "3"}, {"debits", "3"}, {"credit", "3"},
      *   {"debit", "3"}, {"information", "7"}, {"info", "7"}, {"account", "6"},
-     *   {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"}};
+     *   {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"},
+     *   {"p_guid", "9"}, {"parent_guid", "9"}};
      * </pre>
      *
      * @param headers the headers to set
@@ -219,11 +226,12 @@ public class CSVToTransactions implements TransformToTransactions {
         {"transaction type", "4"}, {"category", "5"}, {"account name", "6"},
         {"total", "3"}, {"credits", "3"}, {"debits", "3"}, {"credit", "3"},
         {"debit", "3"}, {"information", "7"}, {"info", "7"}, {"account", "6"},
-        {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"}};
+        {"group", "5"}, {"tag", "5"}, {"notes", "7"}, {"labels", "8"}, {"guid", "1"}, {"id", "1"},
+        {"p_guid", "9"}, {"parent_guid", "9"}};
         if (possibleHeaders == null) {
             possibleHeaders = possibleHeadersTemp;
         }
-        map = new int[9];
+        map = new int[10];
         for (int i = 0; i < map.length; i++) {
             map[i] = -1;
         }
@@ -237,15 +245,16 @@ public class CSVToTransactions implements TransformToTransactions {
                         throw new IOException(
                                 "Date and year/month/day defined. Can only have one or the other");
                     }
-                    map = new int[12];
+                    map = new int[13];
                     for (int i = 0; i < map.length; i++) {
                         map[i] = 1;
                     }
                     map[0] = NODATE;
                     map[1] = -1;
-                    map[9] = year;
-                    map[10] = month;
-                    map[11] = day;
+                    map[9] = -1;
+                    map[10] = year;
+                    map[11] = month;
+                    map[12] = day;
                 } else {
                     throw new IOException(
                             "Year and month found but does not contain a day.");
@@ -265,7 +274,7 @@ public class CSVToTransactions implements TransformToTransactions {
         }
         for (int i = 0; i < map.length; i++) {
         	//Don't check the GUID column - check this separately.
-            if (map[i] == -1 && i != 1) {
+            if (map[i] == -1 && i != 1 && i != 9) {
                 throw new IOException("Not all keys set. You are missing some values. Please "
                         + "define the headers of your CSV.");
             }
@@ -349,17 +358,19 @@ public class CSVToTransactions implements TransformToTransactions {
      * 		6 =&gt; Account Name
      * 		7 =&gt; Notes
      * 		8 =&gt; Labels
-     * 		9 =&gt; Year
-     *      10 =&gt; Month
-     *      11 =&gt; Day
+     * 		9 =&gt; Parent Guid
+     *      10 =&gt; Year
+     *      11 =&gt; Month
+     *      12 =&gt; Day
      * </pre>
      *
      * @param lines
      * @return
      */
     private Transaction[] mappedCSVToTransactions(List<String[]> lines) throws IOException {
-        Transact[] trans = new Transact[lines.size() - 1]; //Skipping header
-
+        Transaction[] trans = new Transaction[lines.size() - 1]; //Skipping header
+        TreeMap<Integer, String> subtrans = new TreeMap<Integer, String>();  //Track the subtrans
+        TreeMap<String, Transact> transMap = new TreeMap<String, Transact>(); //Track all the trans and their guids
         for (int i = 0; i < lines.size() - 1; i++) {
             String[] line = lines.get(i + 1); //Skipping header
             Transact t = new Transact();
@@ -374,8 +385,8 @@ public class CSVToTransactions implements TransformToTransactions {
                 t.setDate(g);
             } else {
             	//GregorianCalendar starts months at 0, decrement months by 1
-                g = new GregorianCalendar(Integer.parseInt(line[map[9]]),
-                        Integer.parseInt(line[map[10]]) - 1, Integer.parseInt(line[map[11]])); 
+                g = new GregorianCalendar(Integer.parseInt(line[map[10]]),
+                        Integer.parseInt(line[map[11]]) - 1, Integer.parseInt(line[map[12]])); 
                 t.setDate(g);
             }
             t.setDescription(line[map[2]]);
@@ -396,11 +407,20 @@ public class CSVToTransactions implements TransformToTransactions {
             } else {
             	t.setGUID(line[map[1]]);
             }
-
+            if(map[9] != -1 && !line[map[9]].isEmpty()){
+            	subtrans.put(i, line[map[9]]);
+            }
 	    // Check if user wants to keep notes and labels
             //Currently just discards them
             //TODO
             trans[i] = t;
+            transMap.put(t.getGUID(), t); //Place in map to retrieve later if SubTransaction is found.
+        }
+        // Go through list
+        for(Map.Entry<Integer, String> sub : subtrans.entrySet()){
+        	Transaction t = trans[sub.getKey()];
+        	SubTransaction st = new SubTransaction(transMap.get(sub.getValue()), t.getAmount());
+        	trans[sub.getKey()] = st;
         }
         return trans;
     }

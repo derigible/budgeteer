@@ -10,7 +10,9 @@
  *******************************************************************************/
 package derigible.transactions;
 
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+
 import derigible.controller.GUID;
 
 /**
@@ -46,9 +48,13 @@ public class SubTransaction implements Transaction {
 	private void init(Splittable t, double amount, String description){
 		this.t = t;
 		amountFromOriginal = amount;
-		this.description = description;
+		this.notes = description;
 		this.guid = GUID.generate();
 		t.addSubTransaction(this);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		this.description = "SUBTRANSACTION OF: " + sdf.format(t.getDate().getTime()) + " : " + 
+				(t.getUndividedAmount() + t.getDividedAmount()) + " : " + t.getAccount() + " : " +
+				t.getDescription();
 	}
 	
 	//More constructors for different Transaction types here.
@@ -169,12 +175,21 @@ public class SubTransaction implements Transaction {
 	}
 
 	/**
-	 * Set the note of the subtransaction.
+	 * Set the description of the subtransaction.
 	 * 
-	 * @param note the sub-transaction's note
+	 * @param description the sub-transaction's note
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	/**
+	 * Get the parent transaction of the subtransaction.
+	 * 
+	 * @return the parent transaction
+	 */
+	public Transaction getParent(){
+		return t;
 	}
 
 }
