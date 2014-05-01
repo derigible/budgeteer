@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import derigible.controller.TransactionsController;
 import derigible.transformations.TransactionsToCSV;
+import derigible.transactions.Transact;
 import derigible.transactions.Transactions;
 import derigible.utils.FileU;
 //import org.junit.Ignore;
@@ -76,6 +77,8 @@ public class TransactionsToCSVTest {
 	
 	@Test
 	public void testT2CFromControllerHasSubTrans() throws IOException{
-
+		Transact t = (Transact) tc.getTransactions().getTransactionAt(0);
+		tc.addSubTransaction(t, 1);
+		tc.transactionsToCSV("transactionswsub", true);
 	}
 }

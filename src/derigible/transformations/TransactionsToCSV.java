@@ -72,7 +72,10 @@ public class TransactionsToCSV extends TransformToStorage {
 			row[8] = t.isCredit() ? "credit" : "debit";
 			row[9] = t.getOriginalDescription();
 			row[10] = t.getNotes();
-			if(t.getClass().equals("SubTransaction") && toAppStorage){
+System.out.println(t.getClass());
+System.out.println(t.getClass().getName() == "derigible.transactions.SubTransaction");
+			if(t.getClass().equals(SubTransaction.class) && toAppStorage){
+				System.out.println("What up.");
 				SubTransaction st = (SubTransaction) t;
 				row[11] = st.getParent().getGUID();
 			} else if(toAppStorage){

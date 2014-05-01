@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 //import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -399,4 +398,6 @@ public class TransControllerTest {
 		Transaction[] l = tc.getPossibleDuplicates().get(0);
 		assertTrue("Wrong transactions in return.", l[0] == trans2[5] ? true : l[1] == trans2[5]);
 	}
+	
+	//TODO Create a transcontroller from a folder of data
 }

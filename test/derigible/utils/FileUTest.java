@@ -13,17 +13,9 @@
 package derigible.utils;
 
 import java.io.File;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-//import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *

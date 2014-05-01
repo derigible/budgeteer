@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import derigible.transactions.Splittable;
+import derigible.transactions.SubTransaction;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.CSVToBudget;
@@ -64,6 +66,72 @@ public class TransactionsController extends AbstractController {
         return tlist;
     }
 
+    @Override
+	public void addTransaction(Transaction t) {
+		this.tlist.addTransaction(t);
+	}
+
+	@Override
+	public void removeTransaction(String GUID) {
+		this.tlist.excludeTransaction(tlist.getTransactionByGUID(GUID));
+	}
+	
+	/**
+	 * Add a subtransaction to a given transaction and place it in the Transactions object.
+	 * 
+	 * @param t the transaction to add a SubTransaction to
+	 * @param amount the amount of the SubTransaction
+	 * @return the SubTransaction
+	 */
+	public SubTransaction addSubTransaction(Splittable t, double amount){
+		return this.addSubTransaction(t, amount, "");
+	}
+	
+	/**
+	 * Add a subtransaction to a given transaction and place it in the Transactions object.
+	 * 
+	 * @param t the transaction to add a SubTransaction to
+	 * @param amount the amount of the SubTransaction
+	 * @param description the description of the SubTransaction
+	 * @return the SubTransaction
+	 */
+	public SubTransaction addSubTransaction(Splittable t, double amount, String description){
+		SubTransaction st = new SubTransaction(t, amount, description);
+		this.addTransaction(st);
+		return st;
+	}
+	
+	/**
+	 * Add a subtransaction to a given transaction and place it in the Transactions object.
+	 * Find the Transaction object by it's guid.
+	 * 
+	 * @param Guid guid of the transaction to add a SubTransaction to
+	 * @param amount the amount of the SubTransaction
+	 * @return the SubTransaction
+	 * @throws IOException The Guid is to a transaction that is not splittable
+	 */
+	public SubTransaction addSubTransaction(String Guid, double amount) throws IOException{
+		return this.addSubTransaction(Guid, amount, "");
+	}
+	
+	/**
+	 * Add a subtransaction to a given transaction and place it in the Transactions object.
+	 * Find the Transaction object by it's guid.
+	 * 
+	 * @param Guid guid of the transaction to add a SubTransaction to
+	 * @param amount the amount of the SubTransaction
+	 * @param description the description of the SubTransaction
+	 * @return the SubTransaction
+	 * @throws IOException The Guid is to a transaction that is not splittable
+	 */
+	public SubTransaction addSubTransaction(String Guid, double amount, String description) throws IOException{
+		try{
+			return this.addSubTransaction((Splittable) this.getTransactions().getTransactionByGUID(Guid), amount);
+		} catch (ClassCastException e){
+			throw new IOException("Transaction with GUID: " + Guid + " is not of the Splittable type.");
+		}
+	}
+    
     /**
      * Exclude all transactions of a given category.
      *

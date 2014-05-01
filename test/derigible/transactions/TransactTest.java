@@ -13,9 +13,7 @@ package derigible.transactions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Test;
@@ -104,12 +102,12 @@ public class TransactTest {
 		SubTransaction st1 = new SubTransaction(t, 5);
 		String description = "This is a description.";
 		st1.setDescription(description);
-		SubTransaction st2 = new SubTransaction(t, 5);
-		SubTransaction st3 = new SubTransaction(t, 5);		
-		SubTransaction st4 = new SubTransaction(t, 5);
-		SubTransaction st5 = new SubTransaction(t, 5);
-		SubTransaction st6 = new SubTransaction(t, 5);
-		SubTransaction st7 = new SubTransaction(t, 5);
+		new SubTransaction(t, 5);
+		new SubTransaction(t, 5);		
+		new SubTransaction(t, 5);
+		new SubTransaction(t, 5);
+		new SubTransaction(t, 5);
+		new SubTransaction(t, 5);
 		
 		assertEquals("Wrong amount divided.", 35.00, t.getDividedAmount(), .001);
 		assertEquals("Wrong amount undivided.", 115, t.getUndividedAmount(), .001);

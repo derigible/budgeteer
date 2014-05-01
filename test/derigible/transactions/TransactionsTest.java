@@ -13,8 +13,6 @@ package derigible.transactions;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
-//import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,7 +23,6 @@ import derigible.transactions.Transact;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,8 +34,8 @@ import java.util.List;
 public class TransactionsTest { 
 	static Transaction[] trans;
 	static Transaction[] trans2;
-	static ArrayList<Transact> talist = new ArrayList<Transact>();
-	static LinkedList<Transact> tllist = new LinkedList<Transact>();
+	static ArrayList<Transaction> talist = new ArrayList<Transaction>();
+	static LinkedList<Transaction> tllist = new LinkedList<Transaction>();
 	static Transaction trn = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,23), "Ice Cream",
 			4.50, "SomethingNew", "Mastercard", false);
 	static Transaction trn2 = new Transact(new GregorianCalendar(2012,Calendar.NOVEMBER,24), "Ice Cream",
@@ -86,12 +83,11 @@ public class TransactionsTest {
 		trans2 = null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testTransactionsCreationAndRetrieval() {
 		TList t = new TList(trans);
-		TList tal = new TList((List) talist);
-		TList tll = new TList((List) tllist);
+		TList tal = new TList(talist);
+		TList tll = new TList(tllist);
 		
 		assertEquals("TList by array not equal to TList by ArrayList",
 				t.getTransactions().size(), tal.getTransactions().size());

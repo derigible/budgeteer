@@ -84,8 +84,8 @@ public class CSVToTransactionsTest {
     public void testCSVToTransactionsCreation() {
         boolean created = false;
         try {
-            CSVToTransactions csv = new CSVToTransactions(fgood);
-            CSVToTransactions csv2 = new CSVToTransactions(fbad);
+            new CSVToTransactions(fgood);
+            new CSVToTransactions(fbad);
             created = true;
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -185,7 +185,7 @@ public class CSVToTransactionsTest {
     
     @Test(expected=IOException.class)
     public void testGUIDDateAndYearInCSV() throws IOException{ 	
-    	TransactionsController tc = new TransactionsController(csvdateandyear.data_to_transactions());
+    	new TransactionsController(csvdateandyear.data_to_transactions());
     }
     
     @Test

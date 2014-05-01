@@ -31,6 +31,51 @@ abstract class AbstractController {
 	 */
 	public abstract Transactions getTransactions();
 	
+	/**
+	 * Add a single transaction to the budget.
+	 * 
+	 * @param t transaction to add
+	 */
+	public abstract void addTransaction(Transaction t);
+	
+	/**
+	 * Add an array of transactions to the budget.
+	 * 
+	 * @param trans the transaction array
+	 */
+	public void addTransactions(Transaction[] trans){
+		for(Transaction t0 : trans){
+			addTransaction(t0);
+		}
+	}
+	
+	/**
+	 * Remove the transaction from the budget. Does nothing if not found.
+	 * 
+	 * @param t the transaction to remove
+	 */
+	public void removeTransaction(Transaction t){
+		removeTransaction(t.getGUID());
+	}
+	
+	/**
+	 * Remove the transaction from the budget by the GUID. Does nothing if not found.
+	 * 
+	 * @param GUID the GUID of the transaction to remove.
+	 */
+	public abstract void removeTransaction(String GUID);
+	
+	/**
+	 * Remove a list of transactions from the controller.
+	 * 
+	 * @param tlist the array of transactions to remove
+	 */
+	public void removeTransactions(Transaction[] tlist){
+		for(Transaction t : tlist){
+			removeTransaction(t);
+		}
+	}
+	
     /**
      * The export method of all transactions in the controller.
      * 
