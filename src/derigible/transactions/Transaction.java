@@ -112,4 +112,11 @@ public interface Transaction {
 	 * @param note the note to add
 	 */
 	public abstract void addNote(String note);
+	
+	/**
+	 * Tell whether or not there are any subtransactions to be found.
+	 * 
+	 * @return true if has a subtransaction
+	 */
+	public abstract boolean hasSubTransactions();
 }
