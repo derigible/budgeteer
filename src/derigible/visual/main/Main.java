@@ -13,7 +13,7 @@ import org.eclipse.swt.events.SelectionEvent;
 public class Main {
 
 	protected Shell shell;
-
+  
 	/**
 	 * Launch the application.
 	 * @param args
