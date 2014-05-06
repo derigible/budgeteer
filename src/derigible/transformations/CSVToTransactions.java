@@ -68,6 +68,16 @@ public class CSVToTransactions implements TransformToTransactions {
     public CSVToTransactions(File file) throws FileNotFoundException {
         csv = new CSVReader(FileU.getFileReader(file));
     }
+    
+    /**
+     * Construct with the string of the filepath to the file.
+     * 
+     * @param file the path to the file
+     * @throws FileNotFoundException
+     */
+    public CSVToTransactions(String file) throws FileNotFoundException {
+        csv = new CSVReader(FileU.getFileReader(file));
+    }
 
     @Override
     public Transactions data_to_transactions() throws IOException {
