@@ -194,7 +194,12 @@ public class SubTransaction implements Transaction {
 
 	@Override
 	public boolean hasSubTransactions() {
-		return false; //Not splittable
+		return true; //Not splittable
+	}
+
+	@Override
+	public boolean isSubTransaction() {
+		return true;
 	}
 
 }

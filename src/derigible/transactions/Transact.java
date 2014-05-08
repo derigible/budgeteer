@@ -289,4 +289,9 @@ public class Transact implements Splittable {
 		}
 		return null;
 	}
+
+	@Override
+	public boolean isSubTransaction() {
+		return false;
+	}
 }

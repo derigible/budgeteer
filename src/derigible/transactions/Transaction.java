@@ -119,4 +119,12 @@ public interface Transaction {
 	 * @return true if has a subtransaction
 	 */
 	public abstract boolean hasSubTransactions();
+	
+	/**
+	 * Determine if this transaction is a subtransaction. A subtransaction
+	 * should not have any Subtransactions.
+	 * 
+	 * @return true if a SubTransaction
+	 */
+	public abstract boolean isSubTransaction();
 }
