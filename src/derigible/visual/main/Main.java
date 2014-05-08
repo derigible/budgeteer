@@ -45,7 +45,9 @@ public class Main {
 	private Table hiddenTable;
 	private TableColumn tblclmnNewColumn;
 	private List categoriesList;
+	private List listAccounts;
 	private String[] categories;
+	private String[] accounts;
 	private Label balanceLbl;
 	private Label countLbl;
   
@@ -87,10 +89,11 @@ public class Main {
 	 */
 	protected void createContents() {
 		shlBudgeteer = new Shell();
-		shlBudgeteer.setMinimumSize(new Point(250, 120));
-		shlBudgeteer.setSize(1104, 804);
+		shlBudgeteer.setMinimumSize(new Point(750, 130));
+//		shlBudgeteer.setSize(1104, 804);
+		shlBudgeteer.setMaximized(true);
 		shlBudgeteer.setText("Budgeteer");
-		shlBudgeteer.setLayout(new GridLayout(2, false));
+		shlBudgeteer.setLayout(new GridLayout(3, false));
 		
 		Menu menu = new Menu(shlBudgeteer, SWT.BAR);
 		shlBudgeteer.setMenuBar(menu);
@@ -166,7 +169,9 @@ public class Main {
 		
 		Composite composite = new Composite(shlBudgeteer, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
-		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+		GridData gd_composite = new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1);
+		gd_composite.minimumHeight = 120;
+		gd_composite.minimumWidth = 228;
 		gd_composite.widthHint = 226;
 		composite.setLayoutData(gd_composite);
 		
@@ -180,7 +185,7 @@ public class Main {
 		lblBalance.setText("Balance");
 		
 		balanceLbl = new Label(composite, SWT.CENTER);
-		balanceLbl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		balanceLbl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		balanceLbl.setText("0");
 		balanceLbl.setVisible(false);
 		
@@ -218,7 +223,7 @@ public class Main {
 		lblAccount.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 		lblAccount.setText("Accounts");
 		
-		List listAccounts = new List(composite, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+		listAccounts = new List(composite, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		GridData gd_listAccounts2 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		gd_listAccounts2.heightHint = 126;
 		gd_listAccounts2.widthHint = 120;
@@ -286,6 +291,8 @@ public class Main {
 		
 		table = new Table(shlBudgeteer, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_table.minimumWidth = 240;
+		gd_table.minimumHeight = 120;
 		gd_table.widthHint = 793;
 		gd_table.heightHint = 738;
 		table.setLayoutData(gd_table);
@@ -327,6 +334,11 @@ public class Main {
 		TableColumn tblclmnSubtransactions = new TableColumn(table, SWT.NONE);
 		tblclmnSubtransactions.setWidth(100);
 		tblclmnSubtransactions.setText("SubTransactions");
+		
+		Composite composite_1 = new Composite(shlBudgeteer, SWT.NONE);
+		GridData gd_composite_1 = new GridData(SWT.RIGHT, SWT.FILL, false, false, 1, 1);
+		gd_composite_1.heightHint = 554;
+		composite_1.setLayoutData(gd_composite_1);
 
 	}
 	
@@ -347,8 +359,11 @@ public class Main {
 		table.removeAll();
 		fillTable(trans.getTransactions(), table);
 		categories = tc.getTransactions().getCategories();
+		accounts = tc.getTransactions().getAccounts();
 		Arrays.sort(categories);
+		Arrays.sort(accounts);
 		categoriesList.setItems(categories);
+		this.listAccounts.setItems(accounts);
 		this.countLbl.setText(Integer.toString(trans.getTransactions().size()));
 		this.countLbl.setVisible(true);
 		this.balanceLbl.setText(String.format("%1$,.2f", tc.getCurrentBalance()));
