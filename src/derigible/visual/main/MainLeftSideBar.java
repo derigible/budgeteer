@@ -8,8 +8,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -22,6 +20,12 @@ public class MainLeftSideBar extends Composite {
 	private List listAccounts;
 	private String[] categories;
 	private String[] accounts;
+	private Combo year1;
+	private Combo month1;
+	private Combo day1;
+	private Combo year2;
+	private Combo month2;
+	private Combo day2;
 
 	/**
 	 * Create the composite.
@@ -99,24 +103,24 @@ public class MainLeftSideBar extends Composite {
 		lblYear.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblYear.setText("Year");
 		
-		Combo combo = new Combo(this, SWT.NONE);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		year1 = new Combo(this, SWT.NONE);
+		year1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblMonth = new Label(this, SWT.NONE);
 		lblMonth.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblMonth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMonth.setText("Month");
 		
-		Combo combo_1 = new Combo(this, SWT.NONE);
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		month1 = new Combo(this, SWT.NONE);
+		month1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblDay = new Label(this, SWT.NONE);
 		lblDay.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblDay.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblDay.setText("Day");
 		
-		Combo combo_2 = new Combo(this, SWT.NONE);
-		combo_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		day1 = new Combo(this, SWT.NONE);
+		day1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblEndDate = new Label(this, SWT.NONE);
 		lblEndDate.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -128,24 +132,24 @@ public class MainLeftSideBar extends Composite {
 		lblYear_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblYear_1.setText("Year");
 		
-		Combo combo_3 = new Combo(this, SWT.NONE);
-		combo_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		year2 = new Combo(this, SWT.NONE);
+		year2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label label = new Label(this, SWT.NONE);
 		label.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		label.setText("Month");
 		
-		Combo combo_4 = new Combo(this, SWT.NONE);
-		combo_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		month2 = new Combo(this, SWT.NONE);
+		month2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label label_1 = new Label(this, SWT.NONE);
 		label_1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		label_1.setText("Day");
 		
-		Combo combo_5 = new Combo(this, SWT.NONE);
-		combo_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		day2 = new Combo(this, SWT.NONE);
+		day2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Button btnApplyFilters = new Button(this, SWT.NONE);
 		btnApplyFilters.setText("Apply Filters");
@@ -247,6 +251,90 @@ public class MainLeftSideBar extends Composite {
 	protected void setAccounts(String[] accounts) {
 		Arrays.sort(accounts);
 		this.accounts = accounts;
+	}
+
+	/**
+	 * @return the year1
+	 */
+	protected int getYear1() {
+		return Integer.parseInt(year1.getText());
+	}
+
+	/**
+	 * @param year1 the year1 to set
+	 */
+	protected void setYear1(int year1) {
+		this.year1.setText(Integer.toString(year1));
+	}
+
+	/**
+	 * @return the month1
+	 */
+	protected int getMonth1() {
+		return Integer.parseInt(month1.getText());
+	}
+
+	/**
+	 * @param month1 the month1 to set
+	 */
+	protected void setMonth1(int month1) {
+		this.month1.setText(Integer.toString(month1));
+	}
+
+	/**
+	 * @return the day1
+	 */
+	protected int getDay1() {
+		return Integer.parseInt(day1.getText());
+	}
+
+	/**
+	 * @param day1 the day1 to set
+	 */
+	protected void setDay1(int day1) {
+		this.day1.setText(Integer.toString(day1));
+	}
+
+	/**
+	 * @return the year2
+	 */
+	protected int getYear2() {
+		return Integer.parseInt(year2.getText());
+	}
+
+	/**
+	 * @param year2 the year2 to set
+	 */
+	protected void setYear2(int year2) {
+		this.year2.setText(Integer.toString(year2));
+	}
+
+	/**
+	 * @return the month2
+	 */
+	protected int getMonth2() {
+		return Integer.parseInt(month2.getText());
+	}
+
+	/**
+	 * @param month2 the month2 to set
+	 */
+	protected void setMonth2(int month2) {
+		this.month2.setText(Integer.toString(month2));
+	}
+
+	/**
+	 * @return the day2
+	 */
+	protected int getDay2() {
+		return Integer.parseInt(day2.getText());
+	}
+
+	/**
+	 * @param day2 the day2 to set
+	 */
+	protected void setDay2(int day2) {
+		this.day2.setText(Integer.toString(day2)); 
 	}
 
 }

@@ -260,6 +260,16 @@ public interface Transactions {
 	public abstract List<Transaction> getByAccount(String account);
 	
 	/**
+	 * Get all the transactions in the specified accounts. Should return an empty list if none found.
+	 * 
+	 * Excluded transactions should not be returned.
+	 * 
+	 * @param accounts the accounts to check for
+	 * @return the list of transactions in the accounts
+	 */
+	public abstract List<Transaction> getByAccounts(String[] accounts);
+	
+	/**
 	 * 
 	 * Get all transactions for the given categories in a specified time interval.
 	 * Should return an empty list if none found. This is a convenience method to call directly and

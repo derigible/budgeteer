@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import derigible.utils.StringU;
 
 /**
@@ -351,6 +352,11 @@ public class TList implements Transactions {
         ArrayList<Transaction> trans0 = (ArrayList<Transaction>) filterByAccount(account, tlist);
         return filterExcluded(trans0);
     }
+    
+    @Override
+	public List<Transaction> getByAccounts(String[] accounts) {
+		return filterExcluded(this.filterByAccounts(accounts, tlist));
+	}
 
     @Override
     public List<Transaction> getCredits() {
@@ -726,6 +732,8 @@ public class TList implements Transactions {
         }
         return trans0;
     }
+
+	
 
     /**
      *
