@@ -337,7 +337,7 @@ public class CSVToTransactions implements TransformToTransactions {
             String[] column = lines.get(i + 1); //Skip header
             Transact t = new Transact();
             String[] dateData = column[0].split("/");
-            int month = Integer.parseInt(dateData[0]);
+            int month = Integer.parseInt(dateData[0]) - 1;
             int day = Integer.parseInt(dateData[1]);
             int year = Integer.parseInt(dateData[2]);
             t.setDate(new GregorianCalendar(year, month, day));
