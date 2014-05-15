@@ -4,7 +4,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -339,7 +338,7 @@ public class TabbedOverview {
 		});
 	}
 
-	private void fillTable(java.util.List<Transaction> trans, Table table) {
+	private void fillTable(java.util.List<Transaction> trans, final Table table) {
 		for (Transaction t : trans) {
 			if (!t.isSubTransaction()) {
 				TableItem row = new TableItem(table, SWT.NONE);

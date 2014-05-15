@@ -16,7 +16,7 @@ package derigible.transactions;
  *	Defines the methods needed for a transaction to be splittable (or 
  *	to be split up into sub transactions.
  */
-public interface Splittable extends Transaction {
+public abstract class Splittable extends Transaction {
 	
 	/**
 	 * Get the sub-transactions associated with this transaction, if any.

@@ -19,24 +19,11 @@ import java.util.GregorianCalendar;
  * A Solid implementation of the Transaction object. For most use cases you will
  * want to use this object.
  */
-public class Transact implements Splittable {
+public class Transact extends Splittable {
 
-    private GregorianCalendar date;
-    private String description;
-    private double Amount;
-    private String Category;
-    private String Account;
-    private boolean DebitOrCredit = false;
-    private String origDescription;
-    private String GUID = "0";
-    private String note = "";
     private SubTransaction[] subTrans;
     private int arrayPoint = 0;
     private double amountAllocated = 0;
-    /**
-     * All transactions assumed included.
-     */
-    private boolean excluded = false;
 
     /**
      * Empty constructor. Add data in later.
@@ -57,49 +44,12 @@ public class Transact implements Splittable {
      */
     public Transact(GregorianCalendar d, String desc, double amount,
             String cat, String account, boolean doc) {
-        date = d;
-        description = desc;
-        Amount = amount;
-        Category = cat;
-        Account = account;
-        DebitOrCredit = doc;
-    }
-
-    @Override
-    public String getAccount() {
-        return Account;
-    }
-
-    public void setAccount(String account) {
-        Account = account;
-    }
-
-    @Override
-    public GregorianCalendar getDate() {
-        return date;
-    }
-
-    /**
-     * Set the date.
-     * 
-     * @param date the date to set
-     */
-    public void setDate(GregorianCalendar date) {
-        this.date = date;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the description.
-     * 
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
+        super.setDate(d);
+        super.setDescription(desc);
+        super.setAmount(amount);
+        super.setCategory(cat);
+        super.setAccount(account);
+        super.setDebitOrCredit(doc);
     }
 
     /**
@@ -110,90 +60,9 @@ public class Transact implements Splittable {
      */
     @Override
     public double getAmount() {
-        return this.hasSubTransactions() ? this.getUndividedAmount() : Amount;
+        return this.hasSubTransactions() ? this.getUndividedAmount() : super.getAmount();
     }
-
-    /**
-     * Set the amount of the transaction. Best not to call this once object is used. Consider getting rid of.
-     * 
-     * @param amount the amount to set
-     */
-    public void setAmount(double amount) {
-        Amount = amount;
-    }
-
-    @Override
-    public String getCategory() {
-        return Category;
-    }
-
-    /**
-     * Set the category of the transaction.
-     * 
-     * @param category the category to set
-     */
-    public void setCategory(String category) {
-        Category = category;
-    }
-
-    @Override
-    public boolean isCredit() {
-        return DebitOrCredit;
-    }
-
-    /**
-     * Set whether this is a debit or credit.
-     * 
-     * @param debitOrCredit the debitOrCredit to set
-     */
-    public void setDebitOrCredit(boolean debitOrCredit) {
-        DebitOrCredit = debitOrCredit;
-    }
-
-    @Override
-    public boolean isExcluded() {
-        return excluded;
-    }
-
-    @Override
-    public void setExcluded(boolean exclude) {
-        excluded = exclude;
-    }
-
-    @Override
-    public String getOriginalDescription() {
-        return this.origDescription;
-    }
-
-    /**
-     * Set the original description.
-     * 
-     * @param original the original description
-     */
-    public void setOriginalDescription(String original) {
-        this.origDescription = original;
-    }
-
-    @Override
-	public String getGUID() {
-		return GUID;
-	}
-
-	@Override
-	public void setGUID(String gUID) {
-		GUID = gUID;
-	}
-
-	@Override
-	public String getNotes() {
-		return note;
-	}
-
-	@Override
-	public void addNote(String note) {
-		note += "; " + note;
-	}
-
+    
 	@Override
 	public SubTransaction[] getSubTransactions() {
 		return subTrans;
@@ -206,9 +75,9 @@ public class Transact implements Splittable {
 
 	@Override
 	public void addSubTransaction(SubTransaction split) {
-		if((amountAllocated + split.getAmount()) > this.Amount){
-			split.setAmount(this.Amount - amountAllocated);
-			split.addNote("SubTransaction amount truncated to fit allowed amount. Amount changed to: " + (this.Amount - amountAllocated));
+		if((amountAllocated + split.getAmount()) > super.getAmount()){
+			split.setAmount(super.getAmount() - amountAllocated);
+			split.addNote("SubTransaction amount truncated to fit allowed amount. Amount changed to: " + (super.getAmount() - amountAllocated));
 		} 
 		if(this.subTrans == null){
 			subTrans = new SubTransaction[6];
@@ -253,7 +122,7 @@ public class Transact implements Splittable {
 
 	@Override
 	public double getUndividedAmount() {
-		return this.Amount - this.amountAllocated;
+		return super.getAmount() - this.amountAllocated;
 	}
 
 	@Override

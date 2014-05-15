@@ -30,7 +30,7 @@ import derigible.controller.GUID;
  * If excluded is set in the original transaction, then this is excluded. If you set this transaction
  * to excluded, nothing will happen as excluding a sub transaction does not make much sense.
  */
-public class SubTransaction implements Transaction {
+public class SubTransaction extends Transaction {
 	private Splittable t;
 	private double amountFromOriginal;
 	private String description;
@@ -169,7 +169,7 @@ public class SubTransaction implements Transaction {
 	 * 
 	 * @param amountFromOriginal the amount from the original transaction
 	 */
-	protected void setAmount(double amountFromOriginal) {
+	public void setAmount(double amountFromOriginal) {
 		this.amountFromOriginal = amountFromOriginal;
 		t.updateSubTransactions();
 	}
@@ -200,6 +200,31 @@ public class SubTransaction implements Transaction {
 	@Override
 	public boolean isSubTransaction() {
 		return true;
+	}
+
+	@Override
+	public void setDate(GregorianCalendar gc) {
+		// Do nothing
+	}
+
+	@Override
+	public void setOriginalDescription(String desc) {
+		// Do nothing
+	}
+
+	@Override
+	public void setCategory(String category) {
+		// Do nothing
+	}
+
+	@Override
+	public void setAccount(String account) {
+		// Do nothing
+	}
+
+	@Override
+	public void setDebitOrCredit(boolean credit) {
+		// Do nothing
 	}
 
 }

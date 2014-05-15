@@ -733,6 +733,36 @@ public class TList implements Transactions {
         return trans0;
     }
 
+	@Override
+	public boolean reindexTransaction(String Guid, Transaction t) {
+		Transaction t0 = this.transactions.get(Guid);
+		if(!t0.getAccount().equalsIgnoreCase(t.getAccount())){
+			return reindexAccount(t0, t);
+		}
+		if(!t0.getCategory().equalsIgnoreCase(t.getCategory())){
+			return reindexCategory(t0, t);
+		}
+		if(!t0.getDate().equals(t.getDate())){
+			return reindexDate(t0, t);
+		}
+		return false;
+	}
+
+	private boolean reindexDate(Transaction t0, Transaction t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean reindexCategory(Transaction t0, Transaction t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean reindexAccount(Transaction t0, Transaction t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 
     /**

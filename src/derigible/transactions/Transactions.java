@@ -484,4 +484,14 @@ public interface Transactions {
 	 * @return the filtered list of transactions
 	 */
 	public abstract List<Transaction> filterByDates(Date start, Date end, List<Transaction> l);
+	
+	/**
+	 * Reindex the transaction. This is applicable only if there is no a database behind the data.
+	 * Otherwise, update each index that pertains to transactions with the updated information.
+	 * 
+	 * @param Guid  the guid of the transaction to update
+	 * @param t the transaction holding data to update
+	 * @return true if successful
+	 */
+	public abstract boolean reindexTransaction(String Guid, Transaction t);
 }
