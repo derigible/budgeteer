@@ -791,4 +791,16 @@ public class TransactionsTest {
 		assertSame("Wrong transaction found.", t.getTransactionByGUID(trans2[0].getGUID()),
 				trans2[0]);
 	}
+	
+	@Test
+	public void testReindexDate(){
+		TList t = new TList(trans2);
+		Transaction t0 = t.getLastTransaction();
+		Transact t1 = new Transact();
+		t1.setAccount(t0.getAccount());
+		t1.setCategory(t0.getCategory());
+		t1.setDate(new GregorianCalendar(2018,0,15));
+		t.reindexTransaction(t0.getGUID(),t1);
+		assertEquals("Wrong number of transactions returned", 0, t.getByDate(new GregorianCalendar(2015,Calendar.JANUARY,15).getTime()).size());
+	}
 }

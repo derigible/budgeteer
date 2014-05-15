@@ -750,11 +750,11 @@ public class TList implements Transactions {
 
 	private boolean reindexDate(Transaction t0, Transaction t) {
 		GregorianCalendar c = t0.getDate();
-		int[] points = years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).get(Calendar.DAY_OF_MONTH);
+		int[] points = years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).get(c.get(Calendar.DAY_OF_MONTH));
 		if(points.length == 1){
-			years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).remove(Calendar.DAY_OF_MONTH);
-			if(years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).size() == 0){
-				years.get(c.get(Calendar.YEAR)).remove(Calendar.MONTH);
+			years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).remove(c.get(Calendar.DAY_OF_MONTH));
+			if(years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).size() == 0){
+				years.get(c.get(Calendar.YEAR)).remove(c.get(Calendar.MONTH));
 				if(years.get(c.get(Calendar.YEAR)).size() == 0){
 					years.remove(c.get(Calendar.YEAR));
 				}
