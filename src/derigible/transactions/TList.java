@@ -749,21 +749,96 @@ public class TList implements Transactions {
 	}
 
 	private boolean reindexDate(Transaction t0, Transaction t) {
-		// TODO Auto-generated method stub
-		return false;
+		GregorianCalendar c = t0.getDate();
+		int[] points = years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).get(Calendar.DAY_OF_MONTH);
+		if(points.length == 1){
+			years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).remove(Calendar.DAY_OF_MONTH);
+			if(years.get(c.get(Calendar.YEAR)).get(Calendar.MONTH).size() == 0){
+				years.get(c.get(Calendar.YEAR)).remove(Calendar.MONTH);
+				if(years.get(c.get(Calendar.YEAR)).size() == 0){
+					years.remove(c.get(Calendar.YEAR));
+				}
+			}
+		}
+		c = t.getDate();
+		if(years.containsKey(c.get(Calendar.YEAR))){
+			if(years.get(c.get(Calendar.YEAR)).containsKey(c.get(Calendar.MONTH))){
+				if(years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).containsKey(c.get(Calendar.DAY_OF_MONTH))){
+					int[] transacts0 = years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).get(c.get(Calendar.DAY_OF_MONTH));
+                    int[] transacts1 = new int[transacts0.length + 1];
+                    for (int j = 0; j < transacts0.length; j++) {
+                        transacts1[j] = transacts0[j];
+                    }
+                    transacts1[transacts1.length - 1] = getTransactionIndex(t0);
+                    years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).put(c.get(Calendar.DAY_OF_MONTH), transacts1);
+				} else {
+					years.get(c.get(Calendar.YEAR)).get(c.get(Calendar.MONTH)).put(c.get(Calendar.DAY_OF_MONTH), new int[] {getTransactionIndex(t0)});
+				}
+			} else {
+				HashMap<Integer, int[]> day = new HashMap<Integer, int[]>();
+				day.put(c.get(Calendar.DAY_OF_MONTH), new int[] {getTransactionIndex(t0)});
+				years.get(c.get(Calendar.YEAR)).put(c.get(Calendar.MONTH), day);
+			}
+		} else {
+			HashMap<Integer, int[]> day = new HashMap<Integer, int[]>();
+			day.put(c.get(Calendar.DAY_OF_MONTH), new int[] {getTransactionIndex(t0)});
+			HashMap<Integer, HashMap<Integer, int[]>> month = new HashMap<Integer, HashMap<Integer, int[]>>();
+			month.put(c.get(Calendar.MONTH), day);
+			years.put(c.get(Calendar.YEAR), month);
+		}
+		t0.setDate(c);
+		return true;
 	}
 
 	private boolean reindexCategory(Transaction t0, Transaction t) {
-		// TODO Auto-generated method stub
-		return false;
+		String cat = lower(t0.getCategory());
+		if(categories.get(cat).length == 1){
+			categories.remove(cat);
+		}
+		cat = lower(t.getCategory());
+		if(categories.containsKey(cat)){
+			int[] transacts0 = categories.get(cat);
+            int[] transacts1 = new int[transacts0.length + 1];
+            for (int j = 0; j < transacts0.length; j++) {
+                transacts1[j] = transacts0[j];
+            }
+            transacts1[transacts1.length - 1] = getTransactionIndex(t0);
+            categories.put(cat, transacts1);
+		} else {
+			categories.put(cat, new int[] {getTransactionIndex(t0)});
+		}
+		t0.setCategory(cat);
+		return true;
 	}
 
 	private boolean reindexAccount(Transaction t0, Transaction t) {
-		// TODO Auto-generated method stub
-		return false;
+		String act = lower(t0.getAccount());
+		if(accounts.get(act).length == 1){
+			accounts.remove(act);
+		}
+		act = lower(t.getAccount());
+		if(accounts.containsKey(act)){
+			int[] transacts0 = accounts.get(act);
+            int[] transacts1 = new int[transacts0.length + 1];
+            for (int j = 0; j < transacts0.length; j++) {
+                transacts1[j] = transacts0[j];
+            }
+            transacts1[transacts1.length - 1] = getTransactionIndex(t0);
+            accounts.put(act, transacts1);
+		} else {
+			accounts.put(act, new int[] {getTransactionIndex(t0)});
+		}
+		t0.setAccount(act);
+		return true;
 	}
 
-	
+	private int getTransactionIndex(Transaction t){
+		if(t.isCredit()){
+			return this.creditslist.indexOf(t);
+		} else {
+			return this.debitslist.indexOf(t);
+		}
+	}
 
     /**
      *
