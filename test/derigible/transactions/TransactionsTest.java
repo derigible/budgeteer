@@ -800,7 +800,7 @@ public class TransactionsTest {
 		t1.setAccount(t0.getAccount());
 		t1.setCategory(t0.getCategory());
 		t1.setDate(new GregorianCalendar(2018,0,15));
-		t.reindexTransaction(t0.getGUID(),t1);
+		t.updateTransaction(t0.getGUID(),t1);
 		assertEquals("Wrong number of transactions returned", 0, t.getByDate(new GregorianCalendar(2015,Calendar.JANUARY,15).getTime()).size());
 		assertEquals("Wrong number of transactions returned", 1, t.getByDate(new GregorianCalendar(2018,0,15).getTime()).size());
 	}
@@ -813,7 +813,7 @@ public class TransactionsTest {
 		t1.setAccount(t0.getAccount());
 		t1.setDate(t0.getDate());
 		t1.setCategory("New");
-		t.reindexTransaction(t0.getGUID(),t1);
+		t.updateTransaction(t0.getGUID(),t1);
 		assertEquals("Wrong number of transactions returned", 0, t.getByCategory("Paycheck #1123").size());
 		assertEquals("Wrong number of transactions returned", 1, t.getByCategory("New").size());
 	}
@@ -826,8 +826,11 @@ public class TransactionsTest {
 		t1.setAccount("New");
 		t1.setDate(t0.getDate());
 		t1.setCategory(t0.getCategory());
-		t.reindexTransaction(t0.getGUID(),t1);
+		t.updateTransaction(t0.getGUID(),t1);
 		assertEquals("Wrong number of transactions returned", 0, t.getByAccount("Check #11456").size());
 		assertEquals("Wrong number of transactions returned", 1, t.getByAccount("New").size());
+		t1.setAccount("Check #11456");
+		t.updateTransaction(t0.getGUID(),t1);
+		assertEquals("Wrong number of transactions returned", 1, t.getByAccount("Check #11456").size());
 	}
 }

@@ -493,5 +493,5 @@ public interface Transactions {
 	 * @param t the transaction holding data to update
 	 * @return true if successful
 	 */
-	public abstract boolean reindexTransaction(String Guid, Transaction t);
+	public abstract boolean updateTransaction(String Guid, Transaction t);
 }

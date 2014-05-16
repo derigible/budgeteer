@@ -14,5 +14,8 @@
 	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" sourcepath="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
 	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/com.ibm.icu_50.1.1.v201304230130.jar" sourcepath="C:/Users/marcphillips/devtools/eclipse/plugins/com.ibm.icu_50.1.1.v201304230130.jar"/>
 	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.core.databinding.observable_1.4.1.v20130515-1857.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.core.databinding.beans_1.2.200.v20130515-1857.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.core.databinding.property_1.4.200.v20130515-1857.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marcphillips/devtools/eclipse/plugins/org.eclipse.core.databinding_1.4.1.v20130515-1857.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

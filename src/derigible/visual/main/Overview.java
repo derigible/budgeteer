@@ -76,7 +76,7 @@ public class Overview {
 		
 		getMenu();
 		
-		table = new TransactionsTable(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI).setPreferredLayout().getTable();
+		table = new TransactionsTable(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, tc).setPreferredLayout().getTable();
 
 		Composite composite_1 = new Composite(shell, SWT.NONE);
 		composite_1.setLayoutData(BorderLayout.WEST);

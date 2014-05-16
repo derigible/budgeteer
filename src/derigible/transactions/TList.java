@@ -734,17 +734,33 @@ public class TList implements Transactions {
     }
 
 	@Override
-	public boolean reindexTransaction(String Guid, Transaction t) {
+	public boolean updateTransaction(String Guid, Transaction t) {
 		Transaction t0 = this.transactions.get(Guid);
+		boolean result = false;
 		if(!t0.getAccount().equalsIgnoreCase(t.getAccount())){
-			return reindexAccount(t0, t);
+			result = reindexAccount(t0, t);
 		}
 		if(!t0.getCategory().equalsIgnoreCase(t.getCategory())){
-			return reindexCategory(t0, t);
+			result = reindexCategory(t0, t);
 		}
 		if(!t0.getDate().equals(t.getDate())){
-			return reindexDate(t0, t);
+			result = reindexDate(t0, t);
 		}
+		if(t0.isCredit() != t.isCredit()){
+			result = reindexCredit(t0);
+		}
+		return result;
+	}
+
+	private boolean reindexCredit(Transaction t0) {
+		if(t0.isCredit()){
+			this.creditslist.remove(t0);
+			this.debitslist.add(t0);
+		} else {
+			this.debitslist.remove(t0);
+			this.creditslist.add(t0);
+		}
+		
 		return false;
 	}
 
@@ -833,11 +849,7 @@ public class TList implements Transactions {
 	}
 
 	private int getTransactionIndex(Transaction t){
-		if(t.isCredit()){
-			return this.creditslist.indexOf(t);
-		} else {
-			return this.debitslist.indexOf(t);
-		}
+		return this.tlist.indexOf(t);
 	}
 
     /**

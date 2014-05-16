@@ -1,34 +1,37 @@
 package derigible.visual.main;
 
-import org.eclipse.wb.swt.SWTResourceManager;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import derigible.controller.TransactionsController;
 import derigible.transactions.Transaction;
 import derigible.transactions.Transactions;
 import derigible.transformations.CSVToTransactions;
+import derigible.utils.TListener;
 
 public class TabbedOverview {
 
@@ -38,6 +41,8 @@ public class TabbedOverview {
 	private MainLeftSideBar leftBar;
 	private CTabFolder tableTabs;
 	private LinkedList<Table> tables = new LinkedList<Table>();
+	private CTabItem overview;
+	private TreeMap<String, TListener> listeners = new TreeMap<String, TListener>();
 
 	/**
 	 * Launch the application.
@@ -58,14 +63,21 @@ public class TabbedOverview {
 	 */
 	public void open() {
 		Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			@Override
+			public void run() {
+				Display display = Display.getDefault();
+				createContents();
+				shell.open();
+				shell.layout();
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				}
 			}
-		}
+		});
+
 	}
 
 	/**
@@ -101,14 +113,14 @@ public class TabbedOverview {
 		tableTabs.setSimple(false);
 		tableTabs.setUnselectedCloseVisible(false);
 
-		CTabItem Overview = new CTabItem(tableTabs, SWT.NONE);
-		Overview.setShowClose(true);
-		Overview.setText("Overview");
+		overview = new CTabItem(tableTabs, SWT.NONE);
+		overview.setShowClose(true);
+		overview.setText("Overview");
 
 		table = new TransactionsTable(tableTabs, SWT.BORDER
-				| SWT.FULL_SELECTION | SWT.MULTI).getTable();
+				| SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
 
-		Overview.setControl(table);
+		overview.setControl(table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		leftTabs.setSelection(0);
@@ -251,7 +263,7 @@ public class TabbedOverview {
 	private void showFilteredValues(java.util.List<Transaction> trans) {
 		CTabItem next = new CTabItem(tableTabs, SWT.NONE);
 		Table newtable = new TransactionsTable(tableTabs, SWT.BORDER
-				| SWT.FULL_SELECTION | SWT.MULTI).getTable();
+				| SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
 		tables.add(newtable);
 		next.setText("Filtered View " + tables.size());
 		next.setControl(newtable);
@@ -342,10 +354,11 @@ public class TabbedOverview {
 		for (Transaction t : trans) {
 			if (!t.isSubTransaction()) {
 				TableItem row = new TableItem(table, SWT.NONE);
-				row.setText(0, Integer.toString(t.getDate().get(
-						Calendar.DAY_OF_MONTH)));
-				row.setText(1,
+
+				row.setText(0,
 						Integer.toString(t.getDate().get(Calendar.MONTH) + 1));
+				row.setText(1, Integer.toString(t.getDate().get(
+						Calendar.DAY_OF_MONTH)));
 				row.setText(2, Integer.toString(t.getDate().get(Calendar.YEAR)));
 				row.setText(3, t.getDescription());
 				row.setText(4, Double.toString(t.getAmount()));
@@ -356,7 +369,10 @@ public class TabbedOverview {
 				} else {
 					row.setText(7, "Debit");
 				}
-				row.setData(t.getGUID());
+				row.setData(t);
+				TListener tl = new TListener(t);
+				tl.addTableItem(row);
+				listeners.put(t.getGUID(), new TListener(t));
 			}
 		}
 	}
@@ -381,6 +397,12 @@ public class TabbedOverview {
 				try {
 					tc = new TransactionsController(new CSVToTransactions(
 							dialog.open()).data_to_transactions());
+					table = new TransactionsTable(tableTabs, SWT.BORDER
+							| SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
+
+					overview.setControl(table);
+					table.setHeaderVisible(true);
+					table.setLinesVisible(true);
 					setBaseValues(tc.getTransactions(), table);
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
