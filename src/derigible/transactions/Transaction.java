@@ -16,13 +16,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.GregorianCalendar;
 
 /**
- * @author marphill An interface to define transaction objects to be used in the
- *         Transactions object. Since it is unclear at this point how a
- *         Transaction may need to be stored, it is best to just define an
- *         interface and let the implementation determine the structure.
- * 
- *         Some Transactions classes can use this to call themselves to get
- *         data.
+ * @author marphill An abstract class to define transaction objects to be used
+ *         in the Transactions object.
  */
 public abstract class Transaction {
 
@@ -84,7 +79,6 @@ public abstract class Transaction {
 	protected void firePropertyChange(String propertyName, Object oldValue,
 			Object newValue) {
 		changeSupport.firePropertyChange(propertyName, oldValue, newValue);
-		System.out.println("Fired");
 	}
 
 	/**

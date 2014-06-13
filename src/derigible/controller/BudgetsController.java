@@ -17,69 +17,82 @@ import java.util.Map;
 
 /**
  * @author marcphillips
- *
- *	Basically a container for each budget that is created by a TransactionsController.
- *	Due to the fact that Budgets are only ever created by a TransactionsController,
- *	this class is also tied to a TransactionsController, and BudgetControllers
- *  should really only be created from within this class.
+ * 
+ *         Basically a container for each budget that is created by a
+ *         TransactionsController. Due to the fact that Budgets are only ever
+ *         created by a TransactionsController, this class is also tied to a
+ *         TransactionsController, and BudgetControllers should really only be
+ *         created from within this class.
  */
 public class BudgetsController {
-	private final TransactionsController tc;
-	private HashMap<String, BudgetController> budgets = new HashMap<String, BudgetController>();
+    private final TransactionsController tc;
+    private HashMap<String, BudgetController> budgets = new HashMap<String, BudgetController>();
 
-	/**
-	 * Creates a new instance of BudgetsController that is bound to a TransactionsController.
-	 * 
-	 * @param tc the TransactionsController
-	 */
-	public BudgetsController(TransactionsController tc){
-		this.tc = tc;
+    /**
+     * Creates a new instance of BudgetsController that is bound to a
+     * TransactionsController.
+     * 
+     * @param tc
+     *            the TransactionsController
+     */
+    public BudgetsController(TransactionsController tc) {
+	this.tc = tc;
+    }
+
+    /**
+     * Create a new budget with the given budget name. The name must be unique
+     * or an IOException will be thrown.
+     * 
+     * @param budgetName
+     *            the name of the budget
+     * @return the BudgetController for the budget
+     * @throws IOException
+     *             budgetName is already in BudgetsController
+     */
+    public BudgetController createNewBudget(String budgetName)
+	    throws IOException {
+	if (budgets.containsKey(budgetName)) {
+	    throw new IOException(
+		    "Budget already exists. Create a new budget name.");
 	}
-	
-	/**
-	 * Create a new budget with the given budget name. The name must be unique or an 
-	 * IOException will be thrown.
-	 * 
-	 * @param budgetName the name of the budget
-	 * @return the BudgetController for the budget
-	 * @throws IOException budgetName is already in BudgetsController
-	 */
-	public BudgetController createNewBudget(String budgetName) throws IOException{
-		if(budgets.containsKey(budgetName)){
-			throw new IOException("Budget already exists. Create a new budget name.");
-		}
-		BudgetController b = tc.createBudget(budgetName);
-		budgets.put(budgetName, b);
-		return b;
+	BudgetController b = tc.createBudget(budgetName);
+	budgets.put(budgetName, b);
+	return b;
+    }
+
+    /**
+     * Create a budget from a budget file. Give it a name, preferably the name
+     * of the old budget. The name must be unique or an IOException will be
+     * thrown.
+     * 
+     * @param budgetName
+     *            the name of the budget
+     * @param file
+     *            the file that the budget is housed in
+     * @return the BudgetController for the budget
+     * @throws IOException
+     *             budgetName is already in BudgetsController
+     */
+    public BudgetController readInBudget(String budgetName, File file)
+	    throws IOException {
+	if (budgets.containsKey(budgetName)) {
+	    throw new IOException(
+		    "Budget already exists. Create a new budget name.");
 	}
-	
-	/**
-	 * Create a budget from a budget file. Give it a name, preferably the name of the old
-	 * budget. The name must be unique or an IOException will be thrown.
-	 * 
-	 * @param budgetName the name of the budget
-	 * @param file the file that the budget is housed in
-	 * @return the BudgetController for the budget
-	 * @throws IOException budgetName is already in BudgetsController
-	 */
-	public BudgetController readInBudget(String budgetName, File file) throws IOException{
-		if(budgets.containsKey(budgetName)){
-			throw new IOException("Budget already exists. Create a new budget name.");
-		}
-		BudgetController b = tc.createBudgetFromFile(budgetName, file);
-		budgets.put(budgetName, b);
-		return b;
+	BudgetController b = tc.createBudgetFromFile(budgetName, file);
+	budgets.put(budgetName, b);
+	return b;
+    }
+
+    /**
+     * Send all the budgets in the BudgetsController to CSV storage within a
+     * directory that is labeled after the TransactionsController's GUID.
+     * 
+     * @throws IOException
+     */
+    public void budgetsToCSV() throws IOException {
+	for (Map.Entry<String, BudgetController> entry : budgets.entrySet()) {
+	    entry.getValue().transactionsToCSV(tc.getName());
 	}
-	
-	/**
-	 * Send all the budgets in the BudgetsController to CSV storage within 
-	 * a directory that is labeled after the TransactionsController's GUID.
-	 * 
-	 * @throws IOException
-	 */
-	public void budgetsToCSV() throws IOException{
-		for(Map.Entry<String, BudgetController> entry : budgets.entrySet()){
-			entry.getValue().transactionsToCSV(tc.getGuid());
-		}
-	}
+    }
 }
