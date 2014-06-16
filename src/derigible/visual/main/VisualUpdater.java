@@ -77,6 +77,25 @@ public final class VisualUpdater {
 	return tc.getTransactions().updateTransaction(t.getGUID(), tu);
     }
 
+    public static int save(Shell shell, Saved saved, String name,
+	    String failmessage) {
+	File f;
+	if ((f = saved.save(name)) != null) {
+	    MessageBox save = new MessageBox(shell, SWT.ICON_INFORMATION
+		    | SWT.OK);
+	    save.setText("File Saved");
+	    save.setMessage("File Saved at " + f.getAbsolutePath());
+	    save.open();
+	    return SWT.YES;
+	} else {
+	    MessageBox save = new MessageBox(shell, SWT.ICON_ERROR | SWT.YES
+		    | SWT.NO);
+	    save.setText("Save Failed!");
+	    save.setMessage(failmessage);
+	    return save.open() == SWT.NO ? SWT.CANCEL : SWT.YES;
+	}
+    }
+
     public static Closer addCloseListener(Shell shell,
 	    HashMap<String, Saved> saved) {
 	return new VisualUpdater.Closer(shell, saved);
@@ -98,49 +117,51 @@ public final class VisualUpdater {
 		    MessageBox save = new MessageBox(shell, SWT.ICON_QUESTION
 			    | SWT.YES | SWT.NO | SWT.CANCEL);
 		    save.setText("Save Information?");
+		    String name;
 		    if (saved.getValue().getClass() == TransactionsController.class) {
 			save.setMessage("You have unsaved Transaction information. Save now?");
+			name = "transactions";
 		    } else {
 			save.setMessage("You have unsaved budget information for "
 				+ saved.getKey() + ". Save now?");
+			name = saved.getKey();
 		    }
-		    arg0.doit = handleResponse(save.open(), saved.getValue());
+		    if (handleResponse(save.open(), saved.getValue(), name) == SWT.CANCEL) {
+			arg0.doit = false;
+			break;
+		    }
 		}
 	    }
-
 	}
 
-	private boolean handleResponse(int open, Saved saved) {
+	private int handleResponse(int open, Saved saved, String name) {
 	    if (open == SWT.YES) {
-		// FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-		// dialog.setFilterExtensions(new String[] { "*.csv", "*.txt",
-		// "*.xml" });
-		// dialog.setFilterPath(System.getProperty("user.home"));
-		// dialog.setFileName(saved.getName());
 		try {
-		    File f;
-		    if ((f = saved.save("transactions")) != null) {
-			MessageBox save = new MessageBox(shell,
-				SWT.ICON_INFORMATION | SWT.OK);
-			save.setText("File Saved");
-			save.setMessage("File Saved at " + f.getAbsolutePath());
-			save.open();
-			return true;
-		    } else {
-			MessageBox save = new MessageBox(shell, SWT.ICON_ERROR
-				| SWT.YES | SWT.NO);
-			save.setText("Save Failed!");
-			save.setMessage("Save failed! Exit Anyways?");
-			return save.open() == SWT.YES;
-		    }
+		    // File f;
+		    // if ((f = saved.save(name)) != null) {
+		    // MessageBox save = new MessageBox(shell,
+		    // SWT.ICON_INFORMATION | SWT.OK);
+		    // save.setText("File Saved");
+		    // save.setMessage("File Saved at " + f.getAbsolutePath());
+		    // save.open();
+		    // return SWT.YES;
+		    // } else {
+		    // MessageBox save = new MessageBox(shell, SWT.ICON_ERROR
+		    // | SWT.YES | SWT.NO);
+		    // save.setText("Save Failed!");
+		    // save.setMessage("Save failed! Exit Anyways?");
+		    // return save.open() == SWT.NO ? SWT.CANCEL : SWT.YES;
+		    // }
+		    return save(shell, saved, name,
+			    "Save failed! Exit Anyways?");
 		} catch (NullPointerException e) {
 		    // canceled save, do nothing
-		    return false;
+		    return SWT.CANCEL;
 		}
 	    } else if (open == SWT.CANCEL) {
-		return false;
+		return SWT.CANCEL;
 	    } else {
-		return true;
+		return SWT.NO;
 	    }
 	}
 

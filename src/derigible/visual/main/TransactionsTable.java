@@ -46,6 +46,9 @@ public class TransactionsTable extends Composite {
 
 	this.tc = tc;
 
+	if (tc != null)
+	    this.setData(tc.getName());
+
 	table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 	table.setHeaderVisible(true);
 	table.setLinesVisible(true);

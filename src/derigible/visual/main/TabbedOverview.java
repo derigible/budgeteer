@@ -3,6 +3,7 @@ package derigible.visual.main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -14,12 +15,15 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
@@ -51,6 +55,8 @@ public class TabbedOverview {
     private CTabItem overview;
     private TreeMap<String, TListener> listeners = new TreeMap<String, TListener>();
     private HashMap<String, Saved> saves = new HashMap<String, Saved>();
+    private Display display;
+    private ArrayDeque<Control> focusQueue = new ArrayDeque<Control>();
 
     /**
      * Launch the application.
@@ -70,11 +76,11 @@ public class TabbedOverview {
      * Open the window.
      */
     public void open() {
-	Display display = Display.getDefault();
+	display = Display.getDefault();
 	Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 	    @Override
 	    public void run() {
-		Display display = Display.getDefault();
+		display = Display.getDefault();
 		createContents();
 		shell.open();
 		shell.layout();
@@ -140,9 +146,13 @@ public class TabbedOverview {
 			.getTextFromNode(dom, "transactions")) != null) {
 		    setOverviewTable(System.getProperty("user.home")
 			    + "/Budgeteer/" + transactions
-			    + "/transactions.csv");
+			    + "/transactions.csv", transactions);
 		}
 	    }
+	}
+
+	for (final Control c : shell.getChildren()) {
+	    this.addFocusListener(c);
 	}
 
 	overview.setControl(table);
@@ -150,6 +160,24 @@ public class TabbedOverview {
 	table.setLinesVisible(true);
 	leftTabs.setSelection(0);
 	tableTabs.setSelection(0);
+    }
+
+    protected void addFocusListener(final Control c) {
+	c.addFocusListener(new FocusListener() {
+
+	    @Override
+	    public void focusGained(FocusEvent arg0) {
+		focusQueue.push(c);
+	    }
+
+	    @Override
+	    public void focusLost(FocusEvent arg0) {
+		if (focusQueue.size() > 10) {
+		    focusQueue.removeFirst();
+		}
+	    }
+
+	});
     }
 
     protected void applyFilter(Filter filter) {
@@ -406,10 +434,17 @@ public class TabbedOverview {
 	}
     }
 
-    private void setOverviewTable(String filename) {
+    private void setOverviewTable(String filename, String name) {
 	try {
-	    tc = new TransactionsController(
-		    new CSVToTransactions(filename).data_to_transactions());
+	    if (name == null) {
+		tc = new TransactionsController(
+			new CSVToTransactions(filename).data_to_transactions());
+	    } else {
+		tc = new TransactionsController(
+			new CSVToTransactions(filename).data_to_transactions(),
+			name);
+	    }
+	    tableTabs.setData(tc.getName());
 	    table = new TransactionsTable(tableTabs, SWT.BORDER
 		    | SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
 
@@ -446,7 +481,7 @@ public class TabbedOverview {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setFilterExtensions(new String[] { "*.csv", "*.txt" });
 		dialog.setFilterPath(System.getProperty("user.home"));
-		setOverviewTable(dialog.open());
+		setOverviewTable(dialog.open(), null);
 	    }
 	});
 	mntmOpen.setText("Open");
@@ -455,9 +490,39 @@ public class TabbedOverview {
 	mntmShareBudget.setText("Share Budget");
 
 	MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
+	mntmSave.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent e) {
+		if (focusQueue.isEmpty()) {
+		    return;
+		}
+		Control c = null;
+		while (!focusQueue.isEmpty()
+			&& (c = focusQueue.removeLast()).getClass() != Table.class) {
+		    System.out.println(c.getClass());
+		    continue;
+		}
+		System.out.println(c.getClass());
+		if (c != null
+			&& c.getData().toString()
+				.equalsIgnoreCase(tc.getName())) {
+		    VisualUpdater.save(shell, saves.get(tc.getName()),
+			    "transactions", "Save failed. Are you sad?");
+		}
+	    }
+	});
 	mntmSave.setText("Save");
 
+	MenuItem mntmSaveAs = new MenuItem(menu_1, SWT.NONE);
+	mntmSaveAs.setText("Save as..");
+
 	MenuItem mntmExit = new MenuItem(menu_1, SWT.NONE);
+	mntmExit.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent e) {
+		shell.close();
+	    }
+	});
 	mntmExit.setText("Exit");
 
 	MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
