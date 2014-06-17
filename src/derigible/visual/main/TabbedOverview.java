@@ -151,7 +151,7 @@ public class TabbedOverview {
 	    }
 	}
 
-	for (final Control c : shell.getChildren()) {
+	for (Control c : shell.getChildren()) {
 	    this.addFocusListener(c);
 	}
 
@@ -166,15 +166,15 @@ public class TabbedOverview {
 	c.addFocusListener(new FocusListener() {
 
 	    @Override
-	    public void focusGained(FocusEvent arg0) {
-		focusQueue.push(c);
-	    }
-
-	    @Override
 	    public void focusLost(FocusEvent arg0) {
 		if (focusQueue.size() > 10) {
 		    focusQueue.removeFirst();
 		}
+	    }
+
+	    @Override
+	    public void focusGained(FocusEvent arg0) {
+		focusQueue.push(c);
 	    }
 
 	});
@@ -404,6 +404,7 @@ public class TabbedOverview {
 
     private void fillTable(java.util.List<Transaction> trans,
 	    final Table table, AbstractController ac) {
+	this.addFocusListener(table);
 	for (Transaction t : trans) {
 	    if (!t.isSubTransaction()) {
 		TableItem row = new TableItem(table, SWT.NONE);
@@ -497,17 +498,31 @@ public class TabbedOverview {
 		    return;
 		}
 		Control c = null;
-		while (!focusQueue.isEmpty()
-			&& (c = focusQueue.removeLast()).getClass() != Table.class) {
-		    System.out.println(c.getClass());
-		    continue;
+		while (!focusQueue.isEmpty()) {
+		    if ((c = focusQueue.removeLast()).getClass() == CTabFolder.class) {
+			if (c.getData() == null) {
+			    continue;
+			} else {
+			    break;
+			}
+		    } else if (c.getClass() == Table.class) {
+			c = c.getParent();
+			if (c.getData() == null) {
+			    continue;
+			} else {
+			    break;
+			}
+		    }
 		}
-		System.out.println(c.getClass());
+		if (c.getData() == null) {
+		    return;
+		}
 		if (c != null
 			&& c.getData().toString()
 				.equalsIgnoreCase(tc.getName())) {
 		    VisualUpdater.save(shell, saves.get(tc.getName()),
 			    "transactions", "Save failed. Are you sad?");
+		    tc.toggleSaved();
 		}
 	    }
 	});
