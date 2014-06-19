@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import derigible.controller.AbstractController;
 import derigible.controller.TransactionsController;
@@ -57,6 +57,8 @@ public class TabbedOverview {
     private HashMap<String, Saved> saves = new HashMap<String, Saved>();
     private Display display;
     private ArrayDeque<Control> focusQueue = new ArrayDeque<Control>();
+    private Document settings;
+    private File settingsFile;
 
     /**
      * Launch the application.
@@ -102,19 +104,54 @@ public class TabbedOverview {
 	shell.setSize(1178, 795);
 	shell.setText("SWT Application");
 	shell.setLayout(new GridLayout(2, false));
-	shell.addListener(SWT.Close,
-		VisualUpdater.addCloseListener(shell, saves));
+
+	// Create these first to allow setting of data
+	CTabFolder leftTabs = new CTabFolder(shell, SWT.NONE);
+	CTabItem DataOverview = new CTabItem(leftTabs, SWT.NONE);
+	leftBar = new MainLeftSideBar(leftTabs, SWT.NONE);
+	tableTabs = new CTabFolder(shell, SWT.NONE);
+	overview = new CTabItem(tableTabs, SWT.NONE);
+	//
+	settingsFile = new File(System.getProperty("user.home") + "/Budgeteer");
+	File check = new File(settingsFile.getAbsolutePath() + "/settings.xml");
+	if (settingsFile.exists() && check.exists()) {
+	    settingsFile = check;
+	    settings = StringU.stringToXML(settingsFile);
+	    if (settings != null) {
+		String transactions;
+		if ((transactions = StringU.getTextFromNode(settings,
+			"transactions")) != null) {
+		    setOverviewTable(System.getProperty("user.home")
+			    + "/Budgeteer/" + transactions
+			    + "/transactions.csv", transactions);
+		}
+	    }
+
+	} else {
+	    settingsFile.mkdir();
+	    settingsFile = new File(settingsFile.getAbsolutePath()
+		    + "/settings.xml");
+	    try {
+		settingsFile.createNewFile();
+	    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	}
+	if (table == null) {
+	    table = new TransactionsTable(tableTabs, SWT.BORDER
+		    | SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
+	}
+	shell.addListener(SWT.Close, VisualUpdater.addCloseListener(shell,
+		saves, settings, settingsFile));
 
 	getMenu();
 
-	CTabFolder leftTabs = new CTabFolder(shell, SWT.NONE);
 	leftTabs.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false,
 		1, 1));
 
-	CTabItem DataOverview = new CTabItem(leftTabs, SWT.NONE);
 	DataOverview.setText("Overview");
 
-	leftBar = new MainLeftSideBar(leftTabs, SWT.NONE);
 	leftBar.getBalanceLbl().setBackground(
 		SWTResourceManager.getColor(SWT.COLOR_WHITE));
 	leftBar.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,
@@ -123,33 +160,13 @@ public class TabbedOverview {
 
 	DataOverview.setControl(leftBar);
 
-	tableTabs = new CTabFolder(shell, SWT.NONE);
 	tableTabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
 		1));
 	tableTabs.setSimple(false);
 	tableTabs.setUnselectedCloseVisible(false);
 
-	overview = new CTabItem(tableTabs, SWT.NONE);
 	overview.setShowClose(true);
 	overview.setText("Overview");
-
-	table = new TransactionsTable(tableTabs, SWT.BORDER
-		| SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
-
-	File file = new File(System.getProperty("user.home")
-		+ "/Budgeteer/settings.xml");
-	if (file.exists()) {
-	    Element dom = StringU.stringToXML(file);
-	    if (dom != null) {
-		String transactions;
-		if ((transactions = StringU
-			.getTextFromNode(dom, "transactions")) != null) {
-		    setOverviewTable(System.getProperty("user.home")
-			    + "/Budgeteer/" + transactions
-			    + "/transactions.csv", transactions);
-		}
-	    }
-	}
 
 	for (Control c : shell.getChildren()) {
 	    this.addFocusListener(c);
@@ -436,14 +453,16 @@ public class TabbedOverview {
     }
 
     private void setOverviewTable(String filename, String name) {
+	File f = new File(filename);
+	if (!f.exists())
+	    return;
 	try {
 	    if (name == null) {
 		tc = new TransactionsController(
-			new CSVToTransactions(filename).data_to_transactions());
+			new CSVToTransactions(f).data_to_transactions());
 	    } else {
 		tc = new TransactionsController(
-			new CSVToTransactions(filename).data_to_transactions(),
-			name);
+			new CSVToTransactions(f).data_to_transactions(), name);
 	    }
 	    tableTabs.setData(tc.getName());
 	    table = new TransactionsTable(tableTabs, SWT.BORDER
@@ -454,6 +473,7 @@ public class TabbedOverview {
 	    table.setLinesVisible(true);
 	    setBaseValues(tc.getTransactions(), table);
 	    saves.put(tc.getName(), tc);
+	    StringU.setTextOfNode(settings, "transactions", tc.getName());
 	} catch (FileNotFoundException e1) {
 	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
@@ -461,6 +481,7 @@ public class TabbedOverview {
 	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	} catch (NullPointerException e1) {
+	    e1.printStackTrace();
 	    // Do nothing, they canceled.
 	}
     }
@@ -479,10 +500,27 @@ public class TabbedOverview {
 	mntmOpen.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent e) {
+		Saved s = null;
+		if ((s = saves.get(tc.getName())) != null && !s.saved()) {
+		    shell.getListeners(SWT.CLOSE)[0].handleEvent(null);
+		}
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setFilterExtensions(new String[] { "*.csv", "*.txt" });
 		dialog.setFilterPath(System.getProperty("user.home"));
-		setOverviewTable(dialog.open(), null);
+		String path = dialog.open();
+		String[] split = path.split("\\" + File.separatorChar);
+		String name = null;
+		if (split.length > 1) {
+		    name = split[split.length - 2];
+		    // GUIDs start with four zeros at least
+		    if (name.charAt(0) != '0' && name.charAt(1) != '0'
+			    && name.charAt(2) != '0' && name.charAt(3) != '0') {
+			name = null;
+		    }
+		}
+		setOverviewTable(path, name);
+		StringU.setTextOfNode(settings, "transactions", tc.getName());
+		tc.toggleSaved();
 	    }
 	});
 	mntmOpen.setText("Open");
@@ -522,7 +560,8 @@ public class TabbedOverview {
 				.equalsIgnoreCase(tc.getName())) {
 		    VisualUpdater.save(shell, saves.get(tc.getName()),
 			    "transactions", "Save failed. Are you sad?");
-		    tc.toggleSaved();
+		    StringU.setTextOfNode(settings, "transactions",
+			    tc.getName());
 		}
 	    }
 	});

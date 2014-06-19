@@ -21,6 +21,16 @@ import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+
 /**
  * @author marphill Helper class to make file handling far easier.
  */
@@ -138,5 +148,23 @@ public final class FileU {
 		.getContextClassLoader();
 	URL url = classLoader.getResource(path);
 	return new File(url.toURI());
+    }
+
+    public static void xmlToFile(File f, Document dom) {
+	try {
+	    Transformer t = TransformerFactory.newInstance().newTransformer();
+	    DOMSource ds = new DOMSource(dom);
+	    StreamResult result = new StreamResult(f);
+	    t.transform(ds, result);
+	} catch (TransformerConfigurationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (TransformerFactoryConfigurationError e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (TransformerException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 }

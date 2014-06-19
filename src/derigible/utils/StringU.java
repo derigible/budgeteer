@@ -19,7 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -228,7 +227,7 @@ public final class StringU {
 	return input;
     }
 
-    public static Element stringToXML(File xml) {
+    public static Document stringToXML(File xml) {
 	Document dom = null;
 	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	try {
@@ -241,11 +240,11 @@ public final class StringU {
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	}
-	Element e;
-	return (e = dom.getDocumentElement()) != null ? e : null;
+	return dom != null ? (dom.getDocumentElement() != null ? dom : null)
+		: null;
     }
 
-    public static String getTextFromNode(Element dom, String node) {
+    public static String getTextFromNode(Document dom, String node) {
 	NodeList nl = dom.getElementsByTagName(node);
 	if (nl.getLength() > 0 && nl.item(0).hasChildNodes()) {
 	    return nl.item(0).getFirstChild().getNodeValue();
@@ -253,83 +252,90 @@ public final class StringU {
 	return null;
     }
 
-    /**
-     * Test the formatNameString method and report the success/failure.
-     */
-    private static int test(String input, String expected) {
-	String output = lower(input);
-	if (expected == null && output == null) {
-	    System.out.println("SUCCESS: [" + input + "] => [" + output + "]");
-	    return 0;
-	} else if (expected == null && output != null) {
-	    // error
-	} else if (!expected.equals(output)) {
-	    // error
-	} else {
-	    System.out.println("SUCCESS: [" + input + "] => [" + output + "]");
-	    return 0;
+    public static void setTextOfNode(Document dom, String node, String value) {
+	NodeList nl = dom.getElementsByTagName(node);
+	if (nl.getLength() > 0 && nl.item(0).hasChildNodes()) {
+	    nl.item(0).getFirstChild().setNodeValue(value);
 	}
-	System.out.println("ERROR:   [" + input + "] => [" + output
-		+ "] *** SHOULD BE [" + expected + "]");
-	return 1;
     }
 
-    /**
-     * @param args
-     *            - the console args
-     */
-    public static void main(String[] args) {
-	int errors = 0;
+    // /**
+    // * Test the formatNameString method and report the success/failure.
+    // */
+    // private static int test(String input, String expected) {
+    // String output = lower(input);
+    // if (expected == null && output == null) {
+    // System.out.println("SUCCESS: [" + input + "] => [" + output + "]");
+    // return 0;
+    // } else if (expected == null && output != null) {
+    // // error
+    // } else if (!expected.equals(output)) {
+    // // error
+    // } else {
+    // System.out.println("SUCCESS: [" + input + "] => [" + output + "]");
+    // return 0;
+    // }
+    // System.out.println("ERROR:   [" + input + "] => [" + output
+    // + "] *** SHOULD BE [" + expected + "]");
+    // return 1;
+    // }
 
-	// test null input
-	errors += test(null, null);
-
-	// test empty input
-	errors += test("", null);
-
-	// test space input
-	errors += test(" ", "");
-
-	// Test multiple space input
-	errors += test("      ", "");
-
-	// Test all others
-	errors += test(" a", "a");
-	errors += test(" Ba", "ba");
-	errors += test("b A ", "b a");
-	errors += test("bb ", "bb");
-
-	// // test single character input
-	// errors += test("A", "A");
-	// errors += test("b", "B");
-	//
-	// // test single name input
-	// errors += test("bob", "Bob");
-	// errors += test("BOB", "Bob");
-	// errors += test("McDonald", "Mcdonald");
-	//
-	// // test multiple character input
-	// errors += test("a b", "A B");
-	// errors += test("A B", "A B");
-	//
-	// // test multiple name input
-	// errors += test("jim jones", "Jim Jones");
-	// errors += test("JOHN JOE DOE", "John Joe Doe");
-	// errors += test("Mike McRae", "Mike Mcrae");
-	// errors += test("mike McRae", "Mike Mcrae");
-	//
-	// // test trimming extra whitespace
-	// errors += test("  jim  jones", "Jim Jones");
-	// errors += test("JOHN   JOE DOE", "John Joe Doe");
-	// errors += test("Mike McRae  ", "Mike Mcrae");
-	// errors += test(" mike  McRae ", "Mike Mcrae");
-
-	System.out.println();
-	if (errors > 0)
-	    System.out.println("There were " + errors + " error(s).");
-	else
-	    System.out.println("All tests pass.");
-
-    }
+    // /**
+    // * @param args
+    // * - the console args
+    // */
+    // public static void main(String[] args) {
+    // int errors = 0;
+    //
+    // // test null input
+    // errors += test(null, null);
+    //
+    // // test empty input
+    // errors += test("", null);
+    //
+    // // test space input
+    // errors += test(" ", "");
+    //
+    // // Test multiple space input
+    // errors += test("      ", "");
+    //
+    // // Test all others
+    // errors += test(" a", "a");
+    // errors += test(" Ba", "ba");
+    // errors += test("b A ", "b a");
+    // errors += test("bb ", "bb");
+    //
+    // // // test single character input
+    // // errors += test("A", "A");
+    // // errors += test("b", "B");
+    // //
+    // // // test single name input
+    // // errors += test("bob", "Bob");
+    // // errors += test("BOB", "Bob");
+    // // errors += test("McDonald", "Mcdonald");
+    // //
+    // // // test multiple character input
+    // // errors += test("a b", "A B");
+    // // errors += test("A B", "A B");
+    // //
+    // // // test multiple name input
+    // // errors += test("jim jones", "Jim Jones");
+    // // errors += test("JOHN JOE DOE", "John Joe Doe");
+    // // errors += test("Mike McRae", "Mike Mcrae");
+    // // errors += test("mike McRae", "Mike Mcrae");
+    // //
+    // // // test trimming extra whitespace
+    // // errors += test("  jim  jones", "Jim Jones");
+    // // errors += test("JOHN   JOE DOE", "John Joe Doe");
+    // // errors += test("Mike McRae  ", "Mike Mcrae");
+    // // errors += test(" mike  McRae ", "Mike Mcrae");
+    //
+    // System.out.println();
+    // if (errors > 0)
+    // System.out.println("There were " + errors + " error(s).");
+    // else
+    // System.out.println("All tests pass.");
+    //
+    // }
 
 }

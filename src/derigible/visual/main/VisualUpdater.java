@@ -21,10 +21,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.w3c.dom.Document;
 
 import derigible.controller.TransactionsController;
 import derigible.transactions.TransUpdater;
 import derigible.transactions.Transaction;
+import derigible.utils.FileU;
 import derigible.utils.Saved;
 
 /**
@@ -97,17 +99,21 @@ public final class VisualUpdater {
     }
 
     public static Closer addCloseListener(Shell shell,
-	    HashMap<String, Saved> saved) {
-	return new VisualUpdater.Closer(shell, saved);
+	    HashMap<String, Saved> saved, Document e, File f) {
+	return new VisualUpdater.Closer(shell, saved, e, f);
     }
 
     private static class Closer implements Listener {
 	private HashMap<String, Saved> saved;
 	private Shell shell;
+	private Document e;
+	private File f;
 
-	Closer(Shell shell, HashMap<String, Saved> saved) {
+	Closer(Shell shell, HashMap<String, Saved> saved, Document dom, File f) {
 	    this.shell = shell;
 	    this.saved = saved;
+	    this.e = dom;
+	    this.f = f;
 	}
 
 	@Override
@@ -126,32 +132,19 @@ public final class VisualUpdater {
 				+ saved.getKey() + ". Save now?");
 			name = saved.getKey();
 		    }
-		    if (handleResponse(save.open(), saved.getValue(), name) == SWT.CANCEL) {
+		    if (handleResponse(save.open(), saved.getValue(), name) == SWT.CANCEL
+			    && arg0 != null) {
 			arg0.doit = false;
 			break;
 		    }
 		}
+		FileU.xmlToFile(f, e);
 	    }
 	}
 
 	private int handleResponse(int open, Saved saved, String name) {
 	    if (open == SWT.YES) {
 		try {
-		    // File f;
-		    // if ((f = saved.save(name)) != null) {
-		    // MessageBox save = new MessageBox(shell,
-		    // SWT.ICON_INFORMATION | SWT.OK);
-		    // save.setText("File Saved");
-		    // save.setMessage("File Saved at " + f.getAbsolutePath());
-		    // save.open();
-		    // return SWT.YES;
-		    // } else {
-		    // MessageBox save = new MessageBox(shell, SWT.ICON_ERROR
-		    // | SWT.YES | SWT.NO);
-		    // save.setText("Save Failed!");
-		    // save.setMessage("Save failed! Exit Anyways?");
-		    // return save.open() == SWT.NO ? SWT.CANCEL : SWT.YES;
-		    // }
 		    return save(shell, saved, name,
 			    "Save failed! Exit Anyways?");
 		} catch (NullPointerException e) {
