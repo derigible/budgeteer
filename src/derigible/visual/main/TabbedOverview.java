@@ -49,7 +49,7 @@ public class TabbedOverview {
     protected TransactionsController tc = null;
     protected Shell shell;
     private Table table;
-    private MainLeftSideBar leftBar;
+    private LeftSideBar leftBar;
     private CTabFolder tableTabs;
     private LinkedList<Table> tables = new LinkedList<Table>();
     private CTabItem overview;
@@ -59,6 +59,7 @@ public class TabbedOverview {
     private ArrayDeque<Control> focusQueue = new ArrayDeque<Control>();
     private Document settings;
     private File settingsFile;
+    CTabFolder leftTabs;
 
     /**
      * Launch the application.
@@ -102,13 +103,12 @@ public class TabbedOverview {
     protected void createContents() {
 	shell = new Shell();
 	shell.setSize(1178, 795);
-	shell.setText("SWT Application");
+	shell.setText("Budgeteer");
 	shell.setLayout(new GridLayout(2, false));
 
 	// Create these first to allow setting of data
-	CTabFolder leftTabs = new CTabFolder(shell, SWT.NONE);
-	CTabItem DataOverview = new CTabItem(leftTabs, SWT.NONE);
-	leftBar = new MainLeftSideBar(leftTabs, SWT.NONE);
+	leftTabs = new CTabFolder(shell, SWT.NONE);
+	leftBar = new LeftSideBar(leftTabs, SWT.NONE, "Overview");
 	tableTabs = new CTabFolder(shell, SWT.NONE);
 	overview = new CTabItem(tableTabs, SWT.NONE);
 	//
@@ -142,23 +142,20 @@ public class TabbedOverview {
 	    table = new TransactionsTable(tableTabs, SWT.BORDER
 		    | SWT.FULL_SELECTION | SWT.MULTI, tc).getTable();
 	}
-	shell.addListener(SWT.Close, VisualUpdater.addCloseListener(shell,
-		saves, settings, settingsFile));
+	shell.addListener(SWT.Close, Listeners.getCloseListener(shell, saves,
+		settings, settingsFile));
 
 	getMenu();
 
 	leftTabs.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false,
 		1, 1));
 
-	DataOverview.setText("Overview");
-
-	leftBar.getBalanceLbl().setBackground(
+	leftBar.getLsb().getBalanceLbl()
+		.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+	leftBar.getLsb().setLayoutData(
+		new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+	leftBar.getLsb().setBackground(
 		SWTResourceManager.getColor(SWT.COLOR_WHITE));
-	leftBar.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,
-		1));
-	leftBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-
-	DataOverview.setControl(leftBar);
 
 	tableTabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
 		1));
@@ -169,7 +166,7 @@ public class TabbedOverview {
 	overview.setText("Overview");
 
 	for (Control c : shell.getChildren()) {
-	    this.addFocusListener(c);
+	    Listeners.addFocusListener(c, focusQueue);
 	}
 
 	overview.setControl(table);
@@ -205,12 +202,12 @@ public class TabbedOverview {
 	double bal = 0;
 	switch (filter) {
 	case CATEGORIES:
-	    cats = leftBar.getCategoriesList().getSelection();
+	    cats = leftBar.getLsb().getCategoriesList().getSelection();
 	    applyFilter(tc.getTransactions().getByCategories(cats),
 		    tc.getBalanceForCategories(cats));
 	    break;
 	case ACCOUNTS:
-	    acts = leftBar.getListAccounts().getSelection();
+	    acts = leftBar.getLsb().getListAccounts().getSelection();
 	    bal = 0;
 	    for (String act : acts) {
 		bal += tc.getCurrentBalanceForAccount(act);
@@ -218,23 +215,23 @@ public class TabbedOverview {
 	    applyFilter(tc.getTransactions().getByAccounts(acts), bal);
 	    break;
 	case DATE:
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
 	    applyFilter(tc.getTransactions().getByDate(gc1.getTime()),
 		    tc.getBalanceBetweenDates(gc1.getTime(), gc1.getTime()));
 	    break;
 	case DATES:
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
-	    gc2 = new GregorianCalendar(leftBar.getYear2(),
-		    leftBar.getMonth2() - 1, leftBar.getDay2());
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
+	    gc2 = new GregorianCalendar(leftBar.getLsb().getYear2(), leftBar
+		    .getLsb().getMonth2() - 1, leftBar.getLsb().getDay2());
 	    applyFilter(tc.getTransactions().getByDate(gc1.getTime()),
 		    tc.getBalanceBetweenDates(gc1.getTime(), gc2.getTime()));
 	    break;
 	case CATEGORIES_AND_DATE:
-	    cats = leftBar.getCategoriesList().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
+	    cats = leftBar.getLsb().getCategoriesList().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
 	    applyFilter(
 		    tc.getTransactions().getByCategoriesAndDate(cats,
 			    gc1.getTime()),
@@ -242,11 +239,11 @@ public class TabbedOverview {
 			    gc1.getTime()));
 	    break;
 	case CATEGORIES_AND_DATES:
-	    cats = leftBar.getCategoriesList().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
-	    gc2 = new GregorianCalendar(leftBar.getYear2(),
-		    leftBar.getMonth2() - 1, leftBar.getDay2());
+	    cats = leftBar.getLsb().getCategoriesList().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
+	    gc2 = new GregorianCalendar(leftBar.getLsb().getYear2(), leftBar
+		    .getLsb().getMonth2() - 1, leftBar.getLsb().getDay2());
 	    applyFilter(
 		    tc.getTransactions().getByCategoriesAndDate(cats,
 			    gc1.getTime()),
@@ -254,9 +251,9 @@ public class TabbedOverview {
 			    gc2.getTime()));
 	    break;
 	case ACCOUNTS_AND_DATE:
-	    acts = leftBar.getListAccounts().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
+	    acts = leftBar.getLsb().getListAccounts().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
 	    for (String act : acts) {
 		bal += tc.getBalanceBetweenDatesForAccount(gc1.getTime(),
 			gc1.getTime(), act);
@@ -266,11 +263,11 @@ public class TabbedOverview {
 			    tc.getTransactions().getByAccounts(acts)), bal);
 	    break;
 	case ACCOUNTS_AND_DATES:
-	    acts = leftBar.getListAccounts().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
-	    gc2 = new GregorianCalendar(leftBar.getYear2(),
-		    leftBar.getMonth2() - 1, leftBar.getDay2());
+	    acts = leftBar.getLsb().getListAccounts().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
+	    gc2 = new GregorianCalendar(leftBar.getLsb().getYear2(), leftBar
+		    .getLsb().getMonth2() - 1, leftBar.getLsb().getDay2());
 	    for (String act : acts) {
 		bal += tc.getBalanceBetweenDatesForAccount(gc1.getTime(),
 			gc2.getTime(), act);
@@ -281,10 +278,10 @@ public class TabbedOverview {
 			    tc.getTransactions().getByAccounts(acts)), bal);
 	    break;
 	case CATEGORIES_AND_ACCOUNTS_AND_DATE:
-	    cats = leftBar.getCategoriesList().getSelection();
-	    acts = leftBar.getListAccounts().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
+	    cats = leftBar.getLsb().getCategoriesList().getSelection();
+	    acts = leftBar.getLsb().getListAccounts().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
 	    for (String act : acts) {
 		bal += tc.getBalanceBetweenDatesForAccount(gc1.getTime(),
 			gc1.getTime(), act);
@@ -299,12 +296,12 @@ public class TabbedOverview {
 				    gc1.getTime(), gc1.getTime()));
 	    break;
 	case CATEGORIES_AND_ACCOUNTS_AND_DATES:
-	    cats = leftBar.getCategoriesList().getSelection();
-	    acts = leftBar.getListAccounts().getSelection();
-	    gc1 = new GregorianCalendar(leftBar.getYear1(),
-		    leftBar.getMonth1() - 1, leftBar.getDay1());
-	    gc2 = new GregorianCalendar(leftBar.getYear2(),
-		    leftBar.getMonth2() - 1, leftBar.getDay2());
+	    cats = leftBar.getLsb().getCategoriesList().getSelection();
+	    acts = leftBar.getLsb().getListAccounts().getSelection();
+	    gc1 = new GregorianCalendar(leftBar.getLsb().getYear1(), leftBar
+		    .getLsb().getMonth1() - 1, leftBar.getLsb().getDay1());
+	    gc2 = new GregorianCalendar(leftBar.getLsb().getYear2(), leftBar
+		    .getLsb().getMonth2() - 1, leftBar.getLsb().getDay2());
 	    for (String act : acts) {
 		bal += tc.getBalanceBetweenDatesForAccount(gc1.getTime(),
 			gc2.getTime(), act);
@@ -319,14 +316,15 @@ public class TabbedOverview {
 				    gc1.getTime(), gc2.getTime()));
 	    break;
 	}
-	leftBar.getListAccounts().deselectAll();
-	leftBar.getCategoriesList().deselectAll();
+	leftBar.getLsb().getListAccounts().deselectAll();
+	leftBar.getLsb().getCategoriesList().deselectAll();
     }
 
     private void applyFilter(java.util.List<Transaction> temp, double balance) {
 	showFilteredValues(temp);
-	leftBar.getBalanceLbl().setText(String.format("%1$,.2f", balance));
-	leftBar.getCountLbl().setText(Integer.toString(temp.size()));
+	leftBar.getLsb().getBalanceLbl()
+		.setText(String.format("%1$,.2f", balance));
+	leftBar.getLsb().getCountLbl().setText(Integer.toString(temp.size()));
     }
 
     private void showFilteredValues(java.util.List<Transaction> trans) {
@@ -346,77 +344,105 @@ public class TabbedOverview {
     private void setBaseValues(Transactions trans, Table table0) {
 	table0.removeAll();
 	fillTable(trans.getTransactions(), table0, tc);
-	leftBar.setCategories(tc.getTransactions().getCategories());
-	leftBar.setAccounts(tc.getTransactions().getAccounts());
-	leftBar.getCategoriesList().setItems(leftBar.getCategories());
-	leftBar.getCategoriesList().addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseDoubleClick(MouseEvent e) {
-		applyFilter(Filter.CATEGORIES);
-	    }
-	});
-	leftBar.getListAccounts().setItems(leftBar.getAccounts());
-	leftBar.getListAccounts().addMouseListener(new MouseAdapter() {
+	leftBar.getLsb().setCategories(tc.getTransactions().getCategories());
+	leftBar.getLsb().setAccounts(tc.getTransactions().getAccounts());
+	leftBar.getLsb().getCategoriesList()
+		.setItems(leftBar.getLsb().getCategories());
+	leftBar.getLsb().getCategoriesList()
+		.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseDoubleClick(MouseEvent e) {
+			applyFilter(Filter.CATEGORIES);
+		    }
+		});
+	leftBar.getLsb().getListAccounts()
+		.setItems(leftBar.getLsb().getAccounts());
+	leftBar.getLsb().getListAccounts().addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseDoubleClick(MouseEvent e) {
 		applyFilter(Filter.ACCOUNTS);
 	    }
 	});
-	leftBar.getCountLbl().setText(
-		Integer.toString(trans.getTransactions().size()));
-	leftBar.getCountLbl().setVisible(true);
-	leftBar.getBalanceLbl().setText(
-		String.format("%1$,.2f", tc.getCurrentBalance()));
-	leftBar.getBalanceLbl().setVisible(true);
-	leftBar.setYear1Years(leftBar.intArrayToStringArray(tc
-		.getTransactions().getYearsWithTransactions()));
-	leftBar.getYear1Comp().select(0);
-	leftBar.getYear1Comp().addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-		leftBar.setMonth1Months(tc.getTransactions()
-			.getMonthsInYearWithTransactions(leftBar.getYear1()));
-		leftBar.setYear2Years(tc.getTransactions()
-			.getYearsWithTransactions(), leftBar.getYear1Comp()
-			.getSelectionIndex());
-		leftBar.getMonth1Comp().select(0);
-	    }
-	});
-	leftBar.getYear2Comp().addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-		if (!leftBar.getMonth1Comp().getText().isEmpty()) {
-		    leftBar.setMonth2Months(
-			    tc.getTransactions()
-				    .getMonthsInYearWithTransactions(
-					    leftBar.getYear2()), leftBar
-				    .getMonth1Comp().getSelectionIndex(),
-			    leftBar.getYear1(), leftBar.getYear2());
-		}
-	    }
-	});
-	leftBar.getMonth1Comp().addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-		leftBar.setDay1Days(leftBar.intArrayToStringArray(tc
-			.getTransactions()
-			.getDaysInMonthInYearWithTransactions(
-				leftBar.getYear1(), leftBar.getMonth1())));
-		leftBar.getDay1Comp().select(0);
-	    }
-	});
-	leftBar.getMonth2Comp().addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-		leftBar.setDay2Days(
-			tc.getTransactions()
-				.getDaysInMonthInYearWithTransactions(
-					leftBar.getYear2(), leftBar.getMonth2()),
-			leftBar.getDay1Comp().getSelectionIndex(), (leftBar
-				.getYear1() == leftBar.getYear2()), (leftBar
-				.getMonth1() == leftBar.getMonth2()));
-	    }
-	});
+	leftBar.getLsb().getCountLbl()
+		.setText(Integer.toString(trans.getTransactions().size()));
+	leftBar.getLsb().getCountLbl().setVisible(true);
+	leftBar.getLsb().getBalanceLbl()
+		.setText(String.format("%1$,.2f", tc.getCurrentBalance()));
+	leftBar.getLsb().getBalanceLbl().setVisible(true);
+	leftBar.getLsb().setYear1Years(
+		leftBar.getLsb().intArrayToStringArray(
+			tc.getTransactions().getYearsWithTransactions()));
+	leftBar.getLsb().getYear1Comp().select(0);
+	leftBar.getLsb().getYear1Comp()
+		.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+			leftBar.getLsb().setMonth1Months(
+				tc.getTransactions()
+					.getMonthsInYearWithTransactions(
+						leftBar.getLsb().getYear1()));
+			leftBar.getLsb()
+				.setYear2Years(
+					tc.getTransactions()
+						.getYearsWithTransactions(),
+					leftBar.getLsb().getYear1Comp()
+						.getSelectionIndex());
+			leftBar.getLsb().getMonth1Comp().select(0);
+		    }
+		});
+	leftBar.getLsb().getYear2Comp()
+		.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+			if (!leftBar.getLsb().getMonth1Comp().getText()
+				.isEmpty()) {
+			    leftBar.getLsb()
+				    .setMonth2Months(
+					    tc.getTransactions()
+						    .getMonthsInYearWithTransactions(
+							    leftBar.getLsb()
+								    .getYear2()),
+					    leftBar.getLsb().getMonth1Comp()
+						    .getSelectionIndex(),
+					    leftBar.getLsb().getYear1(),
+					    leftBar.getLsb().getYear2());
+			}
+		    }
+		});
+	leftBar.getLsb().getMonth1Comp()
+		.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+			leftBar.getLsb()
+				.setDay1Days(
+					leftBar.getLsb()
+						.intArrayToStringArray(
+							tc.getTransactions()
+								.getDaysInMonthInYearWithTransactions(
+									leftBar.getLsb()
+										.getYear1(),
+									leftBar.getLsb()
+										.getMonth1())));
+			leftBar.getLsb().getDay1Comp().select(0);
+		    }
+		});
+	leftBar.getLsb().getMonth2Comp()
+		.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+			leftBar.getLsb().setDay2Days(
+				tc.getTransactions()
+					.getDaysInMonthInYearWithTransactions(
+						leftBar.getLsb().getYear2(),
+						leftBar.getLsb().getMonth2()),
+				leftBar.getLsb().getDay1Comp()
+					.getSelectionIndex(),
+				(leftBar.getLsb().getYear1() == leftBar
+					.getLsb().getYear2()),
+				(leftBar.getLsb().getMonth1() == leftBar
+					.getLsb().getMonth2()));
+		    }
+		});
     }
 
     private void fillTable(java.util.List<Transaction> trans,
@@ -501,7 +527,8 @@ public class TabbedOverview {
 	    @Override
 	    public void widgetSelected(SelectionEvent e) {
 		Saved s = null;
-		if ((s = saves.get(tc.getName())) != null && !s.saved()) {
+		if ((s = saves.get(tc != null ? tc.getName() : null)) != null
+			&& !s.saved()) {
 		    shell.getListeners(SWT.CLOSE)[0].handleEvent(null);
 		}
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);

@@ -248,10 +248,11 @@ public class CSVToTransactions implements TransformToTransactions {
 		{ "transaction type", "4" }, { "category", "5" },
 		{ "account name", "6" }, { "total", "3" }, { "credits", "3" },
 		{ "debits", "3" }, { "credit", "3" }, { "debit", "3" },
-		{ "information", "7" }, { "info", "7" }, { "account", "6" },
-		{ "group", "5" }, { "tag", "5" }, { "notes", "7" },
-		{ "labels", "8" }, { "guid", "1" }, { "id", "1" },
-		{ "p_guid", "9" }, { "parent_guid", "9" } };
+		{ "debit_or_credit", "4" }, { "information", "7" },
+		{ "info", "7" }, { "account", "6" }, { "group", "5" },
+		{ "tag", "5" }, { "notes", "7" }, { "labels", "8" },
+		{ "guid", "1" }, { "id", "1" }, { "p_guid", "9" },
+		{ "parent_guid", "9" } };
 	if (possibleHeaders == null) {
 	    possibleHeaders = possibleHeadersTemp;
 	}
@@ -396,18 +397,13 @@ public class CSVToTransactions implements TransformToTransactions {
      */
     private Transaction[] mappedCSVToTransactions(List<String[]> lines)
 	    throws IOException {
-	Transaction[] trans = new Transaction[lines.size() - 1]; // Skipping
-								 // header
-	TreeMap<Integer, String> subtrans = new TreeMap<Integer, String>(); // Track
-									    // the
-									    // subtrans
-	TreeMap<String, Transact> transMap = new TreeMap<String, Transact>(); // Track
-									      // all
-									      // the
-									      // trans
-									      // and
-									      // their
-									      // guids
+	// Skipping header
+	Transaction[] trans = new Transaction[lines.size() - 1];
+	// Track the subtrans
+	TreeMap<Integer, String> subtrans = new TreeMap<Integer, String>();
+	// Track all the trans and their guids
+	TreeMap<String, Transact> transMap = new TreeMap<String, Transact>();
+
 	for (int i = 0; i < lines.size() - 1; i++) {
 	    String[] line = lines.get(i + 1); // Skipping header
 	    Transact t = new Transact();
