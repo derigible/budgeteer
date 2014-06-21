@@ -1,10 +1,14 @@
 package derigible.visual.main;
 
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -13,6 +17,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import derigible.controller.TransactionsController;
+import derigible.transactions.Transaction;
+import derigible.transactions.Transactions;
 
 public class LeftSideBar extends CTabItem {
 
@@ -31,6 +39,153 @@ public class LeftSideBar extends CTabItem {
      */
     public LeftBar getLsb() {
 	return lsb;
+    }
+
+    public void addCategoriesListener(MouseAdapter mse) {
+	lsb.getCategoriesList().addMouseListener(mse);
+    }
+
+    public void addAccountsListener(MouseAdapter mse) {
+	lsb.getListAccounts().addMouseListener(mse);
+    }
+
+    /**
+     * Pass in -1 for nonexistent dates. Currently only checks if there is a
+     * year. Error prone.
+     * 
+     * @param tc
+     * @param overview
+     * @param cat
+     * @param account
+     * @param year10
+     * @param year20
+     * @param month10
+     * @param month20
+     * @param day10
+     * @param day20
+     * @param transList
+     */
+    public void setBaseValues(TransactionsController tc, boolean overview,
+	    String[] cat, String[] account, int year10, int year20,
+	    int month10, int month20, int day10, int day20,
+	    java.util.List<Transaction> transList) {
+
+	final Transactions trans = tc.getTransactions();
+	String[] cats = cat;
+	String[] accounts = account;
+	int[] year1 = new int[] { year10 };
+	int[] year2 = new int[] { year20 };
+	int[] month1 = new int[] { month10 };
+	int[] month2 = new int[] { month20 };
+	int[] day1 = new int[] { day10 };
+	int[] day2 = new int[] { day20 };
+	double bal;
+
+	if (year10 < 0) {
+	    year1 = new int[] {};
+	    year2 = new int[] {};
+	    month1 = new int[] {};
+	    month2 = new int[] {};
+	    day1 = new int[] {};
+	    day2 = new int[] {};
+	}
+
+	if (overview) {
+	    cats = trans.getCategories();
+	    accounts = trans.getAccounts();
+	    year1 = trans.getYearsWithTransactions();
+	    year2 = new int[] {};
+	    month1 = new int[] {};
+	    month2 = new int[] {};
+	    day1 = new int[] {};
+	    day2 = new int[] {};
+	    transList = trans.getTransactions();
+	    bal = tc.getCurrentBalance();
+	} else {
+	    if (year20 != -1 && month20 != -1 && day20 != -1) {
+		bal = tc.getBalanceForCategoriesForAccountsBetweenDates(cats,
+			accounts, new GregorianCalendar(year10, (month10 - 1),
+				day10).getTime(), new GregorianCalendar(year20,
+				(month20 - 1), day20).getTime());
+	    } else {
+		bal = tc.getBalanceForCategoriesForAccountsBetweenDates(cats,
+			accounts, new GregorianCalendar(year10, (month10 - 1),
+				day10).getTime(), new GregorianCalendar(year10,
+				(month10 - 1), day10).getTime());
+	    }
+	}
+
+	lsb.setCategories(cats);
+	lsb.setAccounts(accounts);
+	lsb.getCategoriesList().setItems(lsb.getCategories());
+	// lsb.getCategoriesList().addMouseListener(new MouseAdapter() {
+	// @Override
+	// public void mouseDoubleClick(MouseEvent e) {
+	// applyFilter(Filter.CATEGORIES);
+	// }
+	// });
+	lsb.getListAccounts().setItems(lsb.getAccounts());
+	// lsb.getListAccounts().addMouseListener(new MouseAdapter() {
+	// @Override
+	// public void mouseDoubleClick(MouseEvent e) {
+	// applyFilter(Filter.ACCOUNTS);
+	// }
+	// });
+	lsb.getCountLbl().setText(Integer.toString(transList.size()));
+	lsb.getCountLbl().setVisible(true);
+	lsb.getBalanceLbl().setText(String.format("%1$,.2f", bal));
+	lsb.getBalanceLbl().setVisible(true);
+	lsb.setYear1Years(lsb.intArrayToStringArray(year1));
+	lsb.getYear1Comp().select(0);
+
+	if (overview) {
+	    lsb.getYear1Comp().addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+		    lsb.setMonth1Months(trans
+			    .getMonthsInYearWithTransactions(lsb.getYear1()));
+		    lsb.setYear2Years(trans.getYearsWithTransactions(), lsb
+			    .getYear1Comp().getSelectionIndex());
+		    lsb.getMonth1Comp().select(0);
+		}
+	    });
+	    lsb.getYear2Comp().addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+		    if (!lsb.getMonth1Comp().getText().isEmpty()) {
+			lsb.setMonth2Months(
+				trans.getMonthsInYearWithTransactions(lsb
+					.getYear2()), lsb.getMonth1Comp()
+					.getSelectionIndex(), lsb.getYear1(),
+				lsb.getYear2());
+		    }
+		}
+	    });
+	    lsb.getMonth1Comp().addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+		    lsb.setDay1Days(lsb.intArrayToStringArray(trans
+			    .getDaysInMonthInYearWithTransactions(
+				    lsb.getYear1(), lsb.getMonth1())));
+		    lsb.getDay1Comp().select(0);
+		}
+	    });
+	    lsb.getMonth2Comp().addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+		    lsb.setDay2Days(trans.getDaysInMonthInYearWithTransactions(
+			    lsb.getYear2(), lsb.getMonth2()), lsb.getDay1Comp()
+			    .getSelectionIndex(), (lsb.getYear1() == lsb
+			    .getYear2()), (lsb.getMonth1() == lsb.getMonth2()));
+		}
+	    });
+	} else {
+	    lsb.getMonth1Comp().setText(Integer.toString(month1[0]));
+	    lsb.getDay1Comp().setText(Integer.toString(day1[0]));
+	    lsb.getYear2Comp().setText(Integer.toString(year2[0]));
+	    lsb.getMonth2Comp().setText(Integer.toString(month2[0]));
+	    lsb.getDay2Comp().setText(Integer.toString(day2[0]));
+	}
     }
 
     public class LeftBar extends Composite {
