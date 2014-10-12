@@ -1,13 +1,13 @@
-package derigible.visual.main;
+package derigible.visual.custom.widgets;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 
 public class LeftTabFolder extends CTabFolder {
 
-    private LeftSideBar lsb;
+    private OverviewBar lsb;
 
-    public LeftTabFolder(Composite parent, int style, LeftSideBar lsb) {
+    public LeftTabFolder(Composite parent, int style, OverviewBar lsb) {
 	super(parent, style);
 	this.lsb = lsb;
     }
@@ -15,7 +15,7 @@ public class LeftTabFolder extends CTabFolder {
     /**
      * @return the lsb
      */
-    public LeftSideBar getLsb() {
+    public OverviewBar getLsb() {
 	return lsb;
     }
 
@@ -23,7 +23,7 @@ public class LeftTabFolder extends CTabFolder {
      * @param lsb
      *            the lsb to set
      */
-    public void setLsb(LeftSideBar lsb) {
+    public void setLsb(OverviewBar lsb) {
 	this.lsb = lsb;
     }
 

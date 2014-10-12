@@ -33,7 +33,7 @@ public class Transact extends Splittable {
     }
 
     /**
-     * Empty constructor. Add data in now.
+     * Add data in now.
      *
      * @param d Date
      * @param desc Description

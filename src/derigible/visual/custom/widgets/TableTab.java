@@ -1,4 +1,4 @@
-package derigible.visual.main;
+package derigible.visual.custom.widgets;
 
 import java.util.ArrayDeque;
 import java.util.Calendar;
@@ -20,6 +20,7 @@ import derigible.controller.TransactionsController;
 import derigible.transactions.Transact;
 import derigible.transactions.Transaction;
 import derigible.utils.TListener;
+import derigible.visual.listeners.Listeners;
 
 public class TableTab extends CTabFolder {
 
@@ -41,7 +42,7 @@ public class TableTab extends CTabFolder {
      * @param lsb
      */
     public TableTab(Composite parent, int style, String tabName, Table t,
-	    LeftSideBar lsb) {
+	    OverviewBar lsb) {
 	super(parent, style);
 	init(tabName);
 	tables.add(new Node(new TableTabItem(this, style, t), lsb));
@@ -58,7 +59,7 @@ public class TableTab extends CTabFolder {
 
     public void addTable(String name, java.util.List<Transaction> trans,
 	    TransactionsController tc, ArrayDeque<Control> focusHistory,
-	    LeftSideBar lsb) {
+	    OverviewBar lsb) {
 	Listeners.addFocusListener(this, focusHistory);
 
 	Table newTable = new TransactionsTable(this, SWT.BORDER
@@ -133,9 +134,9 @@ public class TableTab extends CTabFolder {
 
     public class Node {
 	public TableTabItem table;
-	public LeftSideBar lsb;
+	public OverviewBar lsb;
 
-	private Node(TableTabItem t, LeftSideBar bar) {
+	private Node(TableTabItem t, OverviewBar bar) {
 	    table = t;
 	    lsb = bar;
 	    // Couple the objects together

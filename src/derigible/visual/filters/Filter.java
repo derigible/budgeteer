@@ -1,4 +1,4 @@
-package derigible.visual.main;
+package derigible.visual.filters;
 
 public enum Filter {
 	CATEGORIES,

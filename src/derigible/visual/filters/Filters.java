@@ -1,4 +1,4 @@
-package derigible.visual.main;
+package derigible.visual.filters;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -10,6 +10,9 @@ import org.eclipse.swt.widgets.Control;
 
 import derigible.controller.TransactionsController;
 import derigible.transactions.Transaction;
+import derigible.visual.custom.widgets.OverviewBar;
+import derigible.visual.custom.widgets.LeftTabFolder;
+import derigible.visual.custom.widgets.TableTab;
 
 public final class Filters {
 
@@ -21,7 +24,7 @@ public final class Filters {
 	    TransactionsController tc, TableTab tb,
 	    ArrayDeque<Control> focusHistory) {
 
-	LeftSideBar newLsb = new LeftSideBar(lsb, SWT.NONE, "Filtered View "
+	OverviewBar newLsb = new OverviewBar(lsb, SWT.NONE, "Filtered View "
 		+ tb.getTables().size() + 1);
 	List<Transaction> trans = applyFilter(f, lsb.getLsb(), newLsb, tc);
 
@@ -34,7 +37,7 @@ public final class Filters {
     }
 
     private static java.util.List<Transaction> applyFilter(Filter filter,
-	    LeftSideBar oldBar, LeftSideBar newBar, TransactionsController tc) {
+	    OverviewBar oldBar, OverviewBar newBar, TransactionsController tc) {
 	java.util.List<Transaction> rslt;
 	String[] cats;
 	String[] acts;
@@ -165,7 +168,7 @@ public final class Filters {
 	return rslt;
     }
 
-    private static void setBalance(double balance, LeftSideBar leftBar) {
+    private static void setBalance(double balance, OverviewBar leftBar) {
 	leftBar.getLsb().getBalanceLbl()
 		.setText(String.format("%1$,.2f", balance));
     }

@@ -10,7 +10,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import derigible.controller.TransactionsController;
-import derigible.utils.Saved;
+import derigible.saves.Saved;
+import derigible.visual.custom.widgets.TableTab;
 
 public class VisualDriver {
 

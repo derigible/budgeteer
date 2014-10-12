@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import derigible.controller.TransactionsController;
+import derigible.saves.Saved;
 import derigible.transactions.TransUpdater;
 import derigible.transactions.Transaction;
-import derigible.utils.Saved;
 
 /**
  * @author marcphillips
