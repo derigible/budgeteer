@@ -9,7 +9,7 @@
  *     Derigible Enterprises - initial API and implementation
  *******************************************************************************/
 
-package derigible.transactions;
+package derigible.transactions.abstracts;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

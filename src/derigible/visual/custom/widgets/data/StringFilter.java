@@ -37,7 +37,7 @@ public class StringFilter{
 
 		GridData list_gridData = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
 		list_gridData.heightHint = 120;
-		list_gridData.widthHint = 240;
+		list_gridData.widthHint = 160;
 		list.setLayoutData(list_gridData);
 		list.setVisible(true);
 	}

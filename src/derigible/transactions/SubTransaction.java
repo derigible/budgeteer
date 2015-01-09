@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 import derigible.controller.GUID;
+import derigible.transactions.abstracts.Splittable;
+import derigible.transactions.abstracts.Transaction;
 
 /**
  * @author marcphillips

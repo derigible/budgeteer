@@ -11,7 +11,8 @@
 
 package derigible.transformations;
 
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transactions;
+import derigible.transformations.abstracts.TransformToTransactions;
 
 /**
  * A class made simply for mocking of Transformation objects.

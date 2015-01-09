@@ -14,7 +14,7 @@ import org.junit.Test;
 import derigible.controller.TransactionsController;
 import derigible.transformations.TransactionsToCSV;
 import derigible.transactions.Transact;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transactions;
 import derigible.utils.FileU;
 //import org.junit.Ignore;
 

@@ -20,10 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import derigible.transactions.Splittable;
+import derigible.controller.abstracts.AbstractController;
 import derigible.transactions.SubTransaction;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Splittable;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
 import derigible.transformations.CSVToBudget;
 import derigible.transformations.TransactionsToCSV;
 

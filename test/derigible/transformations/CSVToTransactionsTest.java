@@ -29,8 +29,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import derigible.controller.TransactionsController;
-import derigible.transactions.Splittable;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Splittable;
+import derigible.transactions.abstracts.Transactions;
 import derigible.utils.FileU;
 
 /**

@@ -28,8 +28,9 @@ import derigible.controller.GUID;
 import derigible.transactions.SubTransaction;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
+import derigible.transformations.abstracts.TransformToTransactions;
 import derigible.utils.FileU;
 import derigible.utils.StringU;
 

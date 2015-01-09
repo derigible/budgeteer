@@ -9,7 +9,7 @@
  *     Derigible Enterprises - initial API and implementation
  *******************************************************************************/
 
-package derigible.transformations;
+package derigible.transformations.abstracts;
 
 import java.io.IOException;
 
@@ -37,6 +37,6 @@ public interface TransformToTransactions {
 	 * @return the transactions from the data store
 	 * @throws IOException - if the data store does not match the basic requirements for data in the program
 	 */
-    public abstract derigible.transactions.Transactions data_to_transactions() throws IOException;
+    public abstract derigible.transactions.abstracts.Transactions data_to_transactions() throws IOException;
 
 }

@@ -14,8 +14,9 @@ import java.io.File;
 import java.io.IOException;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
+import derigible.transformations.abstracts.TransformToStorage;
 
 /**
  * @author marcphillips

@@ -13,6 +13,8 @@ package derigible.transactions;
 
 import java.util.GregorianCalendar;
 
+import derigible.transactions.abstracts.Splittable;
+
 /**
  * @author marphill
  *

@@ -20,6 +20,7 @@ import derigible.controller.GUID;
 //import static org.mockito.Mockito.*;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
+import derigible.transactions.abstracts.Transaction;
 
 import java.util.ArrayList;
 import java.util.Calendar;

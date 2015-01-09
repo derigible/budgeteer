@@ -17,8 +17,9 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 import derigible.transactions.TList;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
+import derigible.transformations.abstracts.TransformToTransactions;
 import derigible.utils.FileU;
 
 /**

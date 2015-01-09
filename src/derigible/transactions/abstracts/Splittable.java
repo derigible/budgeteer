@@ -8,7 +8,9 @@
  * Contributors:
  *     Derigible Enterprises - initial API and implementation
  *******************************************************************************/
-package derigible.transactions;
+package derigible.transactions.abstracts;
+
+import derigible.transactions.SubTransaction;
 
 /**
  * @author marcphillips

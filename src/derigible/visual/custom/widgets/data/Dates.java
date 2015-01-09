@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import derigible.controller.AbstractController;
+import derigible.controller.abstracts.AbstractController;
 
 public class Dates {
 
@@ -36,6 +36,7 @@ public class Dates {
 		this.year = new Combo(parent, SWT.NONE);
 		this.month = new Combo(parent, SWT.NONE);
 		this.day = new Combo(parent, SWT.NONE);
+		init();
 
 		this.isSelectable = isSelectable;
 		if (!isSelectable) {
@@ -45,28 +46,30 @@ public class Dates {
 		} else {
 			this.addMonthSelectionListener();
 		}
-		try{
+		try {
 			this.years = ac.getTransactions().getYearsWithTransactions();
-		} catch(NullPointerException e){
-			this.years = new int[]{};
+		} catch (NullPointerException e) {
+			this.years = new int[] {};
 		}
 	}
 
-	protected void init(Composite parent){
-		this.year.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,1, 1));
-		this.month.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,1, 1));
-		this.day.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,1, 1));
+	private void init() {
+		GridData ygrid = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		ygrid.widthHint = 35;
+		this.year.setLayoutData(ygrid);
+		GridData mgrid = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		mgrid.widthHint = 45;
+		this.month.setLayoutData(mgrid);
+		GridData dgrid = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		dgrid.widthHint = 25;
+		this.day.setLayoutData(dgrid);
 	}
 
-	public void setDate2(Dates date2){
+	public void setDate2(Dates date2) {
 		this.date2 = date2;
 	}
 
-	protected void init(){
-		this.init(this.parent);
-	}
-
-	protected Composite getParent(){
+	protected Composite getParent() {
 		return this.parent;
 	}
 
@@ -90,14 +93,13 @@ public class Dates {
 		});
 	}
 
-	public void addYearSelectionListener(){
+	public void addYearSelectionListener() {
 		if (!this.isSelectable) {
 			return; // Fail silently if year selection is disabled.
 		}
 		this.year.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Adding Listener");
 				setMonths(ac.getTransactions().getMonthsInYearWithTransactions(Integer.parseInt(year.getText())));
 
 				int y = year.getSelectionIndex();
@@ -109,38 +111,38 @@ public class Dates {
 		});
 	}
 
-	public GregorianCalendar getDate(){
+	public GregorianCalendar getDate() {
 		int y = Integer.parseInt(this.year.getText());
 		int m = this.months[month.getSelectionIndex()] - 1;
 		int d = Integer.parseInt(this.day.getText());
 		return new GregorianCalendar(y, m, d);
 	}
 
-	protected AbstractController getController(){
+	protected AbstractController getController() {
 		return this.ac;
 	}
 
-	protected void setController(AbstractController ac){
+	protected void setController(AbstractController ac) {
 		this.ac = ac;
-		if(date2 != null){
+		if (date2 != null) {
 			date2.setController(ac);
 		}
 	}
 
-	public void update(){
-		if(date2 != null){
+	public void update() {
+		if (date2 != null) {
 			date2.clearAll();
 		}
 		this.setYears(ac.getTransactions().getYearsWithTransactions());
 	}
 
-	protected void clearAll(){
+	protected void clearAll() {
 		this.year.removeAll();
 		this.month.removeAll();
 		this.day.removeAll();
 	}
 
-	public void update(AbstractController ac){
+	public void update(AbstractController ac) {
 		this.setController(ac);
 		this.update();
 	}

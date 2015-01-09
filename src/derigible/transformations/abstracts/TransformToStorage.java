@@ -8,13 +8,13 @@
  * Contributors:
  *     Derigible Enterprises - initial API and implementation
  *******************************************************************************/
-package derigible.transformations;
+package derigible.transformations.abstracts;
 
 import java.io.File;
 import java.io.IOException;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transactions;
 import derigible.utils.FileU;
 
 /**
@@ -28,15 +28,15 @@ import derigible.utils.FileU;
  * in a database - use a Transactions class that makes use of this fact. This
  * Class is used primarily for the intent to transform flat files into usable data.
  */
-abstract class TransformToStorage {
+public abstract class TransformToStorage {
 	protected String filename;
 	protected File file;
 	protected boolean toAppStorage = false;
 	protected String dir;
-	
+
 	/**
 	 * Set the location where the file is to be written.
-	 * 
+	 *
 	 * @param location the file location
 	 * @return the system file location path
 	 */
@@ -46,23 +46,23 @@ abstract class TransformToStorage {
 
 	/**
 	 * All classes that implement this interface use this method to push all
-	 * transactions in the Transactions object to storage. 
+	 * transactions in the Transactions object to storage.
 	 */
-    public abstract File transactions_to_storage(Transactions list) throws IOException;
-    
-    //TODO This really should be put in an intermediary class
-    protected CSVWriter getCSVWriter() throws IOException{
-    	if(filename.charAt(filename.length() - 4) != '.'){
-    		filename += ".csv";
-    	}
-    	if(dir != null){
-    		if(filename.charAt(0) != '/'){
-    			filename = "/" + filename;
-    		}
-    		filename = dir + filename;
-    	}
-    	CSVWriter csv;
-    	if(toAppStorage){
+	public abstract File transactions_to_storage(Transactions list) throws IOException;
+
+	//TODO This really should be put in an intermediary class
+	protected CSVWriter getCSVWriter() throws IOException{
+		if(filename.charAt(filename.length() - 4) != '.'){
+			filename += ".csv";
+		}
+		if(dir != null){
+			if(filename.charAt(0) != '/'){
+				filename = "/" + filename;
+			}
+			filename = dir + filename;
+		}
+		CSVWriter csv;
+		if(toAppStorage){
 			csv = new CSVWriter(FileU.getFileWriterToDefaultLocation(filename));
 			file = new File(System.getProperty("user.home") + "/Budgeteer/"+filename);
 		} else {
@@ -71,12 +71,12 @@ abstract class TransformToStorage {
 			}
 			csv = new CSVWriter(FileU.getFileWriter(file));
 		}
-    	return csv;
-    }
-    
-    /**
+		return csv;
+	}
+
+	/**
 	 * Set the filename of the csv. The csv is optional.
-	 * 
+	 *
 	 * @param filename the filename
 	 */
 	public void setFileName(String filename){
@@ -85,10 +85,10 @@ abstract class TransformToStorage {
 		}
 		this.filename = filename;
 	}
-	
+
 	/**
 	 * Make the directories as needed in the directory to store the Transformation.
-	 * 
+	 *
 	 * @param dirs the directories
 	 */
 	public void mkDirs(String dirs){
@@ -100,10 +100,10 @@ abstract class TransformToStorage {
 			create.mkdirs();
 		}
 	}
-	
+
 	/**
 	 * Set the directory to store the file within the Budgeteer folder.
-	 * 
+	 *
 	 * @param dir the directory to store in
 	 */
 	public void setDir(String dir){

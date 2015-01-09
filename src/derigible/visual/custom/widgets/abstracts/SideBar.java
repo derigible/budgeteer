@@ -1,7 +1,7 @@
 /**
  *
  */
-package derigible.visual.custom.widgets;
+package derigible.visual.custom.widgets.abstracts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import derigible.controller.AbstractController;
+import derigible.controller.abstracts.AbstractController;
 import derigible.visual.custom.widgets.data.Dates;
 import derigible.visual.custom.widgets.data.StringFilter;
 import derigible.visual.filters.Filter;

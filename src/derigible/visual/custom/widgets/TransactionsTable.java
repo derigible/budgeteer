@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Text;
 
 import derigible.controller.TransactionsController;
 import derigible.transactions.Transact;
-import derigible.transactions.Transaction;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.utils.TransactionUpdater;
 import derigible.utils.TListener;
-import derigible.visual.main.VisualUpdater;
 
 public class TransactionsTable extends Composite {
 
@@ -190,19 +190,19 @@ public class TransactionsTable extends Composite {
 			gc0 = t.getDate();
 			gc = new GregorianCalendar(gc0.get(GregorianCalendar.YEAR), Integer.parseInt(ti.getText(column)) - 1,
 					gc0.get(GregorianCalendar.DAY_OF_MONTH));
-			VisualUpdater.updateDate(t, gc, tc);
+			TransactionUpdater.updateDate(t, gc, tc);
 			break;
 		case TransactionsTable.DAY:
 			gc0 = t.getDate();
 			gc = new GregorianCalendar(gc0.get(GregorianCalendar.YEAR), gc0.get(GregorianCalendar.MONTH),
 					Integer.parseInt(ti.getText(column)));
-			VisualUpdater.updateDate(t, gc, tc);
+			TransactionUpdater.updateDate(t, gc, tc);
 			break;
 		case TransactionsTable.YEAR:
 			gc0 = t.getDate();
 			gc = new GregorianCalendar(Integer.parseInt(ti.getText(column)), gc0.get(GregorianCalendar.MONTH),
 					gc0.get(GregorianCalendar.DAY_OF_MONTH));
-			VisualUpdater.updateDate(t, gc, tc);
+			TransactionUpdater.updateDate(t, gc, tc);
 			break;
 		case TransactionsTable.AMOUNT:
 			t.setAmount(Double.parseDouble(ti.getText(column)));
@@ -210,14 +210,14 @@ public class TransactionsTable extends Composite {
 			// more than Original Amount
 			break;
 		case TransactionsTable.CAT:
-			VisualUpdater.updateCategory(t, ti.getText(column), tc);
+			TransactionUpdater.updateCategory(t, ti.getText(column), tc);
 			break;
 		case TransactionsTable.TTYPE:
 			boolean credit = true;
 			if (ti.getText(column).equalsIgnoreCase("debit")) {
 				credit = false;
 			}
-			VisualUpdater.updateCreditOrDebit(t, credit, tc);
+			TransactionUpdater.updateCreditOrDebit(t, credit, tc);
 			break;
 		case TransactionsTable.SUBT:
 			break;
@@ -225,7 +225,7 @@ public class TransactionsTable extends Composite {
 			t.setDescription(ti.getText(column));
 			break;
 		case TransactionsTable.ACCOUNT:
-			VisualUpdater.updateAccount(t, ti.getText(column), tc);
+			TransactionUpdater.updateAccount(t, ti.getText(column), tc);
 			break;
 		}
 	}
@@ -234,7 +234,7 @@ public class TransactionsTable extends Composite {
 		return tc;
 	}
 
-	public void setTC(TransactionsController tc ){
+	public void setTC(TransactionsController tc) {
 		this.tc = tc;
 	}
 
@@ -244,10 +244,8 @@ public class TransactionsTable extends Composite {
 			if (!t.isSubTransaction()) {
 				TableItem row = new TableItem(table, SWT.NONE);
 
-				row.setText(0,
-						Integer.toString(t.getDate().get(Calendar.MONTH) + 1));
-				row.setText(1, Integer.toString(t.getDate().get(
-						Calendar.DAY_OF_MONTH)));
+				row.setText(0, Integer.toString(t.getDate().get(Calendar.MONTH) + 1));
+				row.setText(1, Integer.toString(t.getDate().get(Calendar.DAY_OF_MONTH)));
 				row.setText(2, Integer.toString(t.getDate().get(Calendar.YEAR)));
 				row.setText(3, t.getDescription());
 				row.setText(4, Double.toString(t.getAmount()));

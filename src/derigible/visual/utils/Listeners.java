@@ -1,4 +1,4 @@
-package derigible.visual.listeners;
+package derigible.visual.utils;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -13,13 +13,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 import derigible.controller.TransactionsController;
 import derigible.saves.Saved;
 import derigible.saves.XMLBuilder;
 import derigible.utils.FileU;
-import derigible.visual.main.VisualUpdater;
 
 public final class Listeners {
 
@@ -27,8 +25,7 @@ public final class Listeners {
 		// do nothing, not instantiable
 	}
 
-	public static void addFocusListener(final Control c,
-			final ArrayDeque<Control> focusHistory) {
+	public static void addFocusListener(final Control c, final ArrayDeque<Control> focusHistory) {
 		c.addFocusListener(new FocusListener() {
 
 			@Override
@@ -44,10 +41,8 @@ public final class Listeners {
 			}
 		});
 	}
-	
 
-	public static Closer createCloseListener(Shell shell,
-			HashMap<String, Saved> saved, XMLBuilder e, File f) {
+	public static Closer createCloseListener(Shell shell, HashMap<String, Saved> saved, XMLBuilder e, File f) {
 		return new Listeners.Closer(shell, saved, e, f);
 	}
 
@@ -68,20 +63,17 @@ public final class Listeners {
 		public void handleEvent(Event arg0) {
 			if (!isSaved()) {
 				for (Map.Entry<String, Saved> saved : this.saved.entrySet()) {
-					MessageBox save = new MessageBox(shell, SWT.ICON_QUESTION
-							| SWT.YES | SWT.NO | SWT.CANCEL);
+					MessageBox save = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
 					save.setText("Save Information?");
 					String name;
 					if (saved.getValue().getClass() == TransactionsController.class) {
 						save.setMessage("You have unsaved Transaction information. Save now?");
 						name = "transactions";
 					} else {
-						save.setMessage("You have unsaved budget information for "
-								+ saved.getKey() + ". Save now?");
+						save.setMessage("You have unsaved budget information for " + saved.getKey() + ". Save now?");
 						name = saved.getKey();
 					}
-					if (handleResponse(save.open(), saved.getValue(), name) == SWT.CANCEL
-							&& arg0 != null) {
+					if (handleResponse(save.open(), saved.getValue(), name) == SWT.CANCEL && arg0 != null) {
 						arg0.doit = false;
 						break;
 					}
@@ -93,8 +85,7 @@ public final class Listeners {
 		private int handleResponse(int open, Saved saved, String name) {
 			if (open == SWT.YES) {
 				try {
-					return VisualUpdater.save(shell, saved, name,
-							"Save failed! Exit Anyways?");
+					return Actions.save(shell, saved, name, "Save failed! Exit Anyways?");
 				} catch (NullPointerException e) {
 					// canceled save, do nothing
 					return SWT.CANCEL;

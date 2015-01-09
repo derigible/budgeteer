@@ -28,9 +28,9 @@ import org.mockito.Mockito;
 
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
-import derigible.transactions.Transaction;
+import derigible.transactions.abstracts.Transaction;
 import derigible.transformations.MockTransform;
-import derigible.transformations.TransformToTransactions;
+import derigible.transformations.abstracts.TransformToTransactions;
 
 /**
  * @author marcphillips

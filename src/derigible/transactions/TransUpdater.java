@@ -11,14 +11,18 @@
 
 package derigible.transactions;
 
+import derigible.transactions.abstracts.Transaction;
+
 /**
  * @author marcphillips
- *	
+ *
  *	This class is used for the specific purpose of transporting
  *	updated transaction information to a transaction object.
  *
  */
 public class TransUpdater extends Transaction {
+
+	//No constructor is provided because only four of the fields are updated.
 
 	/* (non-Javadoc)
 	 * @see derigible.transactions.Transaction#hasSubTransactions()

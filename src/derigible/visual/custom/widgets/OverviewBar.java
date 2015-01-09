@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import derigible.controller.TransactionsController;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
 
 public class OverviewBar extends CTabItem {
 

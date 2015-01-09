@@ -17,9 +17,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import derigible.controller.abstracts.AbstractController;
 import derigible.transactions.TList;
-import derigible.transactions.Transaction;
-import derigible.transactions.Transactions;
+import derigible.transactions.abstracts.Transaction;
+import derigible.transactions.abstracts.Transactions;
 import derigible.transformations.BudgetToCSV;
 
 /**

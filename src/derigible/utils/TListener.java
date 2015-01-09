@@ -7,8 +7,8 @@ import java.util.GregorianCalendar;
 
 import org.eclipse.swt.widgets.TableItem;
 
-import derigible.controller.AbstractController;
-import derigible.transactions.Transaction;
+import derigible.controller.abstracts.AbstractController;
+import derigible.transactions.abstracts.Transaction;
 import derigible.visual.custom.widgets.TransactionsTable;
 
 public class TListener implements PropertyChangeListener {

@@ -23,9 +23,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import derigible.transactions.TList;
 import derigible.transactions.Transact;
-import derigible.transactions.Transaction;
+import derigible.transactions.abstracts.Transaction;
 import derigible.transformations.MockTransform;
-import derigible.transformations.TransformToTransactions;
+import derigible.transformations.abstracts.TransformToTransactions;
 
 import java.io.IOException;
 import java.util.ArrayList;

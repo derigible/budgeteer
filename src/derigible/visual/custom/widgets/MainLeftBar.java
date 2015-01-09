@@ -2,11 +2,10 @@
 
 package derigible.visual.custom.widgets;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.List;
 
 import derigible.controller.TransactionsController;
+import derigible.visual.custom.widgets.abstracts.SideBar;
 import derigible.visual.custom.widgets.data.Dates;
 import derigible.visual.custom.widgets.data.StringFilter;
 import derigible.visual.filters.Filter;
@@ -27,16 +26,13 @@ public class MainLeftBar extends SideBar {
 	 */
 	public MainLeftBar(Composite parent, int style, TransactionsController ac) {
 		super(parent, style, ac);
-
-		new List(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-		new List(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		setSectionLabel("Overview");
 		setOverviewSection();
 		setSectionLabel("Filters");
 		this.categoriesList =  setStringFilterSelection("Categories", Filter.CATEGORIES );
 		this.accountsList =  setStringFilterSelection("Accounts", Filter.ACCOUNTS);
 		date1 = this.setDateSelection(true, "Start Date");
-		date2 = this.setDateSelection(true, "End Date");
+		date2 = this.setDateSelection(true, "End Date ");
 		date1.setDate2(date2);
 		date1.addYearSelectionListener(date2);
 
