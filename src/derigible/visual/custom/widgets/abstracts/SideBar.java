@@ -4,6 +4,7 @@
 package derigible.visual.custom.widgets.abstracts;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -158,7 +159,6 @@ public abstract class SideBar extends Composite {
 	}
 
 	protected AbstractController getController(){
-
 		return this.ac;
 	}
 
@@ -189,8 +189,8 @@ public abstract class SideBar extends Composite {
 
 	public abstract void setBaseValues();
 
+	public void setButtonListener(MouseListener listener){
+		this.btn.addMouseListener(listener);
+	}
 
-	//	public void applyFilters(){
-	//
-	//	}
 }

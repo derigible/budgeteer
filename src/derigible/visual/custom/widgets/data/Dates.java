@@ -16,9 +16,9 @@ import derigible.controller.abstracts.AbstractController;
 
 public class Dates {
 
-	private final Combo year;
-	private final Combo month;
-	private final Combo day;
+	final Combo year;
+	final Combo month;
+	final Combo day;
 	private int[] years;
 	private int[] months;
 	private int[] days;
@@ -73,6 +73,21 @@ public class Dates {
 		return this.parent;
 	}
 
+	private void selectYear(final Dates date2){
+		setMonths(ac.getTransactions().getMonthsInYearWithTransactions(Integer.parseInt(year.getText())));
+		this.setDays(ac.getTransactions().getDaysInMonthInYearWithTransactions(Integer.parseInt(year.getText()),
+				months[month.getSelectionIndex()] - 1));
+		int y = year.getSelectionIndex();
+		int[] temp = new int[years.length - y];
+		for (int i = 0; i < temp.length; i++) {
+			temp[i] = years[i + y];
+		}
+		if(date2 != null){
+			date2.setYears(temp);
+			date2.addYearSelectionListener();
+		}
+	}
+
 	public void addYearSelectionListener(final Dates date2) {
 		if (!this.isSelectable) {
 			return; // Fail silently if year selection is disabled.
@@ -80,15 +95,7 @@ public class Dates {
 		this.year.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setMonths(ac.getTransactions().getMonthsInYearWithTransactions(Integer.parseInt(year.getText())));
-
-				int y = year.getSelectionIndex();
-				int[] temp = new int[years.length - y];
-				for (int i = 0; i < temp.length; i++) {
-					temp[i] = years[i + y];
-				}
-				date2.setYears(temp);
-				date2.addYearSelectionListener();
+				selectYear(date2);
 			}
 		});
 	}
@@ -101,12 +108,6 @@ public class Dates {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setMonths(ac.getTransactions().getMonthsInYearWithTransactions(Integer.parseInt(year.getText())));
-
-				int y = year.getSelectionIndex();
-				int[] temp = new int[years.length - y];
-				for (int i = 0; i < temp.length; i++) {
-					temp[i] = years[i + y];
-				}
 			}
 		});
 	}
@@ -152,11 +153,12 @@ public class Dates {
 	 *            the years to set
 	 */
 	public void setYears(int[] years) {
+		this.month.removeAll();
+		this.day.removeAll();
 		this.years = years;
 		this.year.setItems(intArrayToStringArray(this.years));
 		this.year.select(0);
-		this.month.removeAll();
-		this.day.removeAll();
+		this.selectYear(date2);
 	}
 
 	private void addMonthSelectionListener() {
@@ -164,7 +166,11 @@ public class Dates {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDays(ac.getTransactions().getDaysInMonthInYearWithTransactions(Integer.parseInt(year.getText()),
-						months[month.getSelectionIndex()]));
+						months[month.getSelectionIndex()] - 1));
+				if(date2 != null && Integer.parseInt(date2.year.getText()) == Integer.parseInt(year.getText())){
+					date2.month.select(month.getSelectionIndex());
+					date2.day.select(day.getSelectionIndex());
+				}
 			}
 		});
 	}
@@ -173,7 +179,8 @@ public class Dates {
 	 * @param months
 	 *            the months to set
 	 */
-	private void setMonths(int[] months) {
+	//TODO figure out a way to make the dates synch with another
+	void setMonths(int[] months) {
 		for (int i = 0; i < months.length; i++) {
 			months[i] = months[i] + 1;
 		}

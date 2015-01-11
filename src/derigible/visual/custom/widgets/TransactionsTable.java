@@ -1,7 +1,9 @@
 package derigible.visual.custom.widgets;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -21,6 +23,7 @@ import derigible.transactions.Transact;
 import derigible.transactions.abstracts.Transaction;
 import derigible.transactions.utils.TransactionUpdater;
 import derigible.utils.TListener;
+import derigible.visual.filters.Filter;
 
 public class TransactionsTable extends Composite {
 
@@ -240,7 +243,79 @@ public class TransactionsTable extends Composite {
 
 	public Table fillTable() {
 		table.removeAll();
-		for (Transaction t : tc.getTransactions().getTransactions()) {
+		fillTable(tc.getTransactions().getTransactions());
+		return table;
+	}
+
+	public Table fillTable(String[] strings, Filter filter) throws IOException{
+		if(filter == Filter.ACCOUNTS){
+			fillTable(tc.getTransactions().getByAccounts(strings));
+		} else if(filter == Filter.CATEGORIES){
+			fillTable(tc.getTransactions().getByCategories(strings));
+		} else {
+			throw new IOException("This is not a valid filter in this context.");
+		}
+		return table;
+	}
+
+	public Table fillTable(int year1, int month1, int day1){
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		fillTable(tc.getTransactions().getByDate(gc.getTime()));
+		return table;
+	}
+
+	public Table fillTable(int year1, int month1, int day1, int year2, int month2, int day2){
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
+		fillTable(tc.getTransactions().getBetweenDates(gc.getTime(), gc2.getTime()));
+		return table;
+	}
+
+	public Table fillTable(String[] strings, Filter filter, int year1, int month1, int day1) throws IOException{
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		if(filter == Filter.ACCOUNTS){
+			fillTable(tc.getTransactions().filterByDate(gc.getTime(), tc.getTransactions().getByAccounts(strings)));
+		} else if(filter == Filter.CATEGORIES){
+			fillTable(tc.getTransactions().getByCategoriesAndDate(strings, gc.getTime()));
+		} else {
+			throw new IOException("This is not a valid filter in this context.");
+		}
+		return table;
+	}
+
+	public Table fillTable(String[] strings, Filter filter, int year1, int month1, int day1, int year2, int month2, int day2) throws IOException{
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
+		if(filter == Filter.ACCOUNTS){
+			fillTable(tc.getTransactions().filterByDates(gc.getTime(), gc2.getTime(), tc.getTransactions().getByAccounts(strings)));
+		} else if(filter == Filter.CATEGORIES){
+			fillTable(tc.getTransactions().getByCategoriesAndDates(strings, gc.getTime(), gc2.getTime()));
+		} else {
+			throw new IOException("This is not a valid filter in this context.");
+		}
+		return table;
+	}
+
+	public Table fillTable(String[] cats, String[] acts){
+		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategories(cats)));
+		return table;
+	}
+
+	public Table fillTable(String[] cats, String[] acts, Filter filter, int year1, int month1, int day1){
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDate(cats, gc.getTime())));
+		return table;
+	}
+
+	public Table fillTable(String[] cats, String[] acts, Filter filter, int year1, int month1, int day1, int year2, int month2, int day2){
+		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
+		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDates(cats, gc.getTime(), gc2.getTime())));
+		return table;
+	}
+
+	private void fillTable(List<Transaction> trans){
+		for (Transaction t : trans) {
 			if (!t.isSubTransaction()) {
 				TableItem row = new TableItem(table, SWT.NONE);
 
@@ -265,6 +340,5 @@ public class TransactionsTable extends Composite {
 				tl.addTableItem(row);
 			}
 		}
-		return table;
 	}
 }

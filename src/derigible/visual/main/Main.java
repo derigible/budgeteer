@@ -11,6 +11,8 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -111,7 +113,7 @@ public class Main {
 
 		/// Create default TabFolderItem Containers ///
 		allTransTableTab = new CTabItem(tableTabs, SWT.NONE);
-		allTransTableTab.setShowClose(true);
+		allTransTableTab.setShowClose(false);
 		allTransTableTab.setText("Overview");
 
 		tableOverviewTab = new CTabItem(leftTabs, SWT.NONE);
@@ -129,6 +131,10 @@ public class Main {
 		tableOverviewTab.setText("Overview");
 
 		allTransTableTab.setControl(allTransTable.getTable());
+
+		//Set the overview tab to this table
+		allTransTableTab.setData("control", tableOverviewTab);
+		tableOverviewTab.setData("table", allTransTableTab);
 
 		/// Get the Menu ///
 		getMenu();
@@ -153,7 +159,6 @@ public class Main {
 				setOverviewTable(System.getProperty("user.home") + "/Budgeteer/" + transactions + "/transactions.csv",
 						transactions);
 			}
-
 		} else {
 			settingsFile.mkdir();
 			settingsFile = new File(settingsFile.getAbsolutePath() + "/settings.xml");
@@ -187,6 +192,22 @@ public class Main {
 				allTransTable.setTC(tc);
 				overviewBar.setController(tc);
 				setBaseValues(allTransTable, overviewBar);
+				overviewBar.setButtonListener(new MouseListener(){
+					@Override
+					public void mouseDoubleClick(MouseEvent arg0) {
+						//do nothing
+					}
+
+					@Override
+					public void mouseDown(MouseEvent arg0) {
+						//do nothing
+					}
+
+					@Override
+					public void mouseUp(MouseEvent arg0) {
+						overviewBar.applyFilters(tableTabs);
+					}
+				});
 				allTransTableTab.setControl(allTransTable.getTable());
 				saves.put(tc.getName(), tc);
 				settingsXml.setTextOfNode("transactions", tc.getName());
@@ -198,7 +219,6 @@ public class Main {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (NullPointerException e1) {
-			e1.printStackTrace();
 			// Do nothing, they canceled.
 		}
 	}
