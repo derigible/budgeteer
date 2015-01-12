@@ -121,10 +121,18 @@ public abstract class SideBar extends Composite {
 		container.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		container.setVisible(true);
 
-		Label spacer = new Label(container, SWT.NONE);
-		spacer.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		spacer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		spacer.setText("");
+		Button check = new Button(container, SWT.CHECK);
+
+		if(!isSelectable){
+			Label spacer = new Label(container, SWT.NONE);
+			spacer.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+			spacer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			spacer.setText("");
+		} else {
+			check.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+			check.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			check.setText("Use");
+		}
 
 		Label lblYear = new Label(container, SWT.NONE);
 		lblYear.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -141,7 +149,11 @@ public abstract class SideBar extends Composite {
 		lblDay.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblDay.setText("Day");
 
-		return new Dates(container, ac, isSelectable, text);
+		Dates date = new Dates(container, ac, isSelectable, text);
+		if(isSelectable){
+			date.setCheckBox(check);
+		}
+		return date;
 	}
 
 	public SideBar setButton(String text){

@@ -371,6 +371,21 @@ public class TransactionsController extends AbstractController {
 	}
 
 	/**
+	 * Get the balance for the specified accounts between the given dates.
+	 *
+	 * Returns a negative number if debts &gt; credits.
+	 *
+	 * @param acts the array of strings representing accounts
+	 * @param start the beginning of the time period
+	 * @param end the end of the time period
+	 * @return the balance
+	 */
+	public double getBalanceBetweenDatesForAccounts(String[] acts, Date start, Date end) {
+		// TODO Auto-generated method stub
+		return calculate(tlist.filterByAccounts(acts, tlist.getBetweenDates(start, end)));
+	}
+
+	/**
 	 * Get the balance for the given category.
 	 *
 	 * Returns a negative number if debits &gt; credits.
@@ -393,11 +408,17 @@ public class TransactionsController extends AbstractController {
 	 * @return the balance
 	 */
 	public double getBalanceForCategories(String[] categories) {
-		double balance = 0;
-		for (String category : categories) {
-			balance += calculate(tlist.getByCategory(category));
-		}
-		return balance;
+		return calculate(tlist.getByCategories(categories));
+	}
+
+	/**
+	 * Get the balance for the given accounts.
+	 *
+	 * @param acts the accounts for the balance
+	 * @return the balance
+	 */
+	public double getBalanceForAccounts(String[] acts) {
+		return calculate(tlist.getByAccounts(acts));
 	}
 
 	/**
@@ -1161,5 +1182,4 @@ public class TransactionsController extends AbstractController {
 	public String getName() {
 		return guid;
 	}
-
 }

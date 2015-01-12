@@ -97,4 +97,13 @@ public class StringFilter{
 		return filter;
 	}
 
+	/**
+	 * Get the selected filters from the GUI.
+	 *
+	 * @return a string array of the filters selected
+	 */
+	public String[] getSelectedFilters(){
+		return list.getSelection();
+	}
+
 }

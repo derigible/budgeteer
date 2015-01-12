@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -26,6 +27,7 @@ public class Dates {
 	private AbstractController ac;
 	private Composite parent;
 	private Dates date2 = null;
+	private Button check = null;
 
 	public Dates(Composite parent, AbstractController ac, boolean isSelectable, String text) {
 		this.ac = ac;
@@ -115,7 +117,13 @@ public class Dates {
 	public GregorianCalendar getDate() {
 		int y = Integer.parseInt(this.year.getText());
 		int m = this.months[month.getSelectionIndex()] - 1;
-		int d = Integer.parseInt(this.day.getText());
+		int d = 0;
+		try{
+			d = Integer.parseInt(this.day.getText());
+		} catch(NumberFormatException e){
+			//TODO replace this with making day always selected
+			d = 1;
+		}
 		return new GregorianCalendar(y, m, d);
 	}
 
@@ -159,6 +167,14 @@ public class Dates {
 		this.year.setItems(intArrayToStringArray(this.years));
 		this.year.select(0);
 		this.selectYear(date2);
+	}
+
+	public boolean getChecked(){
+		return check.getSelection();
+	}
+
+	public void setCheckBox(Button check){
+		this.check = check;
 	}
 
 	private void addMonthSelectionListener() {

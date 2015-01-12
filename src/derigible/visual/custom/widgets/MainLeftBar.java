@@ -8,9 +8,10 @@ import java.util.Arrays;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 import derigible.controller.TransactionsController;
@@ -50,28 +51,28 @@ public class MainLeftBar extends SideBar {
 	/**
 	 * @return the categoriesList
 	 */
-	protected StringFilter getCategoriesList() {
+	public StringFilter getCategoriesList() {
 		return categoriesList;
 	}
 
 	/**
 	 * @return the accountsList
 	 */
-	protected StringFilter getAccountsList() {
+	public StringFilter getAccountsList() {
 		return accountsList;
 	}
 
 	/**
 	 * @return the date2
 	 */
-	protected Dates getDate2() {
+	public Dates getDate2() {
 		return date2;
 	}
 
 	/**
 	 * @param date1 the date1 to set
 	 */
-	protected Dates getDate1() {
+	public Dates getDate1() {
 		return date1;
 	}
 
@@ -87,7 +88,6 @@ public class MainLeftBar extends SideBar {
 		}
 		date1.update(this.getController());
 		String[] cats = this.getController().getTransactions().getCategories();
-		Arrays.sort(cats);
 		String[] acts = this.getController().getTransactions().getAccounts();
 		Arrays.sort(cats);
 		Arrays.sort(acts);
@@ -99,25 +99,23 @@ public class MainLeftBar extends SideBar {
 	}
 
 	public void applyFilters(final CTabFolder tableTabs){
-		final CTabItem overviewControl = new CTabItem((CTabFolder) this.getParent(), SWT.NONE);
-		final FilteredBar fb = new FilteredBar(this.getParent(), SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, this.getController());
-		fb.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		applyFilters(tableTabs, (CTabFolder) this.getParent());
+	}
 
-		overviewControl.setControl(fb);
+	public TransactionsTable applyFilters(final CTabFolder tableTabs, final CTabFolder sidebarTabs){
+		final CTabItem overviewControl = new CTabItem(sidebarTabs, SWT.NONE);
+		final FilteredBar sidebar = new FilteredBar(sidebarTabs, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, this.getController());
+
+		overviewControl.setControl(sidebar);
 		overviewControl.setText("Filtered View");
+		overviewControl.setShowClose(true);
 
-		CTabItem tableControl = new CTabItem(tableTabs, SWT.NONE);
+		final CTabItem tableControl = new CTabItem(tableTabs, SWT.NONE);
 		tableControl.setShowClose(true);
 		tableControl.setText("Filtered View");
 		TransactionsTable ftt = new TransactionsTable(tableTabs, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, this.getController());
 		ftt.getTable().setHeaderVisible(true);
 		ftt.getTable().setLinesVisible(true);
-		try {
-			ftt.fillTable(new String[]{"Wedding Ring"}, Filter.CATEGORIES);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		tableControl.setControl(ftt.getTable());
 
 		//Set each entity in relation to the other
@@ -138,6 +136,16 @@ public class MainLeftBar extends SideBar {
 			}
 		});
 
+		tableControl.addDisposeListener(new DisposeListener(){
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				CTabItem control = (CTabItem) tableControl.getData("control");
+				if(!control.isDisposed()){
+					control.dispose();
+				}
+			}
+		});
+
 		//Set the overview tab on focus to select the corresponding table tab
 		overviewTabs.addSelectionListener(new SelectionListener(){
 			@Override
@@ -151,10 +159,104 @@ public class MainLeftBar extends SideBar {
 			}
 		});
 
-	}
+		overviewControl.addDisposeListener(new DisposeListener(){
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				CTabItem control = (CTabItem) overviewControl.getData("table");
+				if(!control.isDisposed()){
+					try{
+						control.dispose();
+					} catch(IllegalArgumentException e){
+						System.out.println("Typical error for closing not sure how to prevent.");
+					}
+				}
+			}
+		});
 
-	public TransactionsTable applyFilters(CTabFolder tabletabs, CTabFolder sidebar){
-		return new TransactionsTable(tabletabs, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, this.getController());
+		//Set the values
+		String[] cats = this.categoriesList.getSelectedFilters();
+		String[] acts = this.accountsList.getSelectedFilters();
+		boolean d1 = this.date1.getChecked();
+		boolean d2 = this.date2.getChecked();
+		double balance = 0;
+		int count = 0;
+
+		if(cats.length > 0 && acts.length > 0 && d1 && d2){ //By Cats, Acts, and Dates
+			count = ftt.fillTable(cats, acts, this.date1.getDate(), this.date2.getDate()).size();
+			balance = this.getController().getBalanceForCategoriesForAccountsBetweenDates(cats, acts, this.date1.getDate().getTime(), this.date2.getDate().getTime());
+		} else if(cats.length > 0 && acts.length == 0 && d1 && d2){ // By Cats and Dates
+			try {
+				count = ftt.fillTable(cats, Filter.CATEGORIES, this.date1.getDate(), this.date2.getDate()).size();
+				balance = this.getController().getBalanceForCategoriesBetweenDates(cats, this.date1.getDate().getTime(), this.date2.getDate().getTime());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(cats.length == 0 && acts.length > 0 && d1 && d2){ //By acts and dates
+			try {
+				count = ftt.fillTable(acts, Filter.ACCOUNTS, this.date1.getDate(), this.date2.getDate()).size();
+				balance = this.getController().getBalanceBetweenDatesForAccounts(acts, this.date1.getDate().getTime(), this.date2.getDate().getTime());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(cats.length == 0 && acts.length == 0 && d1 && d2){ // By Dates
+			count = ftt.fillTable(this.date1.getDate(), this.date2.getDate()).size();
+			balance = this.getController().getBalanceBetweenDates(this.date1.getDate().getTime(), this.date2.getDate().getTime());
+		}
+
+
+		else if(cats.length > 0 && acts.length > 0 && d1 && !d2){ //By Cats, Acts, and Date
+			count = ftt.fillTable(cats, acts, this.date1.getDate()).size();
+			balance = this.getController().getBalanceForCategoriesForAccountsBetweenDates(cats, acts, this.date1.getDate().getTime(), this.date1.getDate().getTime());
+		} else if(cats.length > 0 && acts.length == 0 && d1 && !d2){ //By Cats and Date
+			try {
+				count = ftt.fillTable(cats, Filter.CATEGORIES, this.date1.getDate()).size();
+				balance = this.getController().getBalanceForCategoriesBetweenDates(cats, this.date1.getDate().getTime(), this.date1.getDate().getTime());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(cats.length == 0 && acts.length > 0 && d1 && !d2){ //By Acts and Date
+			try {
+				count = ftt.fillTable(acts, Filter.ACCOUNTS, this.date1.getDate()).size();
+				balance = this.getController().getBalanceBetweenDatesForAccounts(acts, this.date1.getDate().getTime(), this.date1.getDate().getTime());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(cats.length == 0 && acts.length == 0 && d1 && !d2){ //By Date
+			count = ftt.fillTable(this.date1.getDate()).size();
+			balance = this.getController().getBalanceBetweenDates(this.date1.getDate().getTime(), this.date1.getDate().getTime());
+		}
+
+
+		else if(cats.length > 0 && acts.length > 0 && !d1 && !d2){ //By Cats, Acts
+			count = ftt.fillTable(cats, acts).size();
+			balance = this.getController().getBalanceForCategoriesForAccounts(cats, acts);
+		} else if(cats.length > 0 && acts.length == 0 && !d1 && !d2){ //By Cats
+			try {
+				count = ftt.fillTable(cats, Filter.CATEGORIES).size();
+				balance = this.getController().getBalanceForCategories(cats);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(cats.length == 0 && acts.length > 0 && !d1 && !d2){ //By Acts
+			try {
+				count = ftt.fillTable(acts, Filter.ACCOUNTS).size();
+				balance = this.getController().getBalanceForAccounts(acts);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Incorrect filter used.");
+				e.printStackTrace();
+			}
+		}
+
+		sidebar.setBalanceLbl(String.format("%1$,.2f", balance));
+		sidebar.setCountLbl(Integer.toString(count));
+
+		return ftt;
 	}
 
 }

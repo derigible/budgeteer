@@ -241,80 +241,68 @@ public class TransactionsTable extends Composite {
 		this.tc = tc;
 	}
 
-	public Table fillTable() {
+	public List<Transaction> fillTable() {
 		table.removeAll();
-		fillTable(tc.getTransactions().getTransactions());
-		return table;
+		return fillTable(tc.getTransactions().getTransactions());
 	}
 
-	public Table fillTable(String[] strings, Filter filter) throws IOException{
+	public List<Transaction> fillTable(String[] strings, Filter filter) throws IOException{
+		List<Transaction> trans;
 		if(filter == Filter.ACCOUNTS){
-			fillTable(tc.getTransactions().getByAccounts(strings));
+			trans = fillTable(tc.getTransactions().getByAccounts(strings));
 		} else if(filter == Filter.CATEGORIES){
-			fillTable(tc.getTransactions().getByCategories(strings));
+			trans =  fillTable(tc.getTransactions().getByCategories(strings));
 		} else {
 			throw new IOException("This is not a valid filter in this context.");
 		}
-		return table;
+		return trans;
 	}
 
-	public Table fillTable(int year1, int month1, int day1){
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
-		fillTable(tc.getTransactions().getByDate(gc.getTime()));
-		return table;
+	public List<Transaction> fillTable(GregorianCalendar gc1){
+		return fillTable(tc.getTransactions().getByDate(gc1.getTime()));
 	}
 
-	public Table fillTable(int year1, int month1, int day1, int year2, int month2, int day2){
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
-		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
-		fillTable(tc.getTransactions().getBetweenDates(gc.getTime(), gc2.getTime()));
-		return table;
+	public List<Transaction> fillTable(GregorianCalendar gc1, GregorianCalendar gc2){
+		return fillTable(tc.getTransactions().getBetweenDates(gc1.getTime(), gc2.getTime()));
 	}
 
-	public Table fillTable(String[] strings, Filter filter, int year1, int month1, int day1) throws IOException{
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
+	public List<Transaction> fillTable(String[] strings, Filter filter, GregorianCalendar gc1) throws IOException{
+		List<Transaction> trans;
 		if(filter == Filter.ACCOUNTS){
-			fillTable(tc.getTransactions().filterByDate(gc.getTime(), tc.getTransactions().getByAccounts(strings)));
+			trans = fillTable(tc.getTransactions().filterByDate(gc1.getTime(), tc.getTransactions().getByAccounts(strings)));
 		} else if(filter == Filter.CATEGORIES){
-			fillTable(tc.getTransactions().getByCategoriesAndDate(strings, gc.getTime()));
+			trans = fillTable(tc.getTransactions().getByCategoriesAndDate(strings, gc1.getTime()));
 		} else {
 			throw new IOException("This is not a valid filter in this context.");
 		}
-		return table;
+		return trans;
 	}
 
-	public Table fillTable(String[] strings, Filter filter, int year1, int month1, int day1, int year2, int month2, int day2) throws IOException{
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
-		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
+	public List<Transaction> fillTable(String[] strings, Filter filter, GregorianCalendar gc1, GregorianCalendar gc2) throws IOException{
+		List<Transaction> trans;
 		if(filter == Filter.ACCOUNTS){
-			fillTable(tc.getTransactions().filterByDates(gc.getTime(), gc2.getTime(), tc.getTransactions().getByAccounts(strings)));
+			trans = fillTable(tc.getTransactions().filterByDates(gc1.getTime(), gc2.getTime(), tc.getTransactions().getByAccounts(strings)));
 		} else if(filter == Filter.CATEGORIES){
-			fillTable(tc.getTransactions().getByCategoriesAndDates(strings, gc.getTime(), gc2.getTime()));
+			trans = fillTable(tc.getTransactions().getByCategoriesAndDates(strings, gc1.getTime(), gc2.getTime()));
 		} else {
 			throw new IOException("This is not a valid filter in this context.");
 		}
-		return table;
+		return trans;
 	}
 
-	public Table fillTable(String[] cats, String[] acts){
-		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategories(cats)));
-		return table;
+	public List<Transaction> fillTable(String[] cats, String[] acts){
+		return fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategories(cats)));
 	}
 
-	public Table fillTable(String[] cats, String[] acts, Filter filter, int year1, int month1, int day1){
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
-		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDate(cats, gc.getTime())));
-		return table;
+	public List<Transaction> fillTable(String[] cats, String[] acts, GregorianCalendar gc1){
+		return fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDate(cats, gc1.getTime())));
 	}
 
-	public Table fillTable(String[] cats, String[] acts, Filter filter, int year1, int month1, int day1, int year2, int month2, int day2){
-		GregorianCalendar gc = new GregorianCalendar(year1, month1, day1);
-		GregorianCalendar gc2 = new GregorianCalendar(year2, month2, day2);
-		fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDates(cats, gc.getTime(), gc2.getTime())));
-		return table;
+	public List<Transaction> fillTable(String[] cats, String[] acts, GregorianCalendar gc1, GregorianCalendar gc2){
+		return fillTable(tc.getTransactions().filterByAccounts(acts, tc.getTransactions().getByCategoriesAndDates(cats, gc1.getTime(), gc2.getTime())));
 	}
 
-	private void fillTable(List<Transaction> trans){
+	private List<Transaction> fillTable(List<Transaction> trans){
 		for (Transaction t : trans) {
 			if (!t.isSubTransaction()) {
 				TableItem row = new TableItem(table, SWT.NONE);
@@ -323,7 +311,7 @@ public class TransactionsTable extends Composite {
 				row.setText(1, Integer.toString(t.getDate().get(Calendar.DAY_OF_MONTH)));
 				row.setText(2, Integer.toString(t.getDate().get(Calendar.YEAR)));
 				row.setText(3, t.getDescription());
-				row.setText(4, Double.toString(t.getAmount()));
+				row.setText(4, String.format("%1$,.2f", t.getAmount()));
 				row.setText(5, t.getCategory());
 				row.setText(6, t.getAccount());
 				if (t.isCredit()) {
@@ -340,5 +328,6 @@ public class TransactionsTable extends Composite {
 				tl.addTableItem(row);
 			}
 		}
+		return trans;
 	}
 }

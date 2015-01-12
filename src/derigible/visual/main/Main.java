@@ -11,6 +11,7 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -205,6 +206,18 @@ public class Main {
 
 					@Override
 					public void mouseUp(MouseEvent arg0) {
+						overviewBar.applyFilters(tableTabs);
+					}
+				});
+				overviewBar.getCategoriesList().getList().addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDoubleClick(MouseEvent e) {
+						overviewBar.applyFilters(tableTabs);
+					}
+				});
+				overviewBar.getAccountsList().getList().addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDoubleClick(MouseEvent e) {
 						overviewBar.applyFilters(tableTabs);
 					}
 				});
